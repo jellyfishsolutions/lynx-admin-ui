@@ -2,7 +2,7 @@ import { EntityMetadata } from "./decorators";
 import * as fs from "fs";
 
 
-export function generateSchema(entitiesPaths: string[]) {
+export function generateSchema(entitiesPaths: string[]): { entity: any; meta: EntityMetadata }[] {
     
     let data: { entity: any; meta: EntityMetadata }[] = [];
 
@@ -24,10 +24,6 @@ export function generateSchema(entitiesPaths: string[]) {
                 data.push({ entity: entity, meta: entity.adminUI });
             }
         }
-    }
-
-    for (let d of data) {
-        console.log(d.meta);
     }
 
     return data;

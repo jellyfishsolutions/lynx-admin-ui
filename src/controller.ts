@@ -7,7 +7,7 @@ import { generateSchema } from "./generator";
 import {Like, getConnection, Repository} from "typeorm";
 
 
-let _adminUI: any;
+let _adminUI: { entity: any; meta: EntityMetadata }[];
 let hasInit = false;
 
 export class Controller extends BaseController {

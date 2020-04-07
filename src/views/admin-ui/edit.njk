@@ -15,17 +15,6 @@
 
 {% block body %}
 <div class="container">
-<code>
-<div>
-    {{ data | json}}
-</div>
-<div>
-{{ metadata | json }}
-</div>
-<div>
-{{ fields | json }}
-</div>
-</code>
 
 <form method="POST" action="{{route('adminUI.save', {entityName: req.params.entityName, id: req.params.id} )}}">
 <div class="row">
