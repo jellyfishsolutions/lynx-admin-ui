@@ -1,0 +1,28 @@
+
+
+<div class="form-group">
+    <label for="{{key}}">{{ field.name }} </label>
+    (sarà un WYSIWYG)
+    <div id="rich-text-{{key}}">{{data[key] | safe}}</div>
+    <!--<textarea class="form-control" name="{{key}}" {{ "readonly" if field.readOnly }} >{{data[key]}}</textarea>-->
+    <input type="hidden" name="{{key}}" value="{{data[key]}}" />
+</div>
+
+
+{% if field.readOnly %}
+{% else %}
+<script>
+if (!window.quills) {
+    window.quills = [];
+}
+window.quills.push(function() {
+    var quill{{key}} = new Quill('#rich-text-{{key}}', {
+        theme: 'snow'
+    });
+    quill{{key}}.on('text-change', function(delta, oldDelta, source) {
+        var input = document.querySelector('input[name={{key}}]');
+        input.value = quill{{key}}.container.firstChild.innerHTML;
+    });
+});
+</script>
+{% endif %}

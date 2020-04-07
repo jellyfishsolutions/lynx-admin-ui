@@ -1,0 +1,124 @@
+{% extends resolvePath(parentTemplate) %}
+
+{% macro pagination(config, url) %}
+    {% if (config.pageCount > 1) %}
+        <ul class="pagination">
+            <li class="page-item">
+                <a class="page-link" href="{{url}}page=1">&laquo;</a>
+            </li>
+            {% for i in range(config.left, config.right) %}
+                {% if i == config.currentPage %}
+                    <li class="page-item active">
+                        <a class="page-link" href="{{url}}page={{i+1}}">
+                            <span>{{i+1}}
+                                <span class="sr-only">(current)</span></span></a>
+                    </li>
+                {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{url}}page={{i+1}} ">{{i+1}}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+            <li class="page-item">
+                <a class="page-link" href="{{url}}page={{config.pageCount}}">&raquo;</a>
+            </li>
+        </ul>
+    {% endif %}
+{% endmacro %}
+
+
+{% block additional_styles %}
+  <link href="{{route('/adminUI/fontawesome/css/all.css')}}" rel="stylesheet"> <!--load all styles -->
+{% for key, field in fields %}
+    {% include resolvePath(configuration[field.type] + '-css') ignore missing %}
+{% endfor %}
+{% endblock %}
+{% block additional_scripts %}
+{% for key, field in fields %}
+    {% include resolvePath(configuration[field.type] + '-js') ignore missing %}
+{% endfor %}
+{% endblock %}
+
+{% block body %}
+<div class="container">
+<code>
+<div>
+    {{ data | json}}
+</div>
+<div>
+{{ metadata | json }}
+</div>
+<div>
+{{ fields | json }}
+</div>
+</code>
+<div class="accordion" id="accordionFilter">
+    <div class="card">
+        <div class="card-header" id="filterBy">
+            <h4 class="mb-0">
+                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#filtering">
+                    Filtering
+                </button>
+            </h4>
+        </div>
+
+        <div id="filtering" class="collapse" data-parent="#accordionFilter">
+            <div class="card-body">
+            <form method="GET" action="{{route('adminUI.list', { entityName: req.params.entityName })}}">
+                <div class="row">
+                    {% for key, field in fields %}
+                        {% if field.searchable %}
+                            <div class="{{ field.uiSettings.filterClasses if field.uiSettings and field.uiSettings.filterClasses else 'col-12' }} ">
+                            {% include resolvePath(configuration[field.type]) %}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <button class="btn btn-primary">Filter</button>
+            </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            {% for key, field in fields %}
+                {% if field.onSummary %}
+                    <th>
+                    <a href="{{ route(urlNoPageNoOrder, { orderBy: ('-' if needsDesc(key) else '') + key }) }}">
+                    {{field.name}}
+                    {% if req.query.orderBy and req.query.orderBy == '-'+key %}
+                        <i class="fas fa-sort-amount-up"></i>
+                    {% endif %}
+                    {% if req.query.orderBy and req.query.orderBy == key %}
+                        <i class="fas fa-sort-amount-down"></i>
+                    {% endif %}
+                    </a>
+                    </th>
+                {% endif %}
+            {% endfor %}
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for d in gridData %}
+            <tr>
+            {% for key, field in fields %}
+                {% if field.onSummary %}
+                    <td>{{d[key]}}</td>
+                {% endif %}
+            {% endfor %}
+            <td>
+                <a href="{{route('adminUI.details', {entityName: req.params.entityName, id: d.id})}}">Details</a>
+            </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{{ pagination(paging, urlNoPage)  }}
+
+</div>
+{% endblock %}

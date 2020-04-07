@@ -1,0 +1,9 @@
+<div class="form-group">
+    <label for="{{key}}">{{ field.name }} </label>
+    <select class="form-control" name={{key}} {{ "readonly" if field.readOnly }}>
+        <option selected disabled>Select...</option>
+        {% for element in field.values %}
+            <option value="{{element.key}}" {{"selected" if data[key] == element.key }} >{{element.value}}</option>
+        {% endfor %}
+    </select>
+</div>

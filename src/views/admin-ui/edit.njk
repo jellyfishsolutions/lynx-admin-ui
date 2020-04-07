@@ -1,0 +1,45 @@
+{% extends resolvePath(parentTemplate) %}
+
+
+{% block additional_styles %}
+{% for key, field in fields %}
+    {% include resolvePath(configuration[field.type] + '-css') ignore missing %}
+{% endfor %}
+{% endblock %}
+{% block additional_scripts %}
+{% for key, field in fields %}
+    {% include resolvePath(configuration[field.type] + '-js') ignore missing %}
+{% endfor %}
+{% endblock %}
+
+
+{% block body %}
+<div class="container">
+<code>
+<div>
+    {{ data | json}}
+</div>
+<div>
+{{ metadata | json }}
+</div>
+<div>
+{{ fields | json }}
+</div>
+</code>
+
+<form method="POST" action="{{route('adminUI.save', {entityName: req.params.entityName, id: req.params.id} )}}">
+<div class="row">
+{% for key, field in fields %}
+    <div class="{{ field.uiSettings.editorClasses if field.uiSettings and field.uiSettings.editorClasses else 'col-12' }} ">
+        {% include resolvePath(configuration[field.type]) %}
+    </div>
+{% endfor %}
+</div>
+<div>
+    <button class="btn btn-primary" type="submit">Save</button>
+</div>
+</form>
+
+</div>
+
+{% endblock %}
