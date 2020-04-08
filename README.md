@@ -68,6 +68,11 @@ Indicates that the field is an identifier.
 
 #### `AdminType.String`
 Indicates that the field is a string. It uses the standard input with type text.
+It is possible to specify the `pattern` parameters (a `string`), in order to perform input validation.
+
+### `AdminType.Number`
+Indicates that the field is a number. It uses the standard input with type number.
+It is possible to specify the `min`, `max` and `step` values.
 
 #### `AdminType.Text`
 Indicates that the field is a long text. It uses the textarea.

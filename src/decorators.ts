@@ -7,8 +7,8 @@ export enum AdminType {
     Selection = 4,
     RichText = 5,
     Checkbox = 6,
-    Radio = 7
-    //Number
+    Radio = 7,
+    Number = 8
     //Date
     //Time
     //DateTime
@@ -32,6 +32,10 @@ export interface FieldParameters {
               req: Request,
               currentEntity: any
           ) => Promise<{ key: any; value: string }[]>);
+    pattern?: string;
+    min?: number;
+    max?: number;
+    step?: number;
     onSummary?: boolean;
     searchable?: boolean;
     selfType?: any;

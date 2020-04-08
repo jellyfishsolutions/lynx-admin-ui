@@ -69,11 +69,28 @@ export default class Complex extends BaseEntity {
 
     @Column()
     @AdminField({
+        name: "Email",
+        type: AdminType.String,
+        pattern: "[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+    })
+    email: string;
+
+    @Column()
+    @AdminField({
         name: "Gender",
         type: AdminType.Selection,
         values: genderValues
     })
     gender: Gender;
+
+    @Column()
+    @AdminField({
+        name: "Age",
+        type: AdminType.Number,
+        step: 1,
+        min: 13
+    })
+    age: number;
 
     @Column()
     @AdminField({ name: "Bio", type: AdminType.RichText, readOnly: isReadOnly })
