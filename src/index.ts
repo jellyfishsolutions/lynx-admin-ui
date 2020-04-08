@@ -19,6 +19,7 @@ export default class AdminUIModule extends SimpleModule {
         AdminUIModule.configuration[AdminType.Checkbox] = '/admin-ui/editors/checkbox';
         AdminUIModule.configuration[AdminType.Radio] = '/admin-ui/editors/radio';
         AdminUIModule.configuration[AdminType.Number] = '/admin-ui/editors/number';
+        AdminUIModule.configuration[AdminType.Date] = '/admin-ui/editors/date';
     }
 
     /**

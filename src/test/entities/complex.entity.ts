@@ -93,6 +93,13 @@ export default class Complex extends BaseEntity {
     age: number;
 
     @Column()
+    @AdminField({
+        name: "Date of Birth",
+        type: AdminType.Date
+    })
+    dateOfBirth: Date;
+
+    @Column()
     @AdminField({ name: "Bio", type: AdminType.RichText, readOnly: isReadOnly })
     biography: string;
 

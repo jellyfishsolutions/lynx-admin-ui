@@ -5,6 +5,7 @@ import Request from "lynx-framework/request";
 import EditableEntity from "./editable-entity";
 import { generateSchema } from "./generator";
 import {Like, getConnection, Repository} from "typeorm";
+import * as moment from 'moment';
 
 
 let _adminUI: { entity: any; meta: EntityMetadata }[];
@@ -112,7 +113,9 @@ export class Controller extends BaseController {
         metadata.fields.forEach((_, key) => {
             obj[key] = data[key];
             if (obj[key] instanceof Object) {
-                if (obj[key] instanceof Array) {
+                if (obj[key] instanceof Date) {
+                    obj[key] = moment(data[key]).format('YYYY-MM-DD');
+                } else if (obj[key] instanceof Array) {
                     if (forList) {
                         obj[key] = obj[key].map((e: EditableEntity) => e.getLabel());
                     } else {

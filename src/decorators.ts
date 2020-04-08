@@ -8,8 +8,8 @@ export enum AdminType {
     RichText = 5,
     Checkbox = 6,
     Radio = 7,
-    Number = 8
-    //Date
+    Number = 8,
+    Date = 9
     //Time
     //DateTime
 }

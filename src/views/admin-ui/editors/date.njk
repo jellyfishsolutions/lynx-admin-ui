@@ -1,0 +1,9 @@
+<div class="form-group">
+    <label for="{{key}}">{{ field.name }} </label>
+    <input class="form-control" 
+        name="{{key}}" 
+        value="{{data[key]}}" 
+        type="date"
+        {{ "readonly" if field.readOnly }} 
+    />
+</div>
