@@ -59,7 +59,7 @@ There are also a set of optional parameters, available on all types:
 * `onSummary`: indicates if the field shall appear in the list view; default: `false`.
 * `searchable`: indicates if the field can be searchable in the list view; default: `false`.
 * `readOnly`: indicates if the field can be only readable in the editor view; default: `false`. This parameter can be a `boolean` value, or a function like `(req: Request, currentEntity: any) => Promise<boolean>` (same as the `values` but with different return type).
-* `uiSettings`: contains information on how the fields should appear in the editor interface and in the filtering section of the list interface. In both cases, widgets are displayed in the typical 12 column grid system. The `editorClasses` and `filterClasses` properties of `uiSettings` can add custom CSS classes to the widget (default to `col-12`).
+* `uiSettings`: containers information on the visual appearance of the field. See the `uiSettings` paragraph for more information.
 
 ### `AdminField` types
 
@@ -158,3 +158,16 @@ Example:
 ```
 Since `subcategories` is defined as an array of `Category`, it is necessary to explicit the `selfType` of the single element of the array, that is `Category`. 
 NOTE: the Typescript compiler will infer `Array` as type of `subcategories`. 
+
+### `uiSettings` parameter
+The `uiSettings` parameter contains information on how the fields should appear in the editor interface and in the filtering section of the list interface.
+By default, both in the editor and in the filtering section, widgets are displayed in the typical 12 column grid system.
+
+This parameter defines the following optional properties:
+
+* `editorClasses`: indicates custom CSS classes to the widget when displayed in the editor section (default to `col-12`).
+* `filterClasses`: indicates custom CSS classes to the widget when displayed in the filtering section (default to `col-12`).
+* `listTemplate`: indicates a custom template to be used in the list view. The template can access the `value` variable, containing the current value of the field.
+
+Moreover, in the editor section, each field is wrapped inside a `div` with an unique id. The id is defined as `field-{{entity-name}}-{{name-of-the-field}}`. Using the id, it is possible to customize though CSS rules the aspect of a single field.
+

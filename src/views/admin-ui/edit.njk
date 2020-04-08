@@ -19,7 +19,7 @@
 <form method="POST" action="{{route('adminUI.save', {entityName: req.params.entityName, id: req.params.id} )}}">
 <div class="row">
 {% for key, field in fields %}
-    <div class="{{ field.uiSettings.editorClasses if field.uiSettings and field.uiSettings.editorClasses else 'col-12' }} ">
+    <div id="field-{{req.params.entityName}}-{{key}}" class="{{ field.uiSettings.editorClasses if field.uiSettings and field.uiSettings.editorClasses else 'col-12' }} ">
         {% include resolvePath(configuration[field.type]) %}
     </div>
 {% endfor %}

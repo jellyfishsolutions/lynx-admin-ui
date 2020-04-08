@@ -110,7 +110,11 @@ export default class Complex extends BaseEntity {
         name: "Altre categorie",
         type: AdminType.Checkbox,
         values: getCategories,
-        selfType: Category
+        selfType: Category,
+        onSummary: true,
+        uiSettings: {
+            listTemplate: '/chips'
+        }
     })
     subcategories: Category[];
 }

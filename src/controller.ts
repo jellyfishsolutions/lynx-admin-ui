@@ -71,12 +71,8 @@ export class Controller extends BaseController {
             return null as any;
         }
         let metadata = this.retrieveMetadata(entityName); 
-        let selections = [] as string[];
         let where = {} as any;
         metadata.fields.forEach((f, key) => {
-            if (f.onSummary) {
-                selections.push(key);
-            }
             if (f.searchable && req.query[key]) {
                 if (f.type == AdminType.String) {
                     where[key] = Like("%"+(req.query[key] as string).toLowerCase()+"%");
@@ -102,7 +98,7 @@ export class Controller extends BaseController {
         let pageSize = req.query.pageSize || 10;
         let skip = currentPage * pageSize;
         let repository = getConnection().getRepository(Class) as Repository<any>;
-        let [all, count] = await repository.findAndCount({where: where, select: selections, order: orderBy, skip: skip, take: pageSize});
+        let [all, count] = await repository.findAndCount({where: where, order: orderBy, skip: skip, take: pageSize});
         let tmp = all as BaseEntity[];
         let promises: Promise<void>[] = [];
         tmp.forEach(t => promises.push(t.reload()));

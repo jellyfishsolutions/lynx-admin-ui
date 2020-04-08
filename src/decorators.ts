@@ -17,6 +17,7 @@ export enum AdminType {
 export interface UISettings {
     editorClasses?: string;
     filterClasses?: string;
+    listTemplate?: string;
 }
 
 export interface FieldParameters {
