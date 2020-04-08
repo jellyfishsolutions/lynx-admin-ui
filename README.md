@@ -171,3 +171,20 @@ This parameter defines the following optional properties:
 
 Moreover, in the editor section, each field is wrapped inside a `div` with an unique id. The id is defined as `field-{{entity-name}}-{{name-of-the-field}}`. Using the id, it is possible to customize though CSS rules the aspect of a single field.
 
+
+## Personalization
+
+### Template
+It is possible to specify a custom master template for both the list and the editor view.
+To achieve this, use the `AdminUI.setEditorTemplatePath` and `AdminUI.setListTemplatePath` static methods.
+In both cases, the template shall be include the following blocks:
+* `additional_styles`: is used to add additional CSS resources and styles;
+* `additional_scripts`: is used to add additional JS resources and scripts;
+* `body`: the section of the page in which display the main content.
+
+### Custom types
+It is possible to add custom types in order to support a larger set of fields.
+Use the `AdminUI.setEditor` static method to add a new type.
+The same method could also be used to use a custom template for an original type.
+
+IMPORTANT: for custom field type, please use numbers greater then `300`, in order to prevent conflict with the original field types.
