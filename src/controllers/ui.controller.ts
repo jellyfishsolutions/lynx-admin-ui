@@ -3,6 +3,7 @@ import { Controller } from "../controller";
 import Request from "lynx-framework/request";
 import BaseEntity from "lynx-framework/entities/base.entity";
 import AdminUIModule from "..";
+import Datagrid from "lynx-datagrid/datagrid";
 
 @Route("/adminUI/")
 export default class UIController extends Controller {
@@ -14,32 +15,14 @@ export default class UIController extends Controller {
         if (!metadata) {
             throw this.error(404, 'Not found');
         }
-        let [allData, total] = await this.retrieveList(entityName, req);
-        let pageSize = req.query.pageSize || 10;
-        let currentPage = (req.query.page || 1) - 1;
-        let pageCount = Math.ceil(total / pageSize);
-        let maxPages = 10;
+        let datagrid = new Datagrid('', req);
+        await this.retrieveList(req, entityName, datagrid);
         let ctx = {
             metadata: metadata,
             configuration: AdminUIModule.configuration,
             parentTemplate: AdminUIModule.listParentTemplatePath,
-            gridData: allData,
+            gridData: datagrid,
             data: req.query,
-            urlNoPageNoOrder: this.getUrlWithoutPageOrOrder(req),
-            urlNoPage: this.getUrlWithoutPage(req),
-            paging: {
-                currentPage: currentPage,
-                pageCount: pageCount,
-                left: Math.max(0, currentPage - maxPages),
-                right: Math.min(pageCount, currentPage + 1 + maxPages)
-            },
-            needsDesc: () => {
-                let order = req.query.orderBy;
-                if (order && !order.startsWith('-')) {
-                    return true;
-                }
-                return false;
-            },
             fields: await this.generateContextFields(metadata, req, {})
         } as any;
         return this.render(AdminUIModule.listTemplatePath, req, ctx);
@@ -53,7 +36,7 @@ export default class UIController extends Controller {
             throw this.error(404, 'not found');
         }
         let metadata = this.retrieveMetadata(entityName);
-        let data = await this.cleanData(entityData, metadata);
+        let data = await this.cleanData(req, entityData, metadata);
         let ctx = {
             data: data,
             configuration: AdminUIModule.configuration,

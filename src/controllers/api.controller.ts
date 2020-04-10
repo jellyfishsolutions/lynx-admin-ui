@@ -16,14 +16,15 @@ export default class ApiController extends Controller {
         let metadata = this.retrieveMetadata(entityName); 
         let selections = [] as string[];
         let where = {} as any;
-        metadata.fields.forEach((f, key) => {
+        for (let key in metadata.fields) {
+            let f = metadata.fields[key];
             if (f.onSummary) {
                 selections.push(key);
             }
             if (f.searchable && req.query[key]) {
                 where[key] = req.query[key];
             }
-        });
+        }
         let orderBy: any = null;
         if (req.query.orderBy) {
             orderBy = {};
@@ -35,14 +36,14 @@ export default class ApiController extends Controller {
             }
         }
         let all = await Class.find({where: where, select: selections, order: orderBy, skip: req.query.skip, take: req.query.take});
-        return all.map((element:any) => this.cleanData(element, metadata));
+        return all.map((element:any) => this.cleanData(req, element, metadata));
 
     }
 
     @API()
     @GET("/:entityName/:id")
-    async details(entityName: string, id: any) {
-        let data = await this.retrieveData(entityName, id);
+    async details(entityName: string, id: any, req: Request) {
+        let data = await this.retrieveData(req, entityName, id);
         if (!data) {
             throw this.error(404, 'not found');
         }

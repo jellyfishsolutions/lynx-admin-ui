@@ -2,6 +2,7 @@
 
 
 {% block additional_styles %}
+<link href="{{route('/adminUI/fontawesome/css/all.css')}}" rel="stylesheet">
 {% for key, field in fields %}
     {% include resolvePath(configuration[field.type] + '-css') ignore missing %}
 {% endfor %}

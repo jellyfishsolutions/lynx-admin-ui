@@ -1,0 +1,35 @@
+{% import resolvePath('/datagrid/utility') as dgUtils %}
+
+<label> {{ field.name }} </label>
+<table class="table">
+    <thead>
+        <tr>
+            {% for _key, _field in field.metadata.fields %}
+                {% if _field.onSummary %}
+                    <th> {{dgUtils.orderableHeader(_field.name, _key, data[key])}} </th>
+                {% endif %}
+            {% endfor %}
+            <th></th>
+        </tr>
+    </thead>
+        <tbody>
+        {% for d in data[key].data %}
+            <tr>
+            {% for _key, _field in field.metadata.fields %}
+                {% if _field.onSummary %}
+                    {% if _field.uiSettings and _field.uiSettings.listTemplate %}
+                        {% set value = d[_key] %}
+                        <td>{% include resolvePath(_field.uiSettings.listTemplate) %} </td>
+                    {% else %}
+                        <td>{{d[_key]}}</td>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+                <td>
+                    <a href="{{route('adminUI.details', {entityName: field.selfType, id: d.id})}}">Details</a>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{{ dgUtils.pagination(data[key]) }}

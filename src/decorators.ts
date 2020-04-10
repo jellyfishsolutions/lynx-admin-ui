@@ -1,4 +1,5 @@
 import { Request } from "lynx-framework/request";
+import BaseEntity from "lynx-framework/entities/base.entity";
 
 export enum AdminType {
     Id = 1,
@@ -9,7 +10,8 @@ export enum AdminType {
     Checkbox = 6,
     Radio = 7,
     Number = 8,
-    Date = 9
+    Date = 9,
+    Table = 10,
     //Time
     //DateTime
 }
@@ -18,6 +20,15 @@ export interface UISettings {
     editorClasses?: string;
     filterClasses?: string;
     listTemplate?: string;
+    //TODO: editorOrder?: number;
+    //TODO: editorFilter?: number;
+    //TODO: editorList?: number;
+}
+
+export interface QueryParams {
+    order: any;
+    take: number;
+    skip: number;
 }
 
 export interface FieldParameters {
@@ -32,19 +43,20 @@ export interface FieldParameters {
               req: Request,
               currentEntity: any
           ) => Promise<{ key: any; value: string }[]>);
+    query?: ((req: Request, currentEntity: any, params: QueryParams) => Promise<[BaseEntity[], number]>);
     pattern?: string;
     min?: number;
     max?: number;
     step?: number;
     onSummary?: boolean;
     searchable?: boolean;
-    selfType?: any;
+    selfType?: string;
     uiSettings?: UISettings;
 }
 
 export class EntityMetadata {
     name: string;
-    fields: Map<string, FieldParameters> = new Map<string, FieldParameters>();
+    fields: Record<string, FieldParameters> = {};
 }
 
 let currentEntity: EntityMetadata = new EntityMetadata();
@@ -61,8 +73,8 @@ export function AdminField(params: FieldParameters) {
     return (target: any, key: string) => {
         var type = Reflect.getMetadata("design:type", target, key);
         if (!params.selfType) {
-            params.selfType = type;
+            params.selfType = type.name;
         }
-        currentEntity.fields.set(key, params);
+        currentEntity.fields[key] = params;
     };
 }

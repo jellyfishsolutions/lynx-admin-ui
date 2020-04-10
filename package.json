@@ -25,6 +25,7 @@
     },
     "homepage": "https://github.com/jellyfishsolutions/lynx-admin-ui#readme",
     "dependencies": {
+        "lynx-datagrid": "^0.1.2",
         "lynx-framework": "^1.0.9"
     },
     "devDependencies": {

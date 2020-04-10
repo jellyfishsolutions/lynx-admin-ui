@@ -4,15 +4,14 @@ import BaseEntity from "lynx-framework/entities/base.entity";
 import Request from "lynx-framework/request";
 import EditableEntity from "./editable-entity";
 import { generateSchema } from "./generator";
-import {Like, getConnection, Repository} from "typeorm";
-import * as moment from 'moment';
-
+import { Like, getConnection, Repository } from "typeorm";
+import * as moment from "moment";
+import Datagrid from "lynx-datagrid/datagrid";
 
 let _adminUI: { entity: any; meta: EntityMetadata }[];
 let hasInit = false;
 
 export class Controller extends BaseController {
-
     async postConstructor() {
         await super.postConstructor();
         if (!hasInit) {
@@ -28,12 +27,12 @@ export class Controller extends BaseController {
     async retrieveEntity(entityName: string, id: any): Promise<BaseEntity | null> {
         for (let d of this.adminUI) {
             if (d.entity.name == entityName) {
-                if (!id || id == '0') {
+                if (!id || id == "0") {
                     return new d.entity();
                 }
                 return await d.entity.findOne(id);
             }
-        } 
+        }
         return null;
     }
 
@@ -42,7 +41,7 @@ export class Controller extends BaseController {
             if (d.entity.name == entityName) {
                 return d.entity;
             }
-        } 
+        }
         return null;
     }
 
@@ -51,11 +50,11 @@ export class Controller extends BaseController {
             if (d.entity.name == entityName) {
                 return d.meta;
             }
-        } 
+        }
         return null as any;
     }
 
-    async retrieveData(entityName: string, id: any): Promise<any> {
+    async retrieveData(req: Request, entityName: string, id: any): Promise<any> {
         let current = await this.retrieveEntity(entityName, id);
         if (!current) {
             if (!id || id == 0) {
@@ -63,80 +62,90 @@ export class Controller extends BaseController {
             }
             return null;
         }
-        return this.cleanData(current, this.retrieveMetadata(entityName));
+        return await this.cleanData(req, current, this.retrieveMetadata(entityName));
     }
 
-    async retrieveList(entityName: string, req: Request): Promise<[any[], number]> {
+    async retrieveList(req: Request, entityName: string, datagrid: Datagrid<any>): Promise<void> {
         let Class = this.retrieveEntityClass(entityName);
         if (!Class) {
             return null as any;
         }
-        let metadata = this.retrieveMetadata(entityName); 
+        let metadata = this.retrieveMetadata(entityName);
         let where = {} as any;
-        metadata.fields.forEach((f, key) => {
-            if (f.searchable && req.query[key]) {
+        for (let key in metadata.fields) {
+            let f = metadata.fields[key];
+            let v = datagrid.getQueryValue(key);
+            if (f.searchable && v) {
                 if (f.type == AdminType.String) {
-                    where[key] = Like("%"+(req.query[key] as string).toLowerCase()+"%");
+                    where[key] = Like("%" + (v as string).toLowerCase() + "%");
                 } else {
-                    where[key] = req.query[key];
+                    where[key] = v;
                 }
-                
-            }
-        });
-        let orderBy: any = null;
-        if (req.query.orderBy) {
-            orderBy = {};
-            let o = req.query.orderBy as string;
-            if (o.startsWith('-')) {
-                orderBy[req.query.orderBy.substring(1)] = 'ASC';
-            } else if (o.startsWith('+')) {
-                orderBy[req.query.orderBy.substring(1)] = 'DESC';
-            } else {
-                orderBy[o] = 'DESC';
             }
         }
-        let currentPage = (req.query.page || 1) - 1;
-        let pageSize = req.query.pageSize || 10;
-        let skip = currentPage * pageSize;
+
         let repository = getConnection().getRepository(Class) as Repository<any>;
-        let [all, count] = await repository.findAndCount({where: where, order: orderBy, skip: skip, take: pageSize});
-        let tmp = all as BaseEntity[];
+
+        await datagrid.fetchData((params) =>
+            repository.findAndCount({
+                where: where,
+                order: params.order,
+                skip: params.skip,
+                take: params.take,
+            })
+        );
+        let tmp = datagrid.data as BaseEntity[];
         let promises: Promise<void>[] = [];
-        tmp.forEach(t => promises.push(t.reload()));
+        tmp.forEach((t) => promises.push(t.reload()));
         await Promise.all(promises);
-        return [all.map((element:any) => this.cleanData(element, metadata, true)), count];
+        for (let i = 0; i < datagrid.data.length; i++) {
+            datagrid.data[i] = await this.cleanData(req, datagrid.data[i], metadata, true);
+        }
     }
 
-    cleanData(_data: BaseEntity, metadata: EntityMetadata, forList?: boolean) {
+    async cleanData(req: Request, _data: BaseEntity, metadata: EntityMetadata, forList?: boolean) {
         let obj = {} as any;
         let data = _data as any;
-        metadata.fields.forEach((_, key) => {
-            obj[key] = data[key];
-            if (obj[key] instanceof Object) {
-                if (obj[key] instanceof Date) {
-                    obj[key] = moment(data[key]).format('YYYY-MM-DD');
-                } else if (obj[key] instanceof Array) {
-                    if (forList) {
-                        obj[key] = obj[key].map((e: EditableEntity) => e.getLabel());
+        for (let key in metadata.fields) {
+            if (metadata.fields[key].query) {
+                let executor = metadata.fields[key].query as any;
+                let datagrid = new Datagrid(key+'-', req);
+                await datagrid.fetchData((params) => executor(req, data, params));
+                let gridMetadata = this.retrieveMetadata(metadata.fields[key].selfType as string);
+                for (let i = 0; i < datagrid.data.length; i++) {
+                    datagrid.data[i] = await this.cleanData(req, datagrid.data[i] as BaseEntity, gridMetadata, true);
+                }
+                obj[key] = datagrid;
+                console.log('data obtained:', datagrid.data);
+            } else {
+                obj[key] = data[key];
+                if (obj[key] instanceof Object) {
+                    if (obj[key] instanceof Promise) {
+                        obj[key] = await obj[key];
+                    } else if (obj[key] instanceof Date) {
+                        obj[key] = moment(data[key]).format("YYYY-MM-DD");
+                    } else if (obj[key] instanceof Array) {
+                        if (forList) {
+                            obj[key] = obj[key].map((e: EditableEntity) => e.getLabel());
+                        } else {
+                            obj[key] = obj[key].map((e: EditableEntity) => e.getId());
+                        }
                     } else {
-                        obj[key] = obj[key].map((e: EditableEntity) => e.getId());
-                    }
-                } else {
-                    if (forList) {
-                        obj[key] = (obj[key] as EditableEntity).getLabel();
-                    } else {
-                        obj[key] = (obj[key] as EditableEntity).getId();
+                        if (forList) {
+                            obj[key] = (obj[key] as EditableEntity).getLabel();
+                        } else {
+                            obj[key] = (obj[key] as EditableEntity).getId();
+                        }
                     }
                 }
             }
-        });
+        }
         return obj;
     }
 
     async setData(req: Request, entity: BaseEntity, data: any, metadata: EntityMetadata) {
-        let keys = Array.from(metadata.fields.keys());
-        for (let key of keys) {
-            let m = metadata.fields.get(key) as FieldParameters;
+        for (let key in metadata.fields) {
+            let m = metadata.fields[key];
             if (m.readOnly instanceof Function) {
                 let r = await m.readOnly(req, entity);
                 if (r) {
@@ -148,48 +157,52 @@ export class Controller extends BaseController {
             if (m.values instanceof Function) {
                 let values = await m.values(req, entity);
                 if (m.type == AdminType.Selection) {
-                    let v = values.find(s => s.key == data[key]);
+                    let v = values.find((s) => s.key == data[key]);
                     if (v) {
-                        (entity as any)[key] = await (m.selfType as any).findOne(v.key);
+                        (entity as any)[key] = await this.retrieveEntityClass(m.selfType as string).findOne(v.key);
                     }
                 }
                 if (m.type == AdminType.Checkbox) {
                     let updated = [];
                     if (data[key] && data[key].length > 0) {
                         for (let id of data[key]) {
-                            let v = values.find(s => s.key == id);
+                            let v = values.find((s) => s.key == id);
                             if (v) {
-                                updated.push(await (m.selfType as any).findOne(v.key));
+                                updated.push(await this.retrieveEntityClass(m.selfType as string).findOne(v.key));
                             }
                         }
                     }
                     (entity as any)[key] = updated;
                 }
-
             } else if (m.type == AdminType.Checkbox) {
                 (entity as any)[key] = data[key] ? true : false;
             } else {
                 (entity as any)[key] = data[key];
             }
-        };
+        }
     }
-
 
     async generateContextFields(metadata: EntityMetadata, req: Request, entityData: any) {
         let fields = {} as any;
-        metadata.fields.forEach((value, key) => {
-            fields[key] = value;
-        });
+        for (let key in metadata.fields) {
+            fields[key] = metadata.fields[key];
+        }
         for (let key in fields) {
             let field = fields[key] as FieldParameters;
             if (field.readOnly instanceof Function) {
-                fields[key] = {...field};
+                fields[key] = { ...field };
                 fields[key].readOnly = await (field.readOnly as Function)(req, entityData);
                 field = fields[key] as FieldParameters;
             }
             if (field.values instanceof Function) {
-                fields[key] = {...field};
+                fields[key] = { ...field };
                 fields[key].values = await (field.values as Function)(req, entityData);
+            }
+            let meta = this.retrieveMetadata(field.selfType as string);
+            if (meta) {
+                console.log("metadata found for " + field.selfType);
+                console.log(meta.fields);
+                fields[key].metadata = meta;
             }
         }
         return fields;
@@ -198,15 +211,15 @@ export class Controller extends BaseController {
     getUrlWithoutPage(req: Request): string {
         return this.getUrlWithoutParameter(req, ["page"]);
     }
-    
+
     getUrlWithoutOrder(req: Request): string {
         return this.getUrlWithoutParameter(req, ["orderby"]);
     }
-    
+
     getUrlWithoutPageOrOrder(req: Request): string {
         return this.getUrlWithoutParameter(req, ["orderby", "page"]);
     }
-        
+
     getUrlWithoutParameter(req: Request, parameters: string[]): string {
         let u = (req.baseUrl + req.path).replace(/\/$/, "") + "?";
         for (let key in req.query) {
@@ -224,7 +237,7 @@ export class Controller extends BaseController {
         }
         return u;
     }
-    
+
     generateQueryValue(key: string, q: any): string {
         let m = key + "=";
         if (q instanceof Array) {
@@ -236,5 +249,4 @@ export class Controller extends BaseController {
         }
         return m + q + "&";
     }
-
 }
