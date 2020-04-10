@@ -130,6 +130,10 @@ In this particular case, the checkboxes are used to map a many-to-many relations
 Indicates that the field can only have a set of values. Each value is displayed as a radio button.
 It works exactly as the `AdminType.Selection`, but it will use the radio buttons as widgets.
 
+#### `AdminType.Table`
+This type can be used for `OneToMany` relations. It allows to display the relationship elements in a table, supporting pagination and column orders.
+It works only if the `query` parameter is set.
+
 
 ### `values` parameter
 It indicates a list of key-value items that can be used to evaluate the field. 
@@ -157,12 +161,40 @@ Example:
         name: "Altre categorie",
         type: AdminType.Checkbox,
         values: getCategories,
-        selfType: Category
+        selfType: 'Category'
     })
     subcategories: Category[];
 ```
 Since `subcategories` is defined as an array of `Category`, it is necessary to explicit the `selfType` of the single element of the array, that is `Category`. 
+The `selfType` is a `string` values, so it is necessary to convert the name of the class, for example `Category`, to `'Category'`.
 NOTE: the Typescript compiler will infer `Array` as type of `subcategories`. 
+
+### `query` parameter
+When the `query` parameter is specified, the related field value will be transformed in a `Datagrid` object, allowing grid or table visualization inside the editing view.
+The `query` parameter is defined as a function, that is executed when as the `executor` of a `Datagrid` object (please refer to the [Datagrid documentation](https://github.com/jellyfishsolutions/lynx-datagrid)).
+Usage:
+```
+async function fetchComments(req: Request, post: Post, params: QueryParams): Promise<[any[], number]> {
+    return await Comment.findAndCount({
+        where: {
+            post: post,
+        },
+        take: params.take,
+        skip: params.skip,
+        order: params.order,
+    });
+}
+...
+    @OneToMany((type) => Comment, (comment) => comment.post)
+    @AdminField({ name: "Comments", type: AdminType.Table, selfType: "Comment", query: fetchComments })
+    comments: Comment[];
+
+```
+
+In addition to the usual `Datagrid` parameter (third argument), the `query` function has also the current `req` Request (as first argument), and also the current `entity` (as second argument). As depicted in the example, it is possible to use the the `entity` to correctly filter the useful data.
+
+If the `selfType` of the current object is available as a `AdminUI` entity, the returned data will be automatically cleaned as defined by their annotation (only annotated and visible fields will be available).
+
 
 ### `uiSettings` parameter
 The `uiSettings` parameter contains information on how the fields should appear in the editor interface and in the filtering section of the list interface.

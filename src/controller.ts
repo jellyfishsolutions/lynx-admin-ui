@@ -112,11 +112,12 @@ export class Controller extends BaseController {
                 let datagrid = new Datagrid(key+'-', req);
                 await datagrid.fetchData((params) => executor(req, data, params));
                 let gridMetadata = this.retrieveMetadata(metadata.fields[key].selfType as string);
-                for (let i = 0; i < datagrid.data.length; i++) {
-                    datagrid.data[i] = await this.cleanData(req, datagrid.data[i] as BaseEntity, gridMetadata, true);
+                if (gridMetadata) {
+                    for (let i = 0; i < datagrid.data.length; i++) {
+                        datagrid.data[i] = await this.cleanData(req, datagrid.data[i] as BaseEntity, gridMetadata, true);
+                    }
                 }
                 obj[key] = datagrid;
-                console.log('data obtained:', datagrid.data);
             } else {
                 obj[key] = data[key];
                 if (obj[key] instanceof Object) {
