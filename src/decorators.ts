@@ -51,6 +51,7 @@ export interface FieldParameters {
     onSummary?: boolean;
     searchable?: boolean;
     selfType?: string;
+    inverseSide?: string;
     uiSettings?: UISettings;
 }
 

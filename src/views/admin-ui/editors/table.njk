@@ -44,6 +44,14 @@ function openModal{{key}}(id) {
     var index = src.lastIndexOf('/');
     src = src.substring(0, index);
     src += '/' + id + '?popup=true&frameKey={{key}}';
+    {% if field.inverseSide %}
+    if (id == 0) {
+        var dv = {
+            {{field.inverseSide}}: "{{req.params.id}}"
+        };
+        src += '&defaultValues=' + JSON.stringify(dv);
+    }
+    {% endif %}
     console.log('src:',src);
     openPopup("#modalEdit{{key}}", "#modalEditFrame{{key}}", src);
     //$("#modalEditFrame{{key}}").attr('src', src);

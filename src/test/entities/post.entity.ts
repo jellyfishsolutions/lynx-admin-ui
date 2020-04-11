@@ -38,7 +38,7 @@ export default class Post extends BaseEntity implements EditableEntity {
     content: string;
 
     @OneToMany((type) => Comment, (comment) => comment.post)
-    @AdminField({ name: "Comments", type: AdminType.Table, selfType: "Comment", query: fetchComments })
+    @AdminField({ name: "Comments", type: AdminType.Table, selfType: "Comment", query: fetchComments, inverseSide: 'post' })
     comments: Comment[];
 
     getId() {

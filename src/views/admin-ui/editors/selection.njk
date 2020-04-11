@@ -1,9 +1,16 @@
 <div class="form-group">
     <label for="{{key}}">{{ field.name }} </label>
-    <select class="form-control" name={{key}} {{ "readonly" if field.readOnly }}>
-        <option selected disabled>Select...</option>
+    <select class="form-control" name={{key}} {{ "disabled" if field.readOnly }}>
+         <option disabled selected>Select...</option>
+         {% set currentSelectionValue = '' %}
         {% for element in field.values %}
             <option value="{{element.key}}" {{"selected" if data[key] == element.key }} >{{element.value}}</option>
+            {% if data[key] == element.key %}
+                {% set currentSelectionValue = element.key %}
+            {% endif %}
         {% endfor %}
     </select>
+    {% if field.readOnly %}
+    <input type="hidden" name="{{key}}" value="{{currentSelectionValue}}" />
+    {% endif %}
 </div>

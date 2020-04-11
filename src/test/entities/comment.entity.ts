@@ -1,10 +1,9 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
 import { AdminUI, AdminField, AdminType } from '../../decorators';
 import BaseEntity from "lynx-framework/entities/base.entity";
-import EditableEntity from "../../editable-entity";
+import EditableEntity, { notEditableFromPopup } from "../../editable-entity";
 import {map} from "../../editable-entity";
 import Post from "./post.entity";
-
 
 @Entity("comments")
 @AdminUI("Comment")
@@ -18,7 +17,7 @@ export default class Comment extends BaseEntity implements EditableEntity {
     text: string;
 
     @ManyToOne(type => Post, post => post.comments, { eager: true })
-    @AdminField({ name: "Post", type: AdminType.Selection, values: async () => map(await Post.find())})
+    @AdminField({ name: "Post", type: AdminType.Selection, readOnly: notEditableFromPopup, values: async () => map(await Post.find())})
     post: Post;
 
     getId() {

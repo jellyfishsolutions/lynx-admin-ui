@@ -106,6 +106,10 @@ export class Controller extends BaseController {
     async cleanData(req: Request, _data: BaseEntity, metadata: EntityMetadata, forList?: boolean) {
         let obj = {} as any;
         let data = _data as any;
+        let defaultValues = {} as any;
+        if (req.query.defaultValues) {
+            defaultValues = JSON.parse(req.query.defaultValues);
+        }
         for (let key in metadata.fields) {
             if (metadata.fields[key].query) {
                 let executor = metadata.fields[key].query as any;
@@ -139,6 +143,9 @@ export class Controller extends BaseController {
                         }
                     }
                 }
+            }
+            if (defaultValues[key]) {
+                obj[key] = defaultValues[key];
             }
         }
         return obj;
@@ -201,8 +208,6 @@ export class Controller extends BaseController {
             }
             let meta = this.retrieveMetadata(field.selfType as string);
             if (meta) {
-                console.log("metadata found for " + field.selfType);
-                console.log(meta.fields);
                 fields[key].metadata = meta;
             }
         }

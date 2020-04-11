@@ -1,3 +1,5 @@
+import Request from "lynx-framework/request";
+
 export default interface EditableEntity {
     getId(): any;
     getLabel(): string;
@@ -10,4 +12,8 @@ export function map(values: EditableEntity[]): {key: any, value: string}[] {
             value: element.getLabel()
         }
     });
+}
+
+export async function notEditableFromPopup(req: Request) {
+    return req.query.popup;
 }
