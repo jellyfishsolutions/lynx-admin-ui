@@ -37,14 +37,39 @@ export default class UIController extends Controller {
         }
         let metadata = this.retrieveMetadata(entityName);
         let data = await this.cleanData(req, entityData, metadata);
+        let isPopup = req.query.popup;
         let ctx = {
             data: data,
             configuration: AdminUIModule.configuration,
-            parentTemplate: AdminUIModule.editorParentTemplatePath,
+            parentTemplate: isPopup ? AdminUIModule.popupEditorParentTemplatePath : AdminUIModule.editorParentTemplatePath,
+            nested: false,
             metadata: metadata,
             fields: await this.generateContextFields(metadata, req, entityData)
         } as any;
-        return this.render(AdminUIModule.editorTemplatePath, req, ctx);
+        return this.render(isPopup ? AdminUIModule.popupEditorTemplatePath : AdminUIModule.editorTemplatePath, req, ctx);
+    }
+
+    @Name("adminUI.nested")
+    @GET("/:entityName/:id/:nestedKey")
+    async nestedView(entityName: string, id: any, nestedKey: string, req: Request) {
+        let entityData = await this.retrieveEntity(entityName, id);
+        if (!entityData) {
+            throw this.error(404, 'not found');
+        }
+        let metadata = {...this.retrieveMetadata(entityName)};
+        let nestedField = metadata.fields[nestedKey];
+        metadata.fields = {};
+        metadata.fields[nestedKey] = nestedField;
+        let data = await this.cleanData(req, entityData, metadata);
+        let ctx = {
+            data: data,
+            configuration: AdminUIModule.configuration,
+            parentTemplate: AdminUIModule.nestedParentTemplatePath,
+            nested: true,
+            metadata: metadata,
+            fields: await this.generateContextFields(metadata, req, entityData)
+        } as any;
+        return this.render(AdminUIModule.nestedTemplatePath, req, ctx);
     }
 
     @Name("adminUI.save")

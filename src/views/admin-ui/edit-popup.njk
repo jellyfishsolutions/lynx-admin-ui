@@ -6,18 +6,36 @@
 {% for key, field in fields %}
     {% include resolvePath(configuration[field.type] + '-css') ignore missing %}
 {% endfor %}
+<style>
+.modal-footer {
+    position: absolute;
+    bottom: 15px;
+    border-top: 1px solid #dee2e6;
+    width: 100%;
+}
+</style>
+
 {% endblock %}
 {% block additional_scripts %}
 {% for key, field in fields %}
     {% include resolvePath(configuration[field.type] + '-js') ignore missing %}
 {% endfor %}
+<script>
+function closePopup() {
+    window.parent.postMessage({
+        type: 'closePopup',
+        frameId: "#nested-frame-{{req.query.frameKey}}",
+    });
+}
+</script>
 {% endblock %}
 
 
 {% block body %}
-<div class="container">
 
-<form method="POST" action="{{route('adminUI.save', {entityName: req.params.entityName, id: req.params.id} )}}">
+
+<form method="POST" action="{{route('adminUI.save', {entityName: req.params.entityName, id: req.params.id} )}}" onsubmit='closePopup()'>
+<div class="container-fluid">
 <div class="row">
 {% for key, field in fields %}
     <div id="field-{{req.params.entityName}}-{{key}}" class="{{ field.uiSettings.editorClasses if field.uiSettings and field.uiSettings.editorClasses else 'col-12' }} ">
@@ -25,13 +43,14 @@
     </div>
 {% endfor %}
 </div>
+</div>
 
-<div>
+<div class="modal-footer">
     <button class="btn btn-primary" type="submit">Save</button>
 </div>
 
 </form>
 
-</div>
+
 
 {% endblock %}

@@ -1,6 +1,10 @@
 {% import resolvePath('/datagrid/utility') as dgUtils %}
 
+{% if nested %}
 <label> {{ field.name }} </label>
+<button type="button" class="btn btn-primary" onclick='openModal{{key}}(0)'>
+  Aggiungi
+</button>
 <table class="table">
     <thead>
         <tr>
@@ -26,10 +30,40 @@
                 {% endif %}
             {% endfor %}
                 <td>
-                    <a href="{{route('adminUI.details', {entityName: field.selfType, id: d.id})}}">Details</a>
+                    <!--<a href="{{route('adminUI.details', {entityName: field.selfType, id: d.id})}}">Details</a>-->
+                    <button type="button" class="btn btn-primary" onclick='openModal{{key}}({{d.id}})'>Details</button>
                 </td>
             </tr>
         {% endfor %}
     </tbody>
 </table>
 {{ dgUtils.pagination(data[key]) }}
+<script>
+function openModal{{key}}(id) {
+    var src = "{{ route('adminUI.details', {entityName: field.selfType, id: ''}) }}";
+    var index = src.lastIndexOf('/');
+    src = src.substring(0, index);
+    src += '/' + id + '?popup=true&frameKey={{key}}';
+    console.log('src:',src);
+    openPopup("#modalEdit{{key}}", "#modalEditFrame{{key}}", src);
+    //$("#modalEditFrame{{key}}").attr('src', src);
+    //$("#modalEdit{{key}}").modal();
+}
+</script>
+{% else %}
+<iframe id="nested-frame-{{key}}" class="nested-frame" onLoad="calculateFrameHeight(this);" src="{{ route('adminUI.nested', {entityName: req.params.entityName, id: req.params.id, nestedKey: key }) }}"> </iframe>
+<div class="modal fade" id="modalEdit{{key}}" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Modifica {{field.name}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body nested-frame">
+        <iframe class="nested-frame nested-frame-modal" id="modalEditFrame{{key}}" src=""></iframe>
+      </div>
+  </div>
+</div>
+{% endif %}

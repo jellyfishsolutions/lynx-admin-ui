@@ -15,9 +15,6 @@
 
 
 {% block body %}
-<div class="container">
-
-<form method="POST" action="{{route('adminUI.save', {entityName: req.params.entityName, id: req.params.id} )}}">
 <div class="row">
 {% for key, field in fields %}
     <div id="field-{{req.params.entityName}}-{{key}}" class="{{ field.uiSettings.editorClasses if field.uiSettings and field.uiSettings.editorClasses else 'col-12' }} ">
@@ -26,12 +23,5 @@
 {% endfor %}
 </div>
 
-<div>
-    <button class="btn btn-primary" type="submit">Save</button>
-</div>
-
-</form>
-
-</div>
 
 {% endblock %}

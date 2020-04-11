@@ -1,0 +1,33 @@
+<script type="text/javascript">
+function calculateFrameHeight(iframeElement){
+    var the_height=  iframeElement.contentWindow.document.body.scrollHeight;
+    iframeElement.height=  the_height;
+}
+{% if nested %}
+function openPopup(id, frameId, url) {
+    window.parent.postMessage({
+        type: 'openPopup',
+        id: id,
+        frameId: frameId,
+        url: url
+    });
+}
+{% else %}
+window.addEventListener("message", function(event) {
+    console.log(event);
+    var data = event.data;
+    if (data.type == 'openPopup') {
+        $(data.frameId).attr('src', data.url);
+        $(data.id).modal();
+    }
+    if (data.type == 'closePopup') {
+        setTimeout(function() {
+            var frameId = data.frameId;
+            $(frameId).attr('src', $(frameId).attr('src'));
+            $('.modal').modal('hide');
+        }, 200);
+    }
+});
+{% endif %}
+
+</script>
