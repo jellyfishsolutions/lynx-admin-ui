@@ -1,0 +1,10 @@
+<label>{{ field.name }}</label>
+
+{% set originalKey = key %}
+{% set originalField = field %}
+
+{% for key, field in originalField.metadata.fields %}
+    <div id="field-{{req.params.entityName}}-{{originalKey}}-{{key}}" class="{{ field.uiSettings.editorClasses if field.uiSettings and field.uiSettings.editorClasses else 'col-12' }} ">
+        {% include resolvePath(configuration[field.type]) %}
+    </div>
+{% endfor %}

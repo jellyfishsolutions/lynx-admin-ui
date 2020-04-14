@@ -139,6 +139,13 @@ export class Controller extends BaseController {
                         if (forList) {
                             obj[key] = (obj[key] as EditableEntity).getLabel();
                         } else {
+                            let nestedMeta = this.retrieveMetadata(metadata.fields[key].selfType as string);
+                            if (nestedMeta) { 
+                                let cleanData = await this.cleanData(req, obj[key], nestedMeta)
+                                for (let k in cleanData) {
+                                    obj[key+'-'+k] = cleanData[k];
+                                }
+                            } 
                             obj[key] = (obj[key] as EditableEntity).getId();
                         }
                     }
@@ -151,7 +158,7 @@ export class Controller extends BaseController {
         return obj;
     }
 
-    async setData(req: Request, entity: BaseEntity, data: any, metadata: EntityMetadata) {
+    async setData(req: Request, entity: BaseEntity, data: any, metadata: EntityMetadata, prefix: string = '') {
         for (let key in metadata.fields) {
             let m = metadata.fields[key];
             if (m.readOnly instanceof Function) {
@@ -162,18 +169,19 @@ export class Controller extends BaseController {
             } else if (m.readOnly) {
                 continue;
             }
-            if (m.values instanceof Function) {
-                let values = await m.values(req, entity);
+            let originalMeta = this.retrieveMetadata(entity.constructor.name);
+            if (originalMeta.fields[key].values instanceof Function) {
+                let values = m.values as any[];
                 if (m.type == AdminType.Selection) {
-                    let v = values.find((s) => s.key == data[key]);
+                    let v = values.find((s) => s.key == data[prefix+key]);
                     if (v) {
                         (entity as any)[key] = await this.retrieveEntityClass(m.selfType as string).findOne(v.key);
                     }
                 }
                 if (m.type == AdminType.Checkbox) {
                     let updated = [];
-                    if (data[key] && data[key].length > 0) {
-                        for (let id of data[key]) {
+                    if (data[prefix+key] && data[prefix+key].length > 0) {
+                        for (let id of data[prefix+key]) {
                             let v = values.find((s) => s.key == id);
                             if (v) {
                                 updated.push(await this.retrieveEntityClass(m.selfType as string).findOne(v.key));
@@ -183,9 +191,21 @@ export class Controller extends BaseController {
                     (entity as any)[key] = updated;
                 }
             } else if (m.type == AdminType.Checkbox) {
-                (entity as any)[key] = data[key] ? true : false;
+                (entity as any)[key] = data[prefix+key] ? true : false;
+            } else if (m.type == AdminType.Expanded) {
+                let entityClass = await this.retrieveEntityClass(m.selfType as string);
+                if (!entityClass) {
+                    continue;
+                }
+                let e = entity as any;
+                if (!e[key]) {
+                    e[key] = new entityClass();
+                }
+                let currentMeta = this.retrieveMetadata(m.selfType as string);
+                await this.setData(req, e[key], data, currentMeta, prefix+key+'-');
+                await e[key].save();
             } else {
-                (entity as any)[key] = data[key];
+                (entity as any)[key] = data[prefix+key];
             }
         }
     }
@@ -208,6 +228,13 @@ export class Controller extends BaseController {
             }
             let meta = this.retrieveMetadata(field.selfType as string);
             if (meta) {
+                if (!field.query) {
+                    let updatedFields: Record<string, FieldParameters> = {};
+                    for (let f in meta.fields) {
+                        updatedFields[key+'-'+f] = meta.fields[f];
+                    }
+                    meta = {...meta, fields: updatedFields};
+                }
                 fields[key].metadata = meta;
             }
         }

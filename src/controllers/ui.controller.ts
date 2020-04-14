@@ -82,12 +82,14 @@ export default class UIController extends Controller {
         let entity: BaseEntity;
         if (!id || id == '0') {
             entity = new (this.retrieveEntityClass(entityName))();
+            await entity.save();
         } else {
             entity = (await this.retrieveEntity(entityName, id) as BaseEntity);
             if (!entity) {
                 throw this.error(404, 'not found');
             }
         }
+        metadata = {...metadata, fields: await this.generateContextFields(metadata, req, entity) } 
         await this.setData(req, entity, req.body, metadata);
         let updated = await entity.save();
         return this.redirect("adminUI.details", {entityName: entityName, id: (updated as any).id});

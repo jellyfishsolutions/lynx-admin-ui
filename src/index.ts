@@ -25,6 +25,7 @@ export default class AdminUIModule extends SimpleModule {
         AdminUIModule.configuration[AdminType.Number] = '/admin-ui/editors/number';
         AdminUIModule.configuration[AdminType.Date] = '/admin-ui/editors/date';
         AdminUIModule.configuration[AdminType.Table] = '/admin-ui/editors/table';
+        AdminUIModule.configuration[AdminType.Expanded] = '/admin-ui/editors/expanded';
     }
 
     /**

@@ -12,6 +12,7 @@ export enum AdminType {
     Number = 8,
     Date = 9,
     Table = 10,
+    Expanded = 11
     //Time
     //DateTime
 }

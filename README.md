@@ -134,6 +134,9 @@ It works exactly as the `AdminType.Selection`, but it will use the radio buttons
 This type can be used for `OneToMany` relations. It allows to display the relationship elements in a table, supporting pagination and column orders.
 It works only if the `query` parameter is set.
 
+#### `AdminType.Expanded`
+TODO
+
 
 ### `values` parameter
 It indicates a list of key-value items that can be used to evaluate the field. 
