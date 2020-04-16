@@ -12,6 +12,25 @@ Beside the user interface, also a CRUD RESTFul API is automatically generated.
 AdminUI generates the interface using annotated entities.
 An entity shall be annotated with `AdminUI` and implement the `EditableEntity` interface. Any property of the entity annotated with `AdminField` will be available in the interface.
 
+# Installation
+AdminUI is available on NPM as a Lynx module. It depends on the Datagrid Lynx module, that will be automatically installed by NPM.
+```
+    npm install lynx-admin-ui --save
+```
+
+In the `index.ts` of the application:
+
+```
+import AdminUIModule from "lynx-admin-ui";
+import DatagridModule from "lynx-datagrid";
+
+...
+
+const app = new App(myConfig, [new DatagridModule(), new AdminUIModule()] as BaseModule[]);
+
+
+```
+
 # Documentation
 
 ## `AdminUI` annotation
@@ -24,10 +43,10 @@ export default class Category extends BaseEntity implements EditableEntity {
 }
 ```
 
-Beside the standard `Entity` annotation, the `AdminUI` shall be placed when an entity is defined. The `string` argument indicates a readable name of the entity, that will be used in the UI. Localized string are supported and will be automatically used in the UI.
+Beside the standard `Entity` annotation, the `AdminUI` shall be added when an entity is defined. The `string` argument indicates a readable name of the entity, that will be used in the UI. Localized string are supported and will be automatically used in the UI.
 
 ## `EditableEntity` interface
-An -AdminUI- entity shall also implements the `EditableEntity`. To implement the interface, the class shall have these two methods:
+An `AdminUI` entity shall also implements the `EditableEntity`. To implement the interface, the class shall have these two methods:
 ```
     getId() {
         return this.id;
@@ -54,12 +73,14 @@ The `name` indicates a readable string for the property (supporting localized st
 The `type` indicates the type of input to be used in the interface, defined by the `AdminType` enum.
 Other parameters of the `AdminField` annotation can be mandatory based on the chosen type.
 
+NOTE: the `AdminType` enum is a number. Other custom types can be used instead.
+
 ### `AdminField` other parameters
-There are also a set of optional parameters, available on all types:
+There is a set of optional parameters, available on all types:
 * `onSummary`: indicates if the field shall appear in the list view; default: `false`.
 * `searchable`: indicates if the field can be searchable in the list view; default: `false`.
 * `readOnly`: indicates if the field can be only readable in the editor view; default: `false`. This parameter can be a `boolean` value, or a function like `(req: Request, currentEntity: any) => Promise<boolean>` (same as the `values` but with different return type).
-* `uiSettings`: containers information on the visual appearance of the field. See the `uiSettings` paragraph for more information.
+* `uiSettings`: contains information on the visual appearance of the field. See the `uiSettings` paragraph for more information.
 
 ### `AdminField` types
 
@@ -68,7 +89,7 @@ Indicates that the field is an identifier.
 
 #### `AdminType.String`
 Indicates that the field is a string. It uses the standard input with type text.
-It is possible to specify the `pattern` parameters (a `string`), in order to perform input validation.
+It is possible to specify the `pattern` parameters (a `string`), in order to perform input validation. This parameter maps the input `pattern` attribute.
 
 ### `AdminType.Number`
 Indicates that the field is a number. It uses the standard input with type number.
@@ -79,7 +100,7 @@ Indicates that the field is a long text. It uses the textarea.
 
 #### `AdminType.Selection`
 Indicates that the field can only have a set of values. It uses the select widget.
-It is also necessary to specify the `values` parameter.
+It is also necessary to specify the [`values` parameter](#values-parameter).
 Example:
 ```
 const genderValues = [
@@ -107,7 +128,7 @@ Indicates that the field can be checked or not, or that the field can have multi
 Example with single checkbox:
 ```
     @Column()
-    @AdminField({ name: "Privacy accettata", type: AdminType.Checkbox })
+    @AdminField({ name: "Accept privacy", type: AdminType.Checkbox })
     privacy: boolean;
 ```
 
@@ -116,14 +137,14 @@ Example with a list of checkboxes:
     @ManyToMany(type => Category, { eager: true })
     @JoinTable()
     @AdminField({
-        name: "Altre categorie",
+        name: "Other categories",
         type: AdminType.Checkbox,
         values: getCategories,
         selfType: Category
     })
     subcategories: Category[];
 ```
-In this particular case, the checkboxes are used to map a many-to-many relationship. The `values` parameter is a function (see the `values` paragraph) and also the `selfType` is specified.
+In this particular case, the checkboxes are used to map a many-to-many relationship. The `values` parameter is a function (see the [`values` paragraph](#values-parameter)) and also the [`selfType` is specified](#selfType-parameter).
 
 
 #### `AdminType.Radio`
@@ -132,36 +153,28 @@ It works exactly as the `AdminType.Selection`, but it will use the radio buttons
 
 #### `AdminType.Table`
 This type can be used for `OneToMany` relations. It allows to display the relationship elements in a table, supporting pagination and column orders.
-It works only if the `query` parameter is set.
+It works only if the [`query` parameter](#query-parameter) is set.
 
 #### `AdminType.Expanded`
-TODO
+This type can be used for `OneToOne` relations, when the target entity of the relation is available to the AdminUI.
+In this case, the fields of the target entity will be available inside the interface of the main entity.
 
 
 ### `values` parameter
 It indicates a list of key-value items that can be used to evaluate the field. 
 It accepts both a static array, or a function.
 The array is defined as `{ key: any; value: string }[]`.
-The function is defined as `(req: Request, currentEntity: any) => Promise<{ key: any; value: string }[]>`, where `req` is the current request, and `currentEntity` is the current display entity. The `currentEntity` could be an empty object, if this function is called for the list view.
-The AdminUI module define also a `map` function that automatically map an array of `EditableEntity` to `{ key: any; value: string }`. It is defined in the `editable-entity` file.
-A typical implementation of the `values` function could be:
-```
-import { map } from "../modules/admin-ui/editable-entity";
-async function getCategories() {
-    return map(await Category.find());
-}
-```
-that returns the complete list of `Category` mapped to the key-value array. Please note that the `req` and `currentEntity` parameters are omitted.
+The function is defined as `(req: Request, currentEntity: any) => Promise<{ key: any; value: string }[]>`, where `req` is the current request, and `currentEntity` is the current displayed entity. If this function is called for the list view, the `currentEntity` is an empty object.
 
 
 ### `selfType` parameter
-To correctly work, the AdminUI module needs to know the correct type of each `AdminField`. Most of the times, the module can infer the type automatically. When the type is an array, otherwise, it is necessary to explicitly define the type using the `selfType` parameter.
+To work correctly, the AdminUI module needs to know the type of each `AdminField`. Most of the times, the module can infer the type automatically. When the type is an array, otherwise, it is necessary to explicitly define the type using the `selfType` parameter.
 Example:
 ```
     @ManyToMany(type => Category, { eager: true })
     @JoinTable()
     @AdminField({
-        name: "Altre categorie",
+        name: "Categories",
         type: AdminType.Checkbox,
         values: getCategories,
         selfType: 'Category'
@@ -174,13 +187,13 @@ NOTE: the Typescript compiler will infer `Array` as type of `subcategories`.
 
 ### `query` parameter
 When the `query` parameter is specified, the related field value will be transformed in a `Datagrid` object, allowing grid or table visualization inside the editing view.
-The `query` parameter is defined as a function, that is executed when as the `executor` of a `Datagrid` object (please refer to the [Datagrid documentation](https://github.com/jellyfishsolutions/lynx-datagrid)).
+The `query` parameter is defined as a function, that is called as the `executor` of a `Datagrid` object (please refer to the [Datagrid documentation](https://github.com/jellyfishsolutions/lynx-datagrid)).
 Usage:
 ```
-async function fetchComments(req: Request, post: Post, params: QueryParams): Promise<[any[], number]> {
+async function fetchComments(req: Request, entity: Post, params: QueryParams): Promise<[any[], number]> {
     return await Comment.findAndCount({
         where: {
-            post: post,
+            post: entity,
         },
         take: params.take,
         skip: params.skip,
@@ -196,7 +209,7 @@ async function fetchComments(req: Request, post: Post, params: QueryParams): Pro
 
 In addition to the usual `Datagrid` parameter (third argument), the `query` function has also the current `req` Request (as first argument), and also the current `entity` (as second argument). As depicted in the example, it is possible to use the the `entity` to correctly filter the useful data.
 
-If the `selfType` of the current object is available as a `AdminUI` entity, the returned data will be automatically cleaned as defined by their annotation (only annotated and visible fields will be available).
+If the `selfType` of the current object is available as an `AdminUI` entity, after the execution of the `query` function, the returned data will be automatically cleaned as defined by their annotation (only annotated visible fields will be available in the grid or table view).
 
 
 ### `uiSettings` parameter
@@ -213,20 +226,40 @@ Moreover, in the editor section, each field is wrapped inside a `div` with an un
 
 ## Utility functions
 
+### `map` function
+The AdminUI module define also a `map` function that automatically map an array of `EditableEntity` to `{ key: any; value: string }`. It is defined in the `editable-entity` file.
+A typical implementation of the `values` function could be:
+```
+import { map } from "../modules/admin-ui/editable-entity";
+async function getCategories() {
+    return map(await Category.find());
+}
+```
+that returns the complete list of `Category` mapped to the key-value array. Please note that the `req` and `currentEntity` parameters are omitted.
+
 ### `notEditableFromPopup` function
-TODO
+The `notEditableFromPopup` function returns `true` when the editing of a entity is requested as a popup. 
+The popup editing happens then a user add or edit an entity from a relation displayed as a table. In this case, the inverse relation should not be editable inside the popup.
 
 ## Personalization
 
 ### Template
-It is possible to specify a custom master template for both the list and the editor view.
-To achieve this, use the `AdminUI.setEditorTemplatePath` and `AdminUI.setListTemplatePath` static methods.
-In both cases, the template shall be include the following blocks:
+AdminUI uses different templates to display the data in different situation. Each template can be customized. Moreover, it possible to customize only the father template of each view, in order to adapt the default layout inside the general theme of the portal.
+The used templates are the following:
+* list template: used to display the main list of the entity;
+* editor template: used to edit the entity;
+* popup template: used to edit the entity inside a popup;
+* nested template: used to display the entity list inside a relation (nested table inside the standard edit view).
+
+For each template, it is available a method, like the `AdminUI.setEditorTemplatePath`, to customize the the template path.
+To customize the father template, it is possible to use the `AdminUI.setEditorParentTemplatePath` methods family.
+
+The only requirement for a father template, is that defines the following blocks:
 * `additional_styles`: is used to add additional CSS resources and styles;
 * `additional_scripts`: is used to add additional JS resources and scripts;
 * `body`: the section of the page in which display the main content.
 
-TODO: other templates and add the parent template set.
+This blocks will be used by each templates to correctly load any additional resource, and to display its content.
 
 ### Custom types
 It is possible to add custom types in order to support a larger set of fields.
