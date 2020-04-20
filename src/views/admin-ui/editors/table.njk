@@ -2,9 +2,11 @@
 
 {% if nested %}
 <label> {{ field.name }} </label>
+{% if req.params.id != 0 %}
 <button type="button" class="btn btn-primary" onclick='openModal{{key}}(0)'>
   Aggiungi
 </button>
+{% endif %}
 <table class="table">
     <thead>
         <tr>

@@ -75,6 +75,9 @@ export function AdminField(params: FieldParameters) {
     return (target: any, key: string) => {
         var type = Reflect.getMetadata("design:type", target, key);
         if (!params.selfType) {
+            if (!type) {
+                throw new Error('AdminUI: Unable to understand the current type. Please add the \'selfType\' parameter for the \''+key+'\' field.');
+            }
             params.selfType = type.name;
         }
         currentEntity.fields[key] = params;
