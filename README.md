@@ -43,7 +43,7 @@ export default class Category extends BaseEntity implements EditableEntity {
 }
 ```
 
-Beside the standard `Entity` annotation, the `AdminUI` shall be added when an entity is defined. The `string` argument indicates a readable name of the entity, that will be used in the UI. Localized string are supported and will be automatically used in the UI.
+Beside the standard `Entity` annotation, the `AdminUI` one shall be added when an entity is defined. The `string` argument indicates a readable name of the entity, that will be used in the UI. Localized string are supported and will be automatically used in the UI.
 
 ## `EditableEntity` interface
 An `AdminUI` entity shall also implements the `EditableEntity`. To implement the interface, the class shall have these two methods:
