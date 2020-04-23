@@ -17,15 +17,16 @@ export default class UIController extends Controller {
         }
         let datagrid = new Datagrid('', req);
         await this.retrieveList(req, entityName, datagrid);
+        metadata = await this.generateContextMetadata(metadata, req);
         let ctx = {
             metadata: metadata,
             configuration: AdminUIModule.configuration,
-            parentTemplate: AdminUIModule.listParentTemplatePath,
+            parentTemplate: metadata.classParameters.listParentTemplate,
             gridData: datagrid,
             data: req.query,
             fields: await this.generateContextFields(metadata, req, {})
         } as any;
-        return this.render(AdminUIModule.listTemplatePath, req, ctx);
+        return this.render(metadata.classParameters.listTemplate as string, req, ctx);
     }
 
     @Name("adminUI.details")
@@ -36,17 +37,18 @@ export default class UIController extends Controller {
             throw this.error(404, 'not found');
         }
         let metadata = this.retrieveMetadata(entityName);
+        metadata = await this.generateContextMetadata(metadata, req);
         let data = await this.cleanData(req, entityData, metadata);
         let isPopup = req.query.popup;
         let ctx = {
             data: data,
             configuration: AdminUIModule.configuration,
-            parentTemplate: isPopup ? AdminUIModule.popupEditorParentTemplatePath : AdminUIModule.editorParentTemplatePath,
+            parentTemplate: isPopup ? metadata.classParameters.popupEditorParentTemplate : metadata.classParameters.editorParentTemplate,
             nested: false,
             metadata: metadata,
             fields: await this.generateContextFields(metadata, req, entityData)
         } as any;
-        return this.render(isPopup ? AdminUIModule.popupEditorTemplatePath : AdminUIModule.editorTemplatePath, req, ctx);
+        return this.render(isPopup ? metadata.classParameters.popupEditorTemplate as string : metadata.classParameters.editorTemplate as string, req, ctx);
     }
 
     @Name("adminUI.nested")

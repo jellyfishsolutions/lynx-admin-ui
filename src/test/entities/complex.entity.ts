@@ -35,8 +35,36 @@ async function isReadOnly(_: Request, entity: Complex): Promise<boolean> {
     return false;
 }
 
+async function filteringList(req: Request): Promise<{}> {
+    if (req.query.onlyFemale) {
+        return {
+            gender: Gender.female
+        }
+    }
+    return {}
+}
+
+async function listTemplate(req: Request): Promise<string> {
+    if (req.query.onlyFemale) {
+        return '/female-list';
+    }
+    return "";
+}
+
+async function actionTemplate(req: Request): Promise<string> {
+    if (req.query.onlyFemale) {
+        return '/female-list-action';
+    }
+    return "";
+}
+
+
 @Entity("complex")
-@AdminUI("Complex Entity")
+@AdminUI("Complex Entity", {
+    filterBy: filteringList,
+    listParentTemplate: listTemplate,
+    listActionTemplate: actionTemplate
+})
 export default class Complex extends BaseEntity {
     @PrimaryGeneratedColumn()
     @AdminField({

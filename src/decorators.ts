@@ -26,6 +26,17 @@ export interface UISettings {
     //TODO: editorList?: number;
 }
 
+export interface ClassParameters {
+    filterBy?: (req: Request) => Promise<any>,
+    editorTemplate?: string | ((req: Request) => Promise<string>),
+    editorParentTemplate?: string | ((req: Request) => Promise<string>),
+    popupEditorTemplate?: string | ((req: Request) => Promise<string>),
+    popupEditorParentTemplate?: string | ((req: Request) => Promise<string>),
+    listTemplate?: string | ((req: Request) => Promise<string>),
+    listParentTemplate?: string | ((req: Request) => Promise<string>),
+    listActionTemplate?: string | ((req: Request) => Promise<string>)
+}
+
 export interface QueryParams {
     order: any;
     take: number;
@@ -58,14 +69,18 @@ export interface FieldParameters {
 
 export class EntityMetadata {
     name: string;
+    classParameters: ClassParameters = {};
     fields: Record<string, FieldParameters> = {};
 }
 
 let currentEntity: EntityMetadata = new EntityMetadata();
 
-export function AdminUI(name: string) {
+export function AdminUI(name: string, params?: ClassParameters) {
     return (target: any) => {
         currentEntity.name = name;
+        if (params) {
+            currentEntity.classParameters = params;
+        }
         target.adminUI = currentEntity;
         currentEntity = new EntityMetadata();
     };

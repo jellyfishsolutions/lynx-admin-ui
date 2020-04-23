@@ -45,6 +45,16 @@ export default class Category extends BaseEntity implements EditableEntity {
 
 Beside the standard `Entity` annotation, the `AdminUI` shall be added when an entity is defined. The `string` argument indicates a readable name of the entity, that will be used in the UI. Localized string are supported and will be automatically used in the UI.
 
+### `AdminUI` optional argument
+The `AdminUI` annotation supports also an optional object argument, with the following optional parameters:
+* `filterBy`: defines a function to generate an appropriate `where` clause used to filter the data in the list section of the AdminUI. It receives the current `req` request as argument;
+* `editorTemplate` and `editorParentTemplate` allow to specifies a custom editor template for the current entity;
+* `popupEditorTemplate` and `popupEditorParentTemplate` allow to specifies a custom popup editor template for the current entity;
+* `listTemplate` and `listParentTemplate` allow to specifies a custom list template for the current entity;
+* `listActionTemplate` allows to specifies a custom template to be used as the 'action' column (the last one) in the listing template.
+
+Each "template" parameter accepts both a `string`, containing the specified path, or a function that accept the current `req` request as argument and returns a `string`. Using the function version, it is possible to customize a template based on a specific request.
+
 ## `EditableEntity` interface
 An `AdminUI` entity shall also implements the `EditableEntity`. To implement the interface, the class shall have these two methods:
 ```
@@ -94,6 +104,9 @@ It is possible to specify the `pattern` parameters (a `string`), in order to per
 ### `AdminType.Number`
 Indicates that the field is a number. It uses the standard input with type number.
 It is possible to specify the `min`, `max` and `step` values.
+
+### `AdminType.Date`
+Indicates that the field is a date. It uses the standard input with type date.
 
 #### `AdminType.Text`
 Indicates that the field is a long text. It uses the textarea.

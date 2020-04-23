@@ -73,7 +73,11 @@
                 {% endif %}
             {% endfor %}
             <td>
-                <a href="{{route('adminUI.details', {entityName: req.params.entityName, id: d.id})}}">Details</a>
+                {% if metadata.classParameters.listActionTemplate %}
+                    {% include resolvePath(metadata.classParameters.listActionTemplate) %}
+                {% else %}
+                    <a href="{{route('adminUI.details', {entityName: req.params.entityName, id: d.id})}}">Details</a>
+                {% endif %}
             </td>
             </tr>
         {% endfor %}

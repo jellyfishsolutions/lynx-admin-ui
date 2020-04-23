@@ -7,6 +7,7 @@ import { generateSchema } from "./generator";
 import { Like, getConnection, Repository } from "typeorm";
 import * as moment from "moment";
 import Datagrid from "lynx-datagrid/datagrid";
+import AdminUIModule from ".";
 
 let _adminUI: { entity: any; meta: EntityMetadata }[];
 let hasInit = false;
@@ -72,6 +73,9 @@ export class Controller extends BaseController {
         }
         let metadata = this.retrieveMetadata(entityName);
         let where = {} as any;
+        if (metadata.classParameters.filterBy) {
+            where = await metadata.classParameters.filterBy(req);
+        }
         for (let key in metadata.fields) {
             let f = metadata.fields[key];
             let v = datagrid.getQueryValue(key);
@@ -208,6 +212,35 @@ export class Controller extends BaseController {
                 (entity as any)[key] = data[prefix+key];
             }
         }
+    }
+
+    private async evaluateTemplate(metadata: EntityMetadata, prop: string, defaultValue: string, req: Request) {
+        let meta = metadata as any;
+        if (meta.classParameters[prop]) {
+            if (meta.classParameters[prop] instanceof Function) {
+                meta.classParameters[prop] = await meta.classParameters[prop](req);
+            }
+        } 
+        if (!meta.classParameters[prop]) {
+            meta.classParameters[prop] = defaultValue;
+        }
+    }
+
+    async generateContextMetadata(metadata: EntityMetadata, req: Request): Promise<EntityMetadata> {
+        let meta = {...metadata};
+        meta.classParameters = {...metadata.classParameters};
+        let requests = [];
+        requests.push(this.evaluateTemplate(meta, 'listParentTemplate', AdminUIModule.listParentTemplatePath, req));
+        requests.push(this.evaluateTemplate(meta, 'listTemplate', AdminUIModule.listTemplatePath, req));
+        requests.push(this.evaluateTemplate(meta, 'editorParentTemplate', AdminUIModule.editorParentTemplatePath, req));
+        requests.push(this.evaluateTemplate(meta, 'editorTemplate', AdminUIModule.editorTemplatePath, req));
+        requests.push(this.evaluateTemplate(meta, 'popupEditorParentTemplate', AdminUIModule.popupEditorParentTemplatePath, req));
+        requests.push(this.evaluateTemplate(meta, 'popupEditorTemplate', AdminUIModule.popupEditorTemplatePath, req));
+        await Promise.all(requests);
+        if (meta.classParameters.listActionTemplate && meta.classParameters.listActionTemplate instanceof Function) {
+            meta.classParameters.listActionTemplate = await (meta.classParameters.listActionTemplate as any)(req);
+        } 
+        return meta;
     }
 
     async generateContextFields(metadata: EntityMetadata, req: Request, entityData: any) {

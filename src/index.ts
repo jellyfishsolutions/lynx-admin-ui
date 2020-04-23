@@ -33,7 +33,7 @@ export default class AdminUIModule extends SimpleModule {
      * @param type The type of widget
      * @param templatePath The view path of the editor
      */
-    setEditor(type: AdminType, templatePath: string) {
+    static setEditor(type: AdminType, templatePath: string) {
         AdminUIModule.configuration[type] = templatePath;
     }
 
@@ -41,7 +41,7 @@ export default class AdminUIModule extends SimpleModule {
      * Customize the editor template
      * @param path the editor template path
      */
-    setEditorTemplatePath(path: string) {
+    static setEditorTemplatePath(path: string) {
         AdminUIModule.editorTemplatePath = path;
     }
 
@@ -49,7 +49,7 @@ export default class AdminUIModule extends SimpleModule {
      * Customize the list template
      * @param path the list template path
      */
-    setListTemplatePath(path: string) {
+    static setListTemplatePath(path: string) {
         AdminUIModule.listTemplatePath = path;
     }
 
@@ -57,7 +57,7 @@ export default class AdminUIModule extends SimpleModule {
      * Customize the nested template
      * @param path the nested template path
      */
-    setNestedTemplatePath(path: string) {
+    static setNestedTemplatePath(path: string) {
         AdminUIModule.nestedTemplatePath = path;
     }
 
@@ -65,7 +65,7 @@ export default class AdminUIModule extends SimpleModule {
      * Customize the popup editor template
      * @param path the popup editor template path
      */
-    setEditorPopupTemplatePath(path: string) {
+    static setEditorPopupTemplatePath(path: string) {
         AdminUIModule.popupEditorTemplatePath = path;
     }
 
@@ -75,7 +75,7 @@ export default class AdminUIModule extends SimpleModule {
      * Customize the editor template
      * @param path the editor father template path
      */
-    setEditorParentTemplatePath(path: string) {
+    static setEditorParentTemplatePath(path: string) {
         AdminUIModule.editorParentTemplatePath = path;
     }
 
@@ -83,7 +83,7 @@ export default class AdminUIModule extends SimpleModule {
      * Customize the list template
      * @param path the list father template path
      */
-    setListParentTemplatePath(path: string) {
+    static setListParentTemplatePath(path: string) {
         AdminUIModule.listParentTemplatePath = path;
     }
 
@@ -91,7 +91,7 @@ export default class AdminUIModule extends SimpleModule {
      * Customize the nested template
      * @param path the nested father template path
      */
-    setNestedParentTemplatePath(path: string) {
+    static setNestedParentTemplatePath(path: string) {
         AdminUIModule.nestedParentTemplatePath = path;
     }
 
@@ -99,7 +99,7 @@ export default class AdminUIModule extends SimpleModule {
      * Customize the popup editor father template
      * @param path the popup editor father template path
      */
-    setEditorPopupParentTemplatePath(path: string) {
+    static setEditorPopupParentTemplatePath(path: string) {
         AdminUIModule.popupEditorParentTemplatePath = path;
     }
 
