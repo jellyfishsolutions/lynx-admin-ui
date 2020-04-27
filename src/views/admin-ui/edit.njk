@@ -1,5 +1,5 @@
 {% extends resolvePath(parentTemplate) %}
-
+{% import resolvePath("/lynx/utils") as utils %}
 
 {% block additional_styles %}
 <link href="{{route('/adminUI/fontawesome/css/all.css')}}" rel="stylesheet">
@@ -16,7 +16,7 @@
 
 {% block body %}
 <div class="container">
-
+{{ utils.alert(flash) }}
 <form method="POST" action="{{route('adminUI.save', {entityName: req.params.entityName, id: req.params.id} )}}">
 <div class="row">
 {% for key, field in fields %}

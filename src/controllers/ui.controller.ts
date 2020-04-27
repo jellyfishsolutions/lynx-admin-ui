@@ -59,6 +59,7 @@ export default class UIController extends Controller {
             throw this.error(404, 'not found');
         }
         let metadata = {...this.retrieveMetadata(entityName)};
+        metadata = await this.generateContextMetadata(metadata, req);
         let nestedField = metadata.fields[nestedKey];
         metadata.fields = {};
         metadata.fields[nestedKey] = nestedField;
@@ -84,7 +85,6 @@ export default class UIController extends Controller {
         let entity: BaseEntity;
         if (!id || id == '0') {
             entity = new (this.retrieveEntityClass(entityName))();
-            await entity.save();
         } else {
             entity = (await this.retrieveEntity(entityName, id) as BaseEntity);
             if (!entity) {
@@ -93,7 +93,25 @@ export default class UIController extends Controller {
         }
         metadata = {...metadata, fields: await this.generateContextFields(metadata, req, entity) } 
         await this.setData(req, entity, req.body, metadata);
-        let updated = await entity.save();
+        let updated;
+        try {
+            updated = await entity.save();
+        } catch (e) {
+            let errorField = (/'([a-zA-Z0-0_)]+)'/.exec(e.message) as any)[1];
+            let field = metadata.fields[errorField];
+            this.addErrorMessage('Error on field '+field.name, req);
+            metadata = await this.generateContextMetadata(metadata, req);
+            let isPopup = req.query.popup;
+            let ctx = {
+                data: req.body,
+                configuration: AdminUIModule.configuration,
+                parentTemplate: isPopup ? metadata.classParameters.popupEditorParentTemplate : metadata.classParameters.editorParentTemplate,
+                nested: false,
+                metadata: metadata,
+                fields: await this.generateContextFields(metadata, req, entity)
+            } as any;
+            return this.render(isPopup ? metadata.classParameters.popupEditorTemplate as string : metadata.classParameters.editorTemplate as string, req, ctx);
+        }
         return this.redirect("adminUI.details", {entityName: entityName, id: (updated as any).id});
     }
 }

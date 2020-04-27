@@ -24,6 +24,26 @@ const genderValues = [
     { key: Gender.other, value: "Altro" }
 ];
 
+enum DayOfWeek {
+    monday = 1,
+    tuesday = 2,
+    wednesday = 3,
+    thursday = 4,
+    friday = 5,
+    saturday = 6,
+    sunday = 7
+}
+
+const days = [
+    {key: DayOfWeek.monday, value: 'Lunedì'},
+    {key: DayOfWeek.tuesday, value: 'Martedì'},
+    {key: DayOfWeek.wednesday, value: 'Mercoledì'},
+    {key: DayOfWeek.thursday, value: 'Giovedì'},
+    {key: DayOfWeek.friday, value: 'Venerdì'},
+    {key: DayOfWeek.saturday, value: 'Sabato'},
+    {key: DayOfWeek.sunday, value: 'Domenica'}
+];
+
 async function getCategories() {
     return map(await Category.find());
 }
@@ -169,4 +189,7 @@ export default class Complex extends BaseEntity {
         }
     })
     subcategories: Category[];
+
+    @AdminField({ name: "Giorno della settimana", type: AdminType.Selection, values: days, onSummary: true})
+    @Column({nullable: true}) day: DayOfWeek;
 }
