@@ -70,15 +70,15 @@ $('#deleteModal').on('show.bs.modal', function (event) {
 {% endif %}
 
 <div class="">
-    <a href="{{ route('adminUI.details', {entityName: req.params.entityName, id: 0}) }}" class="btn btn-primary btn-create">Create</a>
+    <a href="{{ route('adminUI.details', {entityName: req.params.entityName, id: 0}) }}" class="btn btn-primary btn-create btn-create-{{req.params.entityName}}">Create</a>
 </div>
 
-<table class="table">
+<table class="table table-{{req.params.entityName}}">
     <thead>
         <tr>
             {% for key, field in fields %}
                 {% if field.onSummary %}
-                    <th>
+                    <th class="header-{{field.name}}">
                         {{ dgUtils.orderableHeader(field.name, key, gridData) }}
                     </th>
                 {% endif %}
@@ -93,9 +93,9 @@ $('#deleteModal').on('show.bs.modal', function (event) {
                 {% if field.onSummary %}
                     {% if field.uiSettings and field.uiSettings.listTemplate %}
                         {% set value = d[key] %}
-                        <td>{% include resolvePath(field.uiSettings.listTemplate) %} </td>
+                        <td class="cell-{{field.name}}">{% include resolvePath(field.uiSettings.listTemplate) %} </td>
                     {% else %}
-                        <td>{{d[key]}}</td>
+                        <td class="cell-{{field.name}}">{{d[key]}}</td>
                     {% endif %}
                 {% endif %}
             {% endfor %}
@@ -103,8 +103,8 @@ $('#deleteModal').on('show.bs.modal', function (event) {
                 {% if metadata.classParameters.listActionTemplate %}
                     {% include resolvePath(metadata.classParameters.listActionTemplate) %}
                 {% else %}
-                    <a class="btn btn-primary btn-details" href="{{route('adminUI.details', {entityName: req.params.entityName, id: d.id})}}">Details</a>
-                    <button class="btn btn-danger btn-delete" type="button" data-toggle="modal" data-target="#deleteModal" data-name="{{d.getLabel()}}" data-id="{{d.getId()}}"><i class="far fa-trash-alt"></i></button>
+                    <a class="btn btn-primary btn-details btn-details-{{req.params.entityName}}" href="{{route('adminUI.details', {entityName: req.params.entityName, id: d.id})}}">Details</a>
+                    <button class="btn btn-danger btn-delete btn-delete-{{req.params.entityName}}" type="button" data-toggle="modal" data-target="#deleteModal" data-name="{{d.getLabel()}}" data-id="{{d.getId()}}"><i class="far fa-trash-alt"></i></button>
 
                 {% endif %}
             </td>

@@ -274,6 +274,20 @@ The only requirement for a father template, is that defines the following blocks
 
 This blocks will be used by each templates to correctly load any additional resource, and to display its content.
 
+
+### CSS Classes
+Buttons, fields and tables have additional classes, allowing custom CSS themes.
+The classes are defined as follows:
+* `btn-create` and `btn-create-{entity-name}` are used for the "Create" button in the list page;
+* `table` and `table-{entity-name}` are used for the table in the list page;
+* `header-{field-name}` is used on the `th` cell of the table in the list page;
+* `cell-{field-name}` is used on the `td` cell of the table in the list page;
+* `btn-details` and `btn-details-{entity-name}` are used for the "Details" button in the list page;
+* `btn-delete` and `btn-delete-{entity-name}` are used for the "Delete" button in the list page;
+* `field-{entity-name}-{field-name}` is used to any field in the editing page;
+* `btn-save` and `btn-save-{entity-name}` are used for the "Save" button in the editing page;
+
+
 ### Custom types
 It is possible to add custom types in order to support a larger set of fields.
 Use the `AdminUI.setEditor` static method to add a new type.
