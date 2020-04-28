@@ -16,7 +16,14 @@
 {% endblock %}
 
 {% block body %}
+{% set filtersCount = 0 %}
+{% for key, field in fields %}
+    {% if field.searchable %}
+        {% set filtersCount = filtersCount + 1 %}
+    {% endif %}
+{% endfor %}
 <div class="container">
+{% if filtersCount > 0 %}
 <div class="accordion" id="accordionFilter">
     <div class="card">
         <div class="card-header" id="filterBy">
@@ -45,6 +52,7 @@
         </div>
     </div>
 </div>
+{% endif %}
 
 <table class="table">
     <thead>
