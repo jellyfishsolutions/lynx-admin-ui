@@ -159,6 +159,12 @@ export class Controller extends BaseController {
                 obj[key] = defaultValues[key];
             }
         }
+        obj.getLabel = () => {
+            return (_data as any).getLabel();
+        }
+        obj.getId = () => {
+            return (_data as any).getId();
+        }
         return obj;
     }
 

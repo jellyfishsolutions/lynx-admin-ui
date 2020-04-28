@@ -8,6 +8,25 @@ import Datagrid from "lynx-datagrid/datagrid";
 @Route("/adminUI/")
 export default class UIController extends Controller {
 
+    @Name("adminUI.delete")
+    @GET("/:entityName/:id/delete")
+    async performDelete(entityName: string, id: any, req: Request) {
+        let entityData = await this.retrieveEntity(entityName, id);
+        if (!entityData) {
+            throw this.error(404, 'not found');
+        }
+        try {
+            await entityData.remove();
+        } catch (e) {
+            this.logger.error(e);
+            this.addErrorMessage('Unable to delete '+(entityData as any).getLabel()+'. Please check its dependencies.', req);
+        }
+        if (req.query.redirect) {
+            return this.redirect(req.query.redirect);
+        }
+        return this.redirect("adminUI.list", {entityName: entityName});
+    }
+
     @Name("adminUI.list")
     @GET("/:entityName")
     async list(entityName: string, req: Request) {
@@ -114,4 +133,5 @@ export default class UIController extends Controller {
         }
         return this.redirect("adminUI.details", {entityName: entityName, id: (updated as any).id});
     }
+
 }

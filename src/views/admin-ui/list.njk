@@ -1,5 +1,6 @@
 {% extends resolvePath(parentTemplate) %}
 
+{% import resolvePath("/lynx/utils") as utils %}
 {% import resolvePath('/datagrid/utility') as dgUtils %}
 
 
@@ -13,6 +14,19 @@
 {% for key, field in fields %}
     {% include resolvePath(configuration[field.type] + '-js') ignore missing %}
 {% endfor %}
+
+<script>
+$('#deleteModal').on('show.bs.modal', function (event) {
+  var button = $(event.relatedTarget);
+  var id = button.data('id');
+  var name = button.data('name');
+  var modal = $(this)
+  modal.find('.element-name').text(name);
+  var url = "{{route('adminUI.delete', { entityName: req.params.entityName, id: ':id' })}}".replace(':id', id);
+  url += '?redirect=' + window.location;
+  modal.find('.delete-url').attr("href", url);
+})
+</script>
 {% endblock %}
 
 {% block body %}
@@ -23,6 +37,7 @@
     {% endif %}
 {% endfor %}
 <div class="container">
+{{ utils.alert(flash) }}
 {% if filtersCount > 0 %}
 <div class="accordion" id="accordionFilter">
     <div class="card">
@@ -88,7 +103,9 @@
                 {% if metadata.classParameters.listActionTemplate %}
                     {% include resolvePath(metadata.classParameters.listActionTemplate) %}
                 {% else %}
-                    <a href="{{route('adminUI.details', {entityName: req.params.entityName, id: d.id})}}">Details</a>
+                    <a class="btn btn-primary btn-details" href="{{route('adminUI.details', {entityName: req.params.entityName, id: d.id})}}">Details</a>
+                    <button class="btn btn-danger btn-delete" type="button" data-toggle="modal" data-target="#deleteModal" data-name="{{d.getLabel()}}" data-id="{{d.getId()}}"><i class="far fa-trash-alt"></i></button>
+
                 {% endif %}
             </td>
             </tr>
@@ -99,4 +116,25 @@
 {{ dgUtils.pagination(gridData) }}
 
 </div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Delete element</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          Are you sure to delete <b><span class="element-name">ElementName</span></b>?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Abort</button>
+        <a href="" class="delete-url btn btn-danger">Delete</a>
+      </div>
+    </div>
+  </div>
+</div>
+
 {% endblock %}
