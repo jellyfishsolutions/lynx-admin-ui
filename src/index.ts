@@ -4,6 +4,8 @@ import { AdminType } from "./decorators";
 export default class AdminUIModule extends SimpleModule {
 
     static configuration: any = {};
+    static indexParentTemplatePath = '/admin-ui/layouts/base';
+    static indexTemplatePath = 'admin-ui/index';
     static editorParentTemplatePath = '/admin-ui/layouts/base';
     static editorTemplatePath = 'admin-ui/edit';
     static listParentTemplatePath = '/admin-ui/layouts/base';
@@ -38,6 +40,14 @@ export default class AdminUIModule extends SimpleModule {
     }
 
     /**
+     * Customize the index template
+     * @param path the index template path
+     */
+    static setIndexTemplatePath(path: string) {
+        AdminUIModule.indexTemplatePath = path;
+    }
+
+    /**
      * Customize the editor template
      * @param path the editor template path
      */
@@ -69,6 +79,15 @@ export default class AdminUIModule extends SimpleModule {
         AdminUIModule.popupEditorTemplatePath = path;
     }
 
+
+
+    /**
+     * Customize the index template
+     * @param path the index father template path
+     */
+    static setIndexParentTemplatePath(path: string) {
+        AdminUIModule.indexParentTemplatePath = path;
+    }
 
 
     /**

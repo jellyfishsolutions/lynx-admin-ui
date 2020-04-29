@@ -9,7 +9,7 @@ import {
 import { AdminUI, AdminField, AdminType } from "../../decorators";
 import BaseEntity from "lynx-framework/entities/base.entity";
 import Category from "./category.entity";
-import { map } from "../../editable-entity";
+import EditableEntity, { map } from "../../editable-entity";
 import { Request } from "lynx-framework/request";
 
 export enum Gender {
@@ -85,7 +85,7 @@ async function actionTemplate(req: Request): Promise<string> {
     listParentTemplate: listTemplate,
     listActionTemplate: actionTemplate
 })
-export default class Complex extends BaseEntity {
+export default class Complex extends BaseEntity implements EditableEntity {
     @PrimaryGeneratedColumn()
     @AdminField({
         name: "Id",
@@ -192,4 +192,12 @@ export default class Complex extends BaseEntity {
 
     @AdminField({ name: "Giorno della settimana", type: AdminType.Selection, values: days, onSummary: true})
     @Column({nullable: true}) day: DayOfWeek;
+
+    getId() {
+        return this.id;
+    }
+
+    getLabel(): string {
+        return this.name + " " + this.surname;
+    }
 }

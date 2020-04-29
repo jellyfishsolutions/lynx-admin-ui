@@ -1,0 +1,15 @@
+{% extends resolvePath(parentTemplate) %}
+
+{% block body %}
+<div class="container">
+<table class="table table-entities-list">
+{% for e in entities %}
+    <tr>
+        <td>
+            <a href="{{route('adminUI.list', {entityName: e.name})}}">{{e.readableName}}</a>
+        </td>
+    </tr>
+{% endfor %}
+</table>
+</div>
+{% endblock %}

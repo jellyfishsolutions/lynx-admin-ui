@@ -8,6 +8,16 @@ import Datagrid from "lynx-datagrid/datagrid";
 @Route("/adminUI/")
 export default class UIController extends Controller {
 
+    @Name("adminUI.index")
+    @GET("/")
+    async getIndex(req: Request) {
+        let ctx = {
+            parentTemplate: AdminUIModule.indexParentTemplatePath,
+            entities: this.entitiesList()
+        }
+        return this.render(AdminUIModule.indexTemplatePath, req, ctx);
+    }
+
     @Name("adminUI.delete")
     @GET("/:entityName/:id/delete")
     async performDelete(entityName: string, id: any, req: Request) {

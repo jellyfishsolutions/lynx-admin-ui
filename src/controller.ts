@@ -25,6 +25,17 @@ export class Controller extends BaseController {
         return _adminUI;
     }
 
+    entitiesList(): {name: string, readableName: string}[] {
+        let list = [];
+        for (let d of this.adminUI) {
+            list.push({
+                name: d.entity.name,
+                readableName: d.meta.name
+            });
+        }
+        return list;
+    }
+
     async retrieveEntity(entityName: string, id: any): Promise<BaseEntity | null> {
         for (let d of this.adminUI) {
             if (d.entity.name == entityName) {
