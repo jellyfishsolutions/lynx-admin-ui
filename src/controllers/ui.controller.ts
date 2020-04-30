@@ -128,7 +128,11 @@ export default class UIController extends Controller {
         } catch (e) {
             let errorField = (/'([a-zA-Z0-0_)]+)'/.exec(e.message) as any)[1];
             let field = metadata.fields[errorField];
-            this.addErrorMessage('Error on field '+field.name, req);
+            if (field) {
+                this.addErrorMessage('Error on field '+field.name, req);
+            } else {
+                this.addErrorMessage(e.message, req);
+            }
             metadata = await this.generateContextMetadata(metadata, req);
             let isPopup = req.query.popup;
             let ctx = {

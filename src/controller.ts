@@ -196,7 +196,12 @@ export class Controller extends BaseController {
                 if (m.type == AdminType.Selection) {
                     let v = values.find((s) => s.key == data[prefix+key]);
                     if (v) {
-                        (entity as any)[key] = await this.retrieveEntityClass(m.selfType as string).findOne(v.key);
+                        let _class = this.retrieveEntityClass(m.selfType as string);
+                        if (!_class) {
+                            (entity as any)[key] = v.key;
+                        } else {
+                            (entity as any)[key] = await _class.findOne(v.key);
+                        }
                     }
                 }
                 if (m.type == AdminType.Checkbox) {
