@@ -12,8 +12,9 @@ export enum AdminType {
     Number = 8,
     Date = 9,
     Table = 10,
-    Expanded = 11
-    //Time
+    Expanded = 11,
+    Time = 12,
+    Color = 13
     //DateTime
 }
 
@@ -57,8 +58,8 @@ export interface FieldParameters {
           ) => Promise<{ key: any; value: string }[]>);
     query?: ((req: Request, currentEntity: any, params: QueryParams) => Promise<[BaseEntity[], number]>);
     pattern?: string;
-    min?: number;
-    max?: number;
+    min?: number|string;
+    max?: number|string;
     step?: number;
     onSummary?: boolean;
     searchable?: boolean;

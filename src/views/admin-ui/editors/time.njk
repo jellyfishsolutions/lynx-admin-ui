@@ -1,0 +1,11 @@
+<div class="form-group">
+    <label for="{{key}}">{{ field.name }} </label>
+    <input class="form-control" 
+        type="time"
+        name="{{key}}" 
+        value="{{data[key]}}" 
+        {{ "min="+field.min if field.min}}
+        {{ "max="+field.min if field.max}}    
+        {{ "readonly" if field.readOnly }} 
+    />
+</div>

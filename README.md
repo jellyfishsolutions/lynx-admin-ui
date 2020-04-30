@@ -172,6 +172,9 @@ It works only if the [`query` parameter](#query-parameter) is set.
 This type can be used for `OneToOne` relations, when the target entity of the relation is available to the AdminUI.
 In this case, the fields of the target entity will be available inside the interface of the main entity.
 
+### `AdminType.Time`
+Indicates that the field is a time. It uses the standard input with type time. It is possible to indicates the minimum and the maximum times using the `min` and `max` parameters (they shall be a string using the 'HH:mm' format).
+
 
 ### `values` parameter
 It indicates a list of key-value items that can be used to evaluate the field. 

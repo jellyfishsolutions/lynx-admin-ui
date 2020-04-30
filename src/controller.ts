@@ -152,7 +152,12 @@ export class Controller extends BaseController {
                         }
                     } else {
                         if (forList) {
-                            obj[key] = (obj[key] as EditableEntity).getLabel();
+                            let ee = (obj[key] as EditableEntity);
+                            if (ee.getLabel) {
+                                obj[key] = ee.getLabel();
+                            } else if (ee.toString) {
+                                obj[key] = ee.toString();
+                            }
                         } else {
                             let nestedMeta = this.retrieveMetadata(metadata.fields[key].selfType as string);
                             if (nestedMeta) { 
@@ -161,7 +166,12 @@ export class Controller extends BaseController {
                                     obj[key+'-'+k] = cleanData[k];
                                 }
                             } 
-                            obj[key] = (obj[key] as EditableEntity).getId();
+                            let ee = (obj[key] as EditableEntity);
+                            if (ee.getId) {
+                                obj[key] = ee.getId();
+                            } else {
+                                obj[key] = obj[key].id;
+                            }
                         }
                     }
                 }

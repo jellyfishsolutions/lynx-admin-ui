@@ -126,11 +126,17 @@ export default class UIController extends Controller {
         try {
             updated = await entity.save();
         } catch (e) {
-            let errorField = (/'([a-zA-Z0-0_)]+)'/.exec(e.message) as any)[1];
-            let field = metadata.fields[errorField];
-            if (field) {
-                this.addErrorMessage('Error on field '+field.name, req);
-            } else {
+            try {
+                let errorField = (/'([a-zA-Z0-0_)]+)'/.exec(e.message) as any)[1];
+                let field = metadata.fields[errorField];
+                if (field) {
+                    this.addErrorMessage('Error on field '+field.name, req);
+                } else {
+                    this.addErrorMessage(e.message, req);
+                }
+            } catch (ee) {
+                this.logger.error(e);
+                this.logger.error(ee);
                 this.addErrorMessage(e.message, req);
             }
             metadata = await this.generateContextMetadata(metadata, req);
