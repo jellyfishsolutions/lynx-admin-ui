@@ -2,9 +2,7 @@
 
 <div class="form-group">
     <label for="{{key}}">{{ field.name }} </label>
-    (sarà un WYSIWYG)
     <div id="rich-text-{{key}}">{{data[key] | safe}}</div>
-    <!--<textarea class="form-control" name="{{key}}" {{ "readonly" if field.readOnly }} >{{data[key]}}</textarea>-->
     <input type="hidden" name="{{key}}" value="{{data[key]}}" />
 </div>
 

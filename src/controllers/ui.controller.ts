@@ -68,6 +68,14 @@ export default class UIController extends Controller {
         let metadata = this.retrieveMetadata(entityName);
         metadata = await this.generateContextMetadata(metadata, req);
         let data = await this.cleanData(req, entityData, metadata);
+        let fields = await this.generateContextFields(metadata, req, entityData);
+        let usedTypes: string[] = [];
+        for (let key in fields) {
+            if (usedTypes.indexOf(fields[key].type) == -1) {
+                usedTypes.push(fields[key].type);
+            }
+        }
+        
         let isPopup = req.query.popup;
         let ctx = {
             data: data,
@@ -75,7 +83,8 @@ export default class UIController extends Controller {
             parentTemplate: isPopup ? metadata.classParameters.popupEditorParentTemplate : metadata.classParameters.editorParentTemplate,
             nested: false,
             metadata: metadata,
-            fields: await this.generateContextFields(metadata, req, entityData)
+            fields: fields,
+            usedTypes: usedTypes
         } as any;
         return this.render(isPopup ? metadata.classParameters.popupEditorTemplate as string : metadata.classParameters.editorTemplate as string, req, ctx);
     }

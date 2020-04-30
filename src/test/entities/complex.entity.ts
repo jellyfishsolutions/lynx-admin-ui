@@ -152,6 +152,10 @@ export default class Complex extends BaseEntity implements EditableEntity {
     biography: string;
 
     @Column()
+    @AdminField({ name: "Bio2", type: AdminType.RichText })
+    biography2: string;
+
+    @Column()
     @AdminField({ name: "Privacy accettata", type: AdminType.Checkbox })
     privacy: boolean;
 
