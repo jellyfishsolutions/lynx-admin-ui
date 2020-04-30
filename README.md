@@ -175,6 +175,9 @@ In this case, the fields of the target entity will be available inside the inter
 ### `AdminType.Time`
 Indicates that the field is a time. It uses the standard input with type time. It is possible to indicates the minimum and the maximum times using the `min` and `max` parameters (they shall be a string using the 'HH:mm' format).
 
+### `AdminType.Color`
+Indicates that the field is a color. It uses the standard input with type color.
+
 
 ### `values` parameter
 It indicates a list of key-value items that can be used to evaluate the field. 
