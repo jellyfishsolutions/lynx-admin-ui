@@ -17,7 +17,7 @@
 {% block body %}
 <div class="container">
     <div class="lead entity-title entity-title-{{req.params.entityName}}">
-        <button class="btn btn-secondary btn-back btn-back-{{req.params.entityName}}" onclick="window.history.back();">Indietro</button>
+        <a class="btn btn-secondary btn-back btn-back-{{req.params.entityName}}" href="{{ route('adminUI.list', {entityName: req.params.entityName}) }}">Indietro</a>
         {{ metadata.name }}
     </div>
 {{ utils.alert(flash) }}
