@@ -300,3 +300,10 @@ Use the `AdminUI.setEditor` static method to add a new type.
 The same method could also be used to use a custom template for an original type.
 
 IMPORTANT: for custom field type, please use numbers greater then `300`, in order to prevent conflict with the original field types.
+
+
+## Low Level API
+Starting from version `v0.5.0`, a new "low level" API is available.
+This API allows to create a custom controller to display and edit the entities.
+Thought the API it is possible to customize urls and add custom validation based, for example, on the user role.
+
