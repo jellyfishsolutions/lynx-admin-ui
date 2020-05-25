@@ -142,7 +142,8 @@ export class Controller extends BaseController {
                 if (obj[key] instanceof Object) {
                     if (obj[key] instanceof Promise) {
                         obj[key] = await obj[key];
-                    } else if (obj[key] instanceof Date) {
+                    } 
+                    if (obj[key] instanceof Date) {
                         obj[key] = moment(data[key]).format("YYYY-MM-DD");
                     } else if (obj[key] instanceof Array) {
                         if (forList) {
