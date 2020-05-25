@@ -3,6 +3,7 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from "t
 import { AdminUI, AdminField, AdminType } from "../../decorators";
 import ServiceInfoEntity from "./service-info.entity";
 import EditableEntity, { map } from "../../editable-entity";
+import Post from "./post.entity";
 
 
 async function findMyServiceInfo() {
@@ -11,7 +12,7 @@ async function findMyServiceInfo() {
 
 
 @Entity("professionals")
-@AdminUI("Professionisti")
+@AdminUI("Professionisti", { relations: ['post'] })
 export default class ProfessionalEntity extends BaseEntity implements EditableEntity {
     @PrimaryGeneratedColumn()
     @AdminField({
@@ -35,6 +36,11 @@ export default class ProfessionalEntity extends BaseEntity implements EditableEn
     @ManyToOne(type => ServiceInfoEntity, _ => null)
     @JoinColumn() 
     consultingService: Promise<ServiceInfoEntity>;
+
+    @AdminField({name: 'Post', type: AdminType.Selection, onSummary: true, values: async () => map(await Post.find())})
+    @ManyToOne(type => Post, _ => null, {eager: false})
+    @JoinColumn()
+    post: Post;
 
     getId() {
         return this.id;

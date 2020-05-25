@@ -21,7 +21,7 @@ export class Controller extends BaseController {
         }
     }
 
-    get adminUI(): any {
+    get adminUI(): { entity: any; meta: EntityMetadata }[] {
         return _adminUI;
     }
 
@@ -42,7 +42,7 @@ export class Controller extends BaseController {
                 if (!id || id == "0") {
                     return new d.entity();
                 }
-                return await d.entity.findOne(id);
+                return await d.entity.findOne(id, { relations: d.meta.classParameters.relations });
             }
         }
         return null;
@@ -107,6 +107,7 @@ export class Controller extends BaseController {
                 order: params.order,
                 skip: params.skip,
                 take: params.take,
+                relations: metadata.classParameters.relations
             })
         );
         let tmp = datagrid.data as BaseEntity[];

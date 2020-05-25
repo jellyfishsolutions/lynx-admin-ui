@@ -35,7 +35,8 @@ export interface ClassParameters {
     popupEditorParentTemplate?: string | ((req: Request) => Promise<string>),
     listTemplate?: string | ((req: Request) => Promise<string>),
     listParentTemplate?: string | ((req: Request) => Promise<string>),
-    listActionTemplate?: string | ((req: Request) => Promise<string>)
+    listActionTemplate?: string | ((req: Request) => Promise<string>),
+    relations?: string[]
 }
 
 export interface QueryParams {
