@@ -95,6 +95,12 @@ export function AdminField(params: FieldParameters) {
             if (!type) {
                 throw new Error('AdminUI: Unable to understand the current type. Please add the \'selfType\' parameter for the \''+key+'\' field.');
             }
+            if (type.name == 'Promise') {
+                throw new Error('AdminUI: Please specify the Promise type for the \''+key+'\' field.');
+            }
+            if (type.name == 'Array') {
+                throw new Error('AdminUI: Please specify the Arrays type for the \''+key+'\' field.');
+            }
             params.selfType = type.name;
         }
         currentEntity.fields[key] = params;

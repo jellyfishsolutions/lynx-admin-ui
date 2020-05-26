@@ -102,11 +102,11 @@ Indicates that the field is an identifier.
 Indicates that the field is a string. It uses the standard input with type text.
 It is possible to specify the `pattern` parameters (a `string`), in order to perform input validation. This parameter maps the input `pattern` attribute.
 
-### `AdminType.Number`
+#### `AdminType.Number`
 Indicates that the field is a number. It uses the standard input with type number.
 It is possible to specify the `min`, `max` and `step` values.
 
-### `AdminType.Date`
+#### `AdminType.Date`
 Indicates that the field is a date. It uses the standard input with type date.
 
 #### `AdminType.Text`
@@ -173,10 +173,10 @@ It works only if the [`query` parameter](#query-parameter) is set.
 This type can be used for `OneToOne` relations, when the target entity of the relation is available to the AdminUI.
 In this case, the fields of the target entity will be available inside the interface of the main entity.
 
-### `AdminType.Time`
+#### `AdminType.Time`
 Indicates that the field is a time. It uses the standard input with type time. It is possible to indicates the minimum and the maximum times using the `min` and `max` parameters (they shall be a string using the 'HH:mm' format).
 
-### `AdminType.Color`
+#### `AdminType.Color`
 Indicates that the field is a color. It uses the standard input with type color.
 
 
