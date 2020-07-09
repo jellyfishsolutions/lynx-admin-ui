@@ -30,9 +30,9 @@ export default class ApiController extends Controller {
             orderBy = {};
             let o = req.query.orderBy as string;
             if (o.startsWith('-')) {
-                orderBy[req.query.orderBy.substring(1)] = 'ASC';
+                orderBy[o.substring(1)] = 'ASC';
             } else if (o.startsWith('+')) {
-                orderBy[req.query.orderBy.substring(1)] = 'DESC';
+                orderBy[o.substring(1)] = 'DESC';
             }
         }
         let all = await Class.find({where: where, select: selections, order: orderBy, skip: req.query.skip, take: req.query.take});

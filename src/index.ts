@@ -125,6 +125,9 @@ export default class AdminUIModule extends SimpleModule {
     }
 
 
+    get translation(): string {
+        return __dirname + "/locale";
+    }
 
 
     get controllers(): string {

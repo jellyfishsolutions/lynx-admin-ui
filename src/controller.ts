@@ -124,7 +124,7 @@ export class Controller extends BaseController {
         let data = _data as any;
         let defaultValues = {} as any;
         if (req.query.defaultValues) {
-            defaultValues = JSON.parse(req.query.defaultValues);
+            defaultValues = JSON.parse(req.query.defaultValues as string);
         }
         for (let key in metadata.fields) {
             if (metadata.fields[key].query) {
@@ -270,6 +270,7 @@ export class Controller extends BaseController {
         requests.push(this.evaluateTemplate(meta, 'editorTemplate', AdminUIModule.editorTemplatePath, req));
         requests.push(this.evaluateTemplate(meta, 'popupEditorParentTemplate', AdminUIModule.popupEditorParentTemplatePath, req));
         requests.push(this.evaluateTemplate(meta, 'popupEditorTemplate', AdminUIModule.popupEditorTemplatePath, req));
+        requests.push(this.evaluateTemplate(meta, 'batchDelete', null as any, req));
         await Promise.all(requests);
         if (meta.classParameters.listActionTemplate && meta.classParameters.listActionTemplate instanceof Function) {
             meta.classParameters.listActionTemplate = await (meta.classParameters.listActionTemplate as any)(req);

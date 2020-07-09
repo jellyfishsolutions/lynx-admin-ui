@@ -17,7 +17,7 @@
 {% block body %}
 <div class="container">
     <div class="lead entity-title entity-title-{{req.params.entityName}}">
-        <a class="btn btn-secondary btn-back btn-back-{{req.params.entityName}}" href="{{ route('adminUI.list', {entityName: req.params.entityName}) }}">Indietro</a>
+        <a class="btn btn-secondary btn-back btn-back-{{req.params.entityName}}" href="{{ route('adminUI.list', {entityName: req.params.entityName}) }}">{{ 'admin-ui.back' | tr }}</a>
         {{ metadata.name }}
     </div>
 {{ utils.alert(flash) }}
@@ -31,7 +31,7 @@
 </div>
 
 <div>
-    <button class="btn btn-primary btn-save btn-save-{{req.params.entityName}}" type="submit">Save</button>
+    <button class="btn btn-primary btn-save btn-save-{{req.params.entityName}}" type="submit">{{'admin-ui.save' | tr }}</button>
 </div>
 
 </form>

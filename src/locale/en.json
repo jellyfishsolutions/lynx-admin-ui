@@ -1,0 +1,15 @@
+{
+    "admin-ui.back": "Back",
+    "admin-ui.save": "Save",
+    "admin-ui.abort": "Abort",
+    "admin-ui.filter-title": "Filter",
+    "admin-ui.filter-do": "Filter",
+    "admin-ui.create": "Create",
+    "admin-ui.details": "Details",
+    "admin-ui.delete-selected-elements": "Delete selected elements",
+    "admin-ui.delete-element": "Delete element",
+    "admin-ui.delete-elements": "Delete elements",
+    "admin-ui.delete-confirm-single": "Are you sure to delete ",
+    "admin-ui.delete-confirm-multiple": "Are you sure to delete selected elements?",
+    "admin-ui.delete": "Delete"
+}

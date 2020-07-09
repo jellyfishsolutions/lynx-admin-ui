@@ -25,7 +25,68 @@ $('#deleteModal').on('show.bs.modal', function (event) {
   var url = "{{route('adminUI.delete', { entityName: req.params.entityName, id: ':id' })}}".replace(':id', id);
   url += '?redirect=' + window.location;
   modal.find('.delete-url').attr("href", url);
-})
+});
+
+var currentSelections = [];
+
+function toggleSelection(id) {
+    var index = currentSelections.indexOf(id);
+    if (index == -1) {
+        currentSelections.push(id);
+    } else {
+        currentSelections.splice(index, 1);
+    }
+    updateDeleteAllBtnVisibility();
+}
+
+function toggleAllSelections() {
+    var all = [];
+    {% for d in gridData.data %}
+        all.push('{{d.getId()}}');
+    {%endfor %}
+
+    var selected = true;
+    if (currentSelections.length != all.length) {
+        currentSelections = all;
+    } else {
+        currentSelections = [];
+        var selected = false;
+    }
+
+    for (var i = 0; i<all.length; i++) {
+        $("#delete-checkbox-"+all[i]).prop("checked", selected);
+    }
+
+    updateDeleteAllBtnVisibility();
+}
+
+function showDeleteAllBtn() {
+    $("#deleteAllBtn").show();
+}
+
+function hideDeleteAllBtn() {
+    $("#deleteAllBtn").hide();
+}
+
+function updateDeleteAllBtnVisibility() {
+    if (currentSelections.length > 0) {
+        showDeleteAllBtn();
+    } else {
+        hideDeleteAllBtn();
+    }
+}
+
+$('#deleteAllModal').on('show.bs.modal', function (event) {
+  var button = $(event.relatedTarget);
+  var id = JSON.stringify(currentSelections);
+  var name = button.data('name');
+  var modal = $(this)
+  modal.find('.element-name').text(name);
+  var url = "{{route('adminUI.delete_multiple', { entityName: req.params.entityName, ids: ':id' })}}".replace(':id', id);
+  url += '&redirect=' + window.location;
+  modal.find('.delete-url').attr("href", url);
+});
+
 </script>
 {% endblock %}
 
@@ -44,7 +105,7 @@ $('#deleteModal').on('show.bs.modal', function (event) {
         <div class="card-header" id="filterBy">
             <h4 class="mb-0">
                 <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#filtering">
-                    Filtering
+                    {{ 'admin-ui.filter-title' | tr }}
                 </button>
             </h4>
         </div>
@@ -61,7 +122,7 @@ $('#deleteModal').on('show.bs.modal', function (event) {
                         {% endif %}
                     {% endfor %}
                 </div>
-                <button class="btn btn-primary">Filter</button>
+                <button class="btn btn-primary">{{ 'admin-ui.filter-do' | tr }}</button>
             </form>
             </div>
         </div>
@@ -70,12 +131,17 @@ $('#deleteModal').on('show.bs.modal', function (event) {
 {% endif %}
 
 <div class="">
-    <a href="{{ route('adminUI.details', {entityName: req.params.entityName, id: 0}) }}" class="btn btn-primary btn-create btn-create-{{req.params.entityName}}">Create</a>
+    <a href="{{ route('adminUI.details', {entityName: req.params.entityName, id: 0}) }}" class="btn btn-primary btn-create btn-create-{{req.params.entityName}}">{{ 'admin-ui.create' | tr }}</a>
 </div>
 
 <table class="table table-{{req.params.entityName}}">
     <thead>
         <tr>
+            {% if metadata.classParameters.batchDelete %}
+                <th class="header-delete-checkbox">
+                    <input type="checkbox" onclick="toggleAllSelections()"/>
+                </th>
+            {% endif %}
             {% for key, field in fields %}
                 {% if field.onSummary %}
                     <th class="header-{{field.name}}">
@@ -89,6 +155,11 @@ $('#deleteModal').on('show.bs.modal', function (event) {
     <tbody>
         {% for d in gridData.data %}
             <tr>
+            {% if metadata.classParameters.batchDelete %}
+                <th class="cell-delete-checkbox">
+                    <input type="checkbox" onclick="toggleSelection('{{d.getId()}}')" id="delete-checkbox-{{d.getId()}}" />
+                </th>
+            {% endif %}
             {% for key, field in fields %}
                 {% if field.onSummary %}
                     {% if field.uiSettings and field.uiSettings.listTemplate %}
@@ -103,7 +174,7 @@ $('#deleteModal').on('show.bs.modal', function (event) {
                 {% if metadata.classParameters.listActionTemplate %}
                     {% include resolvePath(metadata.classParameters.listActionTemplate) %}
                 {% else %}
-                    <a class="btn btn-primary btn-details btn-details-{{req.params.entityName}}" href="{{route('adminUI.details', {entityName: req.params.entityName, id: d.id})}}">Details</a>
+                    <a class="btn btn-primary btn-details btn-details-{{req.params.entityName}}" href="{{route('adminUI.details', {entityName: req.params.entityName, id: d.id})}}">{{ 'admin-ui.details' | tr }}</a>
                     <button class="btn btn-danger btn-delete btn-delete-{{req.params.entityName}}" type="button" data-toggle="modal" data-target="#deleteModal" data-name="{{d.getLabel()}}" data-id="{{d.getId()}}"><i class="far fa-trash-alt"></i></button>
 
                 {% endif %}
@@ -113,6 +184,10 @@ $('#deleteModal').on('show.bs.modal', function (event) {
     </tbody>
 </table>
 
+<div>
+    <button style="display: none;" id="deleteAllBtn" class="btn btn-danger btn-delete" type="button" data-toggle="modal" data-target="#deleteAllModal">{{ 'admin-ui.delete-selected-elements' | tr }}</button>
+</div>
+
 {{ dgUtils.pagination(gridData) }}
 
 </div>
@@ -121,17 +196,37 @@ $('#deleteModal').on('show.bs.modal', function (event) {
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Delete element</h5>
+        <h5 class="modal-title">{{ 'admin-ui.delete-element' | tr }}</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-          Are you sure to delete <b><span class="element-name">ElementName</span></b>?
+          {{ 'admin-ui.delete-confirm-single' | tr }} <b><span class="element-name">ElementName</span></b>?
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Abort</button>
-        <a href="" class="delete-url btn btn-danger">Delete</a>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ 'admin-ui.abort' | tr }}</button>
+        <a href="" class="delete-url btn btn-danger">{{ 'admin-ui.delete' | tr }}</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="deleteAllModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ 'admin-ui.delete-elements' | tr }}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          {{ 'admin-ui.delete-confirm-multiple' | tr}}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ 'admin-ui.abort' | tr }}</button>
+        <a href="" class="delete-url btn btn-danger">{{ 'admin-ui.delete' | tr }}</a>
       </div>
     </div>
   </div>

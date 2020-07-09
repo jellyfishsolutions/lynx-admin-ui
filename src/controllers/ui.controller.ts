@@ -1,10 +1,11 @@
-import { Route, GET, POST, Name } from "lynx-framework/decorators";
+import { Route, GET, POST, Name, IsDisabledOn } from "lynx-framework/decorators";
 import Request from "lynx-framework/request";
 import { BaseUIController } from "../base-ui-controller";
 
 @Route("/adminUI/")
 export default class UIController extends BaseUIController {
 
+    @IsDisabledOn(() => false)
     @Name("adminUI.index")
     @GET("/")
     async getIndex(req: Request) {
@@ -15,6 +16,12 @@ export default class UIController extends BaseUIController {
     @GET("/:entityName/:id/delete")
     async performDelete(entityName: string, id: any, req: Request) {
         return this.performEntityDelete(entityName, id, req);
+    }
+
+    @Name("adminUI.delete_multiple")
+    @GET("/:entityName/delete_multiple")
+    async performMultipleDelete(entityName: string, req: Request) {
+        return this.performEntityDeleteMultiple(entityName, req);
     }
 
     @Name("adminUI.list")

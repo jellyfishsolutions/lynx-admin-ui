@@ -52,6 +52,7 @@ The `AdminUI` annotation supports also an optional object argument, with the fol
 * `popupEditorTemplate` and `popupEditorParentTemplate` allow to specifies a custom popup editor template for the current entity;
 * `listTemplate` and `listParentTemplate` allow to specifies a custom list template for the current entity;
 * `listActionTemplate` allows to specifies a custom template to be used as the 'action' column (the last one) in the listing template;
+* `batchDelete` if true (or if resolve to true), checkboxes will be displayed for each list element, enabling a batch delete of elements;
 * `relations` allows to specifies other TypeORM relations to load with the entity (useful for "lazy" relations).
 
 Each "template" parameter accepts both a `string`, containing the specified path, or a function that accept the current `req` request as argument and returns a `string`. Using the function version, it is possible to customize a template based on a specific request.

@@ -36,6 +36,7 @@ export interface ClassParameters {
     listTemplate?: string | ((req: Request) => Promise<string>),
     listParentTemplate?: string | ((req: Request) => Promise<string>),
     listActionTemplate?: string | ((req: Request) => Promise<string>),
+    batchDelete?: boolean | ((req: Request) => Promise<boolean>),
     relations?: string[]
 }
 
@@ -67,6 +68,7 @@ export interface FieldParameters {
     selfType?: string;
     inverseSide?: string;
     uiSettings?: UISettings;
+    getter?: (value: any) => Promise<string>;
 }
 
 export class EntityMetadata {

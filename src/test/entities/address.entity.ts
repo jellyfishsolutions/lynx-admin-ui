@@ -5,7 +5,9 @@ import Customer from "./customer.entity";
 import EditableEntity from "../../editable-entity";
 
 @Entity("addresses")
-@AdminUI("Address")
+@AdminUI("Address",{
+    batchDelete: true
+})
 export default class Address extends BaseEntity implements EditableEntity {
     @PrimaryGeneratedColumn()
     @AdminField({ name: "Id", type: AdminType.Id, readOnly: true, onSummary: true })

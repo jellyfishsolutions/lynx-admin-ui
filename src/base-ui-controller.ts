@@ -41,8 +41,35 @@ export class BaseUIController extends Controller {
             this.logger.error(e);
             this.addErrorMessage('Unable to delete '+(entityData as any).getLabel()+'. Please check its dependencies.', req);
         }
-        if (req.query.redirect) {
-            return this.redirect(req.query.redirect);
+        if (req.query.redirect as string) {
+            return this.redirect(req.query.redirect as string);
+        }
+        return this.redirect("adminUI.list", {entityName: entityName});
+    }
+
+    /**
+     * Delete the specified entities.
+     * @param entityName The name of the entity class
+     * @param req The current Lynx request, containing the query parameter ids, with an array of id
+     */
+    async performEntityDeleteMultiple(entityName: string, req: Request): Promise<Response> {
+
+        let ids = JSON.parse(req.query.ids as string) as string[];
+
+        for (let id of ids)  {
+            let entityData = await this.retrieveEntity(entityName, id);
+            if (!entityData) {
+                throw this.error(404, 'not found');
+            }
+            try {
+                await entityData.remove();
+            } catch (e) {
+                this.logger.error(e);
+                this.addErrorMessage('Unable to delete '+(entityData as any).getLabel()+'. Please check its dependencies.', req);
+            }
+        }
+        if (req.query.redirect as string) {
+            return this.redirect(req.query.redirect as string);
         }
         return this.redirect("adminUI.list", {entityName: entityName});
     }
