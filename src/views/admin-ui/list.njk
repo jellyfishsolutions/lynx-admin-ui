@@ -97,23 +97,32 @@ $('#deleteAllModal').on('show.bs.modal', function (event) {
         {% set filtersCount = filtersCount + 1 %}
     {% endif %}
 {% endfor %}
+{% if hasSmartSearchable %}
+    {% set filtersCount = filtersCount + 1 %}
+{% endif %}
 <div class="container">
 {{ utils.alert(flash) }}
 {% if filtersCount > 0 %}
-<div class="accordion" id="accordionFilter">
-    <div class="card">
-        <div class="card-header" id="filterBy">
-            <h4 class="mb-0">
-                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#filtering">
-                    {{ 'admin-ui.filter-title' | tr }}
-                </button>
-            </h4>
-        </div>
-
-        <div id="filtering" class="collapse" data-parent="#accordionFilter">
-            <div class="card-body">
+<div id="filterBy" class="mb-2">
+    <button class="btn btn-light btn-search mb-2" type="button" data-toggle="collapse" data-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
+        <i class="fas fa-search"></i> {{ 'admin-ui.filter-title' | tr }}
+    </button>
+    <div class="collapse" id="collapseFilter">
+        <div class="card card-body">
             <form method="GET" action="{{route('adminUI.list', { entityName: req.params.entityName })}}">
                 <div class="row">
+
+                    {% if hasSmartSearchable %}
+                        <div class="smart-search col-12">
+                            <div class="form-group">
+                                <input class="form-control" 
+                                    name="smartSearch" 
+                                    value="{{req.query.smartSearch}}" 
+                                />
+                            </div>
+                        </div>
+                    {% endif %}
+
                     {% for key, field in fields %}
                         {% if field.searchable %}
                             <div class="{{ field.uiSettings.filterClasses if field.uiSettings and field.uiSettings.filterClasses else 'col-12' }} ">
@@ -123,15 +132,17 @@ $('#deleteAllModal').on('show.bs.modal', function (event) {
                     {% endfor %}
                 </div>
                 <button class="btn btn-primary">{{ 'admin-ui.filter-do' | tr }}</button>
+                <a href="{{route('adminUI.list', { entityName: req.params.entityName })}}" class="btn btn-secondary">{{ 'admin-ui.filter-clean' | tr}}</a>
             </form>
-            </div>
         </div>
     </div>
 </div>
 {% endif %}
 
-<div class="">
-    <a href="{{ route('adminUI.details', {entityName: req.params.entityName, id: 0}) }}" class="btn btn-primary btn-create btn-create-{{req.params.entityName}}">{{ 'admin-ui.create' | tr }}</a>
+<div class="mb-2">
+    <a href="{{ route('adminUI.details', {entityName: req.params.entityName, id: 0}) }}" class="btn btn-primary btn-create btn-create-{{req.params.entityName}}">
+        <i class="fas fa-plus"></i> {{ 'admin-ui.create' | tr }}
+    </a>
 </div>
 
 <table class="table table-{{req.params.entityName}}">

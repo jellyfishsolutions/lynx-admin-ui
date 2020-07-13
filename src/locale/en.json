@@ -4,6 +4,7 @@
     "admin-ui.abort": "Abort",
     "admin-ui.filter-title": "Filter",
     "admin-ui.filter-do": "Filter",
+    "admin-ui.filter-clean": "Clean filters",
     "admin-ui.create": "Create",
     "admin-ui.details": "Details",
     "admin-ui.delete-selected-elements": "Delete selected elements",
@@ -11,5 +12,7 @@
     "admin-ui.delete-elements": "Delete elements",
     "admin-ui.delete-confirm-single": "Are you sure to delete ",
     "admin-ui.delete-confirm-multiple": "Are you sure to delete selected elements?",
-    "admin-ui.delete": "Delete"
+    "admin-ui.delete": "Delete",
+    "admin-ui.success-update": "Updated completed!",
+    "admin-ui.success-create": "Element created!"
 }

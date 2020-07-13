@@ -83,14 +83,19 @@ export class Controller extends BaseController {
             return null as any;
         }
         let metadata = this.retrieveMetadata(entityName);
-        let where = {} as any;
+        let filterWhere = null as any;
         if (metadata.classParameters.filterBy) {
-            where = await metadata.classParameters.filterBy(req);
+            filterWhere = await metadata.classParameters.filterBy(req);
         }
+        let where = {} as any;
+        let hasSmartSearchable = false;
         for (let key in metadata.fields) {
             let f = metadata.fields[key];
-            let v = datagrid.getQueryValue(key);
-            if (f.searchable && v) {
+            let v = datagrid.getQueryValue(key) || datagrid.getQueryValue('smartSearch');
+            if ((f.searchable || f.smartSearchable) && v) {
+                if (f.smartSearchable) {
+                    hasSmartSearchable = true;
+                }
                 if (f.type == AdminType.String) {
                     where[key] = Like("%" + (v as string).toLowerCase() + "%");
                 } else {
@@ -101,7 +106,21 @@ export class Controller extends BaseController {
 
         let repository = getConnection().getRepository(Class) as Repository<any>;
 
-        await datagrid.fetchData((params) =>
+        if (!hasSmartSearchable) {
+            if (filterWhere) {
+                where = { ...filterWhere, ...where};
+            }
+        } else {
+            let ors = [] as any[];
+            for (let key in where) {
+                let tmp = {...filterWhere} as any;
+                tmp[key] = where[key];
+                ors.push(tmp);
+            }
+            where = ors;
+        }
+
+        await datagrid.fetchData((params) => 
             repository.findAndCount({
                 where: where,
                 order: params.order,

@@ -65,6 +65,7 @@ export interface FieldParameters {
     step?: number;
     onSummary?: boolean;
     searchable?: boolean;
+    smartSearchable?: boolean;
     selfType?: string;
     inverseSide?: string;
     uiSettings?: UISettings;

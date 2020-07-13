@@ -87,13 +87,23 @@ export class BaseUIController extends Controller {
         let datagrid = new Datagrid('', req);
         await this.retrieveList(req, entityName, datagrid);
         metadata = await this.generateContextMetadata(metadata, req);
+        let fields = await this.generateContextFields(metadata, req, {});
+        let hasSmartSearchable = false;
+        for (let key in fields) {
+            let field = fields[key];
+            if (field.smartSearchable) {
+                hasSmartSearchable = true;
+                break;
+            }
+        }
         let ctx = {
             metadata: metadata,
             configuration: AdminUIModule.configuration,
             parentTemplate: metadata.classParameters.listParentTemplate,
             gridData: datagrid,
             data: req.query,
-            fields: await this.generateContextFields(metadata, req, {})
+            fields: fields,
+            hasSmartSearchable: hasSmartSearchable
         } as any;
         return this.render(metadata.classParameters.listTemplate as string, req, ctx);
     }
@@ -213,6 +223,11 @@ export class BaseUIController extends Controller {
                 fields: await this.generateContextFields(metadata, req, entity)
             } as any;
             return this.render(isPopup ? metadata.classParameters.popupEditorTemplate as string : metadata.classParameters.editorTemplate as string, req, ctx);
+        }
+        if (id == 0) {
+            this.addSuccessMessage("admin-ui.success-create", req);
+        } else {
+            this.addSuccessMessage("admin-ui.success-update", req);
         }
         return this.redirect("adminUI.details", {entityName: entityName, id: (updated as any).id});
     }
