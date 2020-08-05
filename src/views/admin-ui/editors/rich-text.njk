@@ -1,7 +1,7 @@
 
 
 <div class="form-group">
-    <label for="{{key}}">{{ field.name }} </label>
+    <label for="{{key}}">{{ field.name | tr }} </label>
     <div id="rich-text-{{key}}">{{data[key] | safe}}</div>
     <input type="hidden" name="{{key}}" value="{{data[key]}}" />
 </div>

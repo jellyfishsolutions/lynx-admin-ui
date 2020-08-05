@@ -1,10 +1,10 @@
 <div class="form-group">
-    <label for="{{key}}">{{ field.name }} </label>
+    <label for="{{key}}">{{ field.name | tr }} </label>
     <select class="form-control" name={{key}} {{ "disabled" if field.readOnly }}>
          <option disabled selected>Select...</option>
          {% set currentSelectionValue = '' %}
         {% for element in field.values %}
-            <option value="{{element.key}}" {{"selected" if data[key] == element.key }} >{{element.value}}</option>
+            <option value="{{element.key}}" {{"selected" if data[key] == element.key }} >{{element.value | tr}}</option>
             {% if data[key] == element.key %}
                 {% set currentSelectionValue = element.key %}
             {% endif %}

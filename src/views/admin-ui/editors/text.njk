@@ -1,4 +1,4 @@
 <div class="form-group">
-    <label for="{{key}}">{{ field.name }} </label>
+    <label for="{{key}}">{{ field.name | tr }} </label>
     <textarea class="form-control" name="{{key}}" {{ "readonly" if field.readOnly }} >{{data[key]}}</textarea>
 </div>

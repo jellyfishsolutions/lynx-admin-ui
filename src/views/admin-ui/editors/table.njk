@@ -1,7 +1,7 @@
 {% import resolvePath('/datagrid/utility') as dgUtils %}
 
 {% if nested %}
-<label> {{ field.name }} </label>
+<label> {{ field.name | tr }} </label>
 {% if req.params.id != 0 %}
 <button type="button" class="btn btn-primary" onclick='openModal{{key}}(0)'>
   Aggiungi
