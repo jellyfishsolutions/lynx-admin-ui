@@ -33,6 +33,8 @@
             {% endfor %}
                 <td>
                     <button type="button" class="btn btn-primary" onclick='openModal{{key}}({{d.id}})'>{{ 'admin-ui.details' | tr }}</button>
+                    <a class="btn btn-danger btn-delete" href="{{ route('adminUI.nested', {entityName: req.params.entityName, id: req.params.id, nestedKey: key, remove: d.getId() }) }}"><i class="far fa-trash-alt"></i></a>
+
                 </td>
             </tr>
         {% endfor %}

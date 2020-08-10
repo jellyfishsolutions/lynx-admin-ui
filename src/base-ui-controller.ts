@@ -161,6 +161,20 @@ export class BaseUIController extends Controller {
         let nestedField = metadata.fields[nestedKey];
         metadata.fields = {};
         metadata.fields[nestedKey] = nestedField;
+
+        if (req.query.remove) {
+            let entityData = await this.retrieveEntity(nestedField.selfType as string, req.query.remove);
+            if (!entityData) {
+                throw this.error(404, 'not found');
+            }
+            try {
+                await entityData.remove();
+            } catch (e) {
+                this.logger.error(e);
+                this.addErrorMessage('Unable to delete '+(entityData as any).getLabel()+'. Please check its dependencies.', req);
+            }
+        }
+
         let data = await this.cleanData(req, entityData, metadata);
         let ctx = {
             data: data,
