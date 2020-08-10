@@ -2,9 +2,9 @@
 
 {% if nested %}
 <label> {{ field.name | tr }} </label>
-{% if req.params.id != 0 %}
+{% if req.params.id != 0 and field.readOnly != true %}
 <button type="button" class="btn btn-primary" onclick='openModal{{key}}(0)'>
-  Aggiungi
+  {{ "admin-ui.add" | tr }}
 </button>
 {% endif %}
 <table class="table">
@@ -32,8 +32,7 @@
                 {% endif %}
             {% endfor %}
                 <td>
-                    <!--<a href="{{route('adminUI.details', {entityName: field.selfType, id: d.id})}}">Details</a>-->
-                    <button type="button" class="btn btn-primary" onclick='openModal{{key}}({{d.id}})'>Details</button>
+                    <button type="button" class="btn btn-primary" onclick='openModal{{key}}({{d.id}})'>{{ 'admin-ui.details' | tr }}</button>
                 </td>
             </tr>
         {% endfor %}
@@ -66,7 +65,7 @@ function openModal{{key}}(id) {
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Modifica {{field.name}}</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Modifica {{field.name | tr }}</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -74,6 +73,7 @@ function openModal{{key}}(id) {
       <div class="modal-body nested-frame">
         <iframe class="nested-frame nested-frame-modal" id="modalEditFrame{{key}}" src=""></iframe>
       </div>
+    </div>
   </div>
 </div>
 {% endif %}

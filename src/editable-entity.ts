@@ -15,5 +15,8 @@ export function map(values: EditableEntity[]): {key: any, value: string}[] {
 }
 
 export async function notEditableFromPopup(req: Request, _: any): Promise<boolean> {
+    if (req.method == "POST") {
+        return false;
+    }
     return req.query.popup != null;
 }

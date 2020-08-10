@@ -34,7 +34,7 @@ function closePopup() {
 {% block body %}
 
 
-<form method="POST" action="{{route('adminUI.save', {entityName: req.params.entityName, id: req.params.id} )}}" onsubmit='closePopup()'>
+<form method="POST" action="{{route('adminUI.save', {entityName: req.params.entityName, id: req.params.id, popup: req.query.popup} )}}" onsubmit='closePopup()'>
 <div class="container-fluid">
 <div class="row">
 {% for key, field in fields %}

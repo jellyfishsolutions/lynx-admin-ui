@@ -14,5 +14,6 @@
     "admin-ui.delete-confirm-multiple": "Are you sure to delete selected elements?",
     "admin-ui.delete": "Delete",
     "admin-ui.success-update": "Updated completed!",
-    "admin-ui.success-create": "Element created!"
+    "admin-ui.success-create": "Element created!",
+    "admin-ui.add": "Add"
 }
