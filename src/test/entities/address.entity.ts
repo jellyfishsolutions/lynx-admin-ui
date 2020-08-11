@@ -14,7 +14,7 @@ export default class Address extends BaseEntity implements EditableEntity {
     id: number;
 
     @Column()   
-    @AdminField({ name: "Street", type: AdminType.String, onSummary: true, smartSearchable: true })
+    @AdminField({ name: "Street", type: AdminType.String, onSummary: true, smartSearchable: true, uiSettings: { additionalEditorInfo: {prova: 'asdasd'} } })
     street: string;
 
     @Column()

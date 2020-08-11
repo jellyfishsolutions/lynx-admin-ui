@@ -22,6 +22,9 @@ export interface UISettings {
     editorClasses?: string;
     filterClasses?: string;
     listTemplate?: string;
+    additionalEditorInfo?: any;
+    additionalFilterInfo?: any;
+    additionalListInfo?: any;
     //TODO: editorOrder?: number;
     //TODO: editorFilter?: number;
     //TODO: editorList?: number;

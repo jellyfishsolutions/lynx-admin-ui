@@ -243,6 +243,9 @@ This parameter defines the following optional properties:
 * `editorClasses`: indicates custom CSS classes to the widget when displayed in the editor section (default to `col-12`).
 * `filterClasses`: indicates custom CSS classes to the widget when displayed in the filtering section (default to `col-12`).
 * `listTemplate`: indicates a custom template to be used in the list view. The template can access the `value` variable, containing the current value of the field.
+* `additionalEditorInfo`: additional info that can be used by the editor template; `any` values accepted.
+* `additionalFilterInfo`: additional info that can be used by the editor template; `any` values accepted.
+* `additionalListInfo`: additional info that can be used by the editor template; `any` values accepted.
 
 Moreover, in the editor section, each field is wrapped inside a `div` with an unique id. The id is defined as `field-{{entity-name}}-{{name-of-the-field}}`. Using the id, it is possible to customize though CSS rules the aspect of a single field.
 
