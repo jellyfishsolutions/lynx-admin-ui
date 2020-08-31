@@ -16,10 +16,8 @@ export default class UIController extends BaseUIController {
     @Name("adminUI.previewMedia")
     @GET("/media/preview/:id")
     async mediaPreview(id: any, req: Request) {
-        console.log('cerco la media con id ', id);
         let media = await MediaEntity.findBySlugOrId(id);
         if (!media) {
-            console.log('non la trovo');
             throw this.error(404, 'Media not found');
         }
         return this.download(media, { width: 300 });
