@@ -1,0 +1,11 @@
+<div class="form-group">
+    <label for="{{key}}">{{ field.name | tr }} </label>
+    {% if data[key] %}
+        <br/><img src="{{route('adminUI.previewMedia', { id: data[key] }) }}" aclass="img-thumbnail">
+    {% endif %}
+    <input class="form-control" 
+        type="file"
+        name="{{key}}" 
+        {{ "readonly" if field.readOnly }} 
+    />
+</div>

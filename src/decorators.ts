@@ -14,7 +14,8 @@ export enum AdminType {
     Table = 10,
     Expanded = 11,
     Time = 12,
-    Color = 13
+    Color = 13,
+    Media = 14
     //DateTime
 }
 

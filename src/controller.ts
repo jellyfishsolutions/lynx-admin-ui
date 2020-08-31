@@ -1,6 +1,7 @@
 import { BaseController } from "lynx-framework/base.controller";
 import { EntityMetadata, AdminType, FieldParameters } from "./decorators";
 import BaseEntity from "lynx-framework/entities/base.entity";
+import MediaEntity from "lynx-framework/entities/media.entity";
 import Request from "lynx-framework/request";
 import EditableEntity from "./editable-entity";
 import { generateSchema } from "./generator";
@@ -261,6 +262,14 @@ export class Controller extends BaseController {
                 let currentMeta = this.retrieveMetadata(m.selfType as string);
                 await this.setData(req, e[key], data, currentMeta, prefix+key+'-');
                 await e[key].save();
+            } else if (m.type == AdminType.Media) {
+                for (let f of req.files) {
+                    if (f.fieldname == prefix + key) {
+                        let file = await MediaEntity.persist(f, req.user);
+                        (entity as any)[key] = file;
+                        break;
+                    }
+                }
             } else {
                 (entity as any)[key] = data[prefix+key];
             }

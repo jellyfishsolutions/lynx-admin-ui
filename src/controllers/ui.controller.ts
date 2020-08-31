@@ -1,5 +1,6 @@
-import { Route, GET, POST, Name, IsDisabledOn } from "lynx-framework/decorators";
+import { Route, GET, POST, Name, IsDisabledOn, MultipartForm } from "lynx-framework/decorators";
 import Request from "lynx-framework/request";
+import MediaEntity from "lynx-framework/entities/media.entity";
 import { BaseUIController } from "../base-ui-controller";
 
 @Route("/adminUI/")
@@ -10,6 +11,18 @@ export default class UIController extends BaseUIController {
     @GET("/")
     async getIndex(req: Request) {
         return this.generateEntitiesIndex(req);
+    }
+
+    @Name("adminUI.previewMedia")
+    @GET("/media/preview/:id")
+    async mediaPreview(id: any, req: Request) {
+        console.log('cerco la media con id ', id);
+        let media = await MediaEntity.findBySlugOrId(id);
+        if (!media) {
+            console.log('non la trovo');
+            throw this.error(404, 'Media not found');
+        }
+        return this.download(media, { width: 300 });
     }
 
     @Name("adminUI.delete")
@@ -43,6 +56,7 @@ export default class UIController extends BaseUIController {
     }
 
     @Name("adminUI.save")
+    @MultipartForm()
     @POST("/:entityName/:id")
     async edit(entityName: string, id: any, req: Request) {
         return this.performEntityEdit(entityName, id, req);

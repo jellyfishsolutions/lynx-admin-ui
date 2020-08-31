@@ -30,6 +30,7 @@ export default class AdminUIModule extends SimpleModule {
         AdminUIModule.configuration[AdminType.Expanded] = '/admin-ui/editors/expanded';
         AdminUIModule.configuration[AdminType.Time] = '/admin-ui/editors/time';
         AdminUIModule.configuration[AdminType.Color] = '/admin-ui/editors/color';
+        AdminUIModule.configuration[AdminType.Media] = '/admin-ui/editors/media';
     }
 
     /**

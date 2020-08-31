@@ -181,6 +181,17 @@ Indicates that the field is a time. It uses the standard input with type time. I
 #### `AdminType.Color`
 Indicates that the field is a color. It uses the standard input with type color.
 
+#### `AdminType.Media`
+Indicate that the field is a media. Currently, only images are supported
+The image is uploaded and saved as a `MediaEntity` of the Lynx framework, inside the root directory.
+Example:
+```
+    @ManyToOne(type => MediaEntity, { eager: true })
+    @JoinColumn()
+    @AdminField({ name: 'File', type: AdminType.Media, onSummary: false})
+    file: MediaEntity;
+```
+
 
 ### `values` parameter
 It indicates a list of key-value items that can be used to evaluate the field. 

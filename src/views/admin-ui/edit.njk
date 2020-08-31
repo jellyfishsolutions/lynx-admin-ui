@@ -23,7 +23,7 @@
         {{ metadata.name }}
     </div>
 {{ utils.alert(flash) }}
-<form method="POST" action="{{route('adminUI.save', {entityName: req.params.entityName, id: req.params.id} )}}">
+<form method="POST" action="{{route('adminUI.save', {entityName: req.params.entityName, id: req.params.id} )}}" enctype="multipart/form-data">
 <div class="row">
 {% for key, field in fields %}
     <div id="field-{{req.params.entityName}}-{{key}}" class="{{ field.uiSettings.editorClasses if field.uiSettings and field.uiSettings.editorClasses else 'col-12' }} ">
