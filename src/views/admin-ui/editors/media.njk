@@ -6,6 +6,9 @@
     <input class="form-control" 
         type="file"
         name="{{key}}" 
+        {% if field.accept %}
+        accept="{{field.accept}}"
+        {% endif %}
         {{ "readonly" if field.readOnly }} 
     />
 </div>

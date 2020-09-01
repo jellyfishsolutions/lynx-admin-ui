@@ -18,7 +18,7 @@ export default class AttatchmentEntity extends BaseEntity implements EditableEnt
     
     @ManyToOne(type => MediaEntity, { eager: true })
     @JoinColumn()
-    @AdminField({ name: 'File', type: AdminType.Media, onSummary: false})
+    @AdminField({ name: 'File', type: AdminType.Media, onSummary: false, accept: 'image/*' })
     file: MediaEntity;
 
     

@@ -64,6 +64,7 @@ export interface FieldParameters {
           ) => Promise<{ key: any; value: string }[]>);
     query?: ((req: Request, currentEntity: any, params: QueryParams) => Promise<[BaseEntity[], number]>);
     pattern?: string;
+    accept?: string;
     min?: number|string;
     max?: number|string;
     step?: number;
