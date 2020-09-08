@@ -15,7 +15,8 @@ export enum AdminType {
     Expanded = 11,
     Time = 12,
     Color = 13,
-    Media = 14
+    Media = 14,
+    AjaxSelection = 15,
     //DateTime
 }
 
@@ -63,6 +64,7 @@ export interface FieldParameters {
               currentEntity: any
           ) => Promise<{ key: any; value: string }[]>);
     query?: ((req: Request, currentEntity: any, params: QueryParams) => Promise<[BaseEntity[], number]>);
+    searchRequest?: ((req: Request, currentEntity: any, search: string, page: number) => Promise<[{key: any, value: string}[], boolean]>);
     pattern?: string;
     accept?: string;
     min?: number|string;

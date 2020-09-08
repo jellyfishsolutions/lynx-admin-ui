@@ -48,6 +48,17 @@ async function getCategories() {
     return map(await Category.find());
 }
 
+async function filteredCategories(req: Request, currentEntity: any, search: string, page: number): Promise<[{key: any, value: string}[], boolean]> {
+    let skip = 10 * (page - 1);
+    let take = 10;
+    let qb = Category.createQueryBuilder("q");
+    if (search && search.length > 0) {
+        qb = qb.where("q.name LIKE :l", { l: '%'+search+'%' });
+    }
+    let searched = map(await qb.skip(skip).take(take).getMany());
+    return [searched, searched.length > 0];
+}
+
 async function isReadOnly(_: Request, entity: Complex): Promise<boolean> {
     if (entity.gender == Gender.male) {
         return true;
@@ -179,6 +190,16 @@ export default class Complex extends BaseEntity implements EditableEntity {
         searchable: true
     })
     category: Category;
+
+    @ManyToOne(type => Category, { eager: true })
+    @AdminField({
+        name: "Categoria con filtro ajax",
+        type: AdminType.AjaxSelection,
+        searchRequest: filteredCategories,
+        onSummary: true,
+        searchable: true
+    })
+    categoryAjax: Category;
 
     @ManyToMany(type => Category, { eager: true })
     @JoinTable()

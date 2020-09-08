@@ -4,6 +4,7 @@ import AdminUIModule from ".";
 import Datagrid from "lynx-datagrid/datagrid";
 import BaseEntity from "lynx-framework/entities/base.entity";
 import Response from "lynx-framework/response";
+import EditableEntity from "./editable-entity";
 
 /**
  * Basic controller that generates all the UI that contains the logic to perform the
@@ -22,6 +23,44 @@ export class BaseUIController extends Controller {
             entities: this.entitiesList()
         }
         return this.render(AdminUIModule.indexTemplatePath, req, ctx);
+    }
+
+
+    /**
+     * Perform ajax request for selection values
+     * @param entityName the name of the entity
+     * @param id the id of the editing entity
+     * @param field the name of the field that is edited
+     * @param req the current Lynx request
+     */
+    async performAjaxRequest(entityName: string, id: any, field: string, req: Request) {
+        let entityData = await this.retrieveEntity(entityName, id);
+        if (!entityData) {
+            throw this.error(404, 'not found');
+        }
+        let metadata = this.retrieveMetadata(entityName);
+        metadata = await this.generateContextMetadata(metadata, req);
+        let _field = metadata.fields[field];
+        if (!_field) {
+            throw this.error(500, 'field not found');
+        }
+        if (!_field.searchRequest) {
+            throw this.error(500, 'You need to implement the \'searchRequest\' parameter for the field \''+field+'\'');
+        }
+        if (req.query.selection) {
+            let tmp = (entityData as any)[field] as EditableEntity;
+            return {
+                data: [
+                    { id: tmp.getId(), text: tmp.getLabel() }
+                ],
+                pagination: false
+            };
+        }
+        let response = await _field.searchRequest(req, entityData, req.query.term as string, Number(req.query.page));
+        return {
+            data: response[0].map(b => {return {id: b.key, text: b.value}}),
+            pagination: response[1]
+        };
     }
 
     /**

@@ -135,6 +135,35 @@ const genderValues = [
 ...
 ```
 
+#### `AdminType.AjaxSelection`
+Indicates that the field can only have a set of values, dinamically loaded using an ajax request.
+It uses the select widget updated with the `Select2` library in order to provide a searchability of the options.
+This type is intended to be used when the set of values is huge, or/and if options searchability is needed.
+It is also necesary to specify the [`searchRequest` parameter](#searchRequest-parameter).
+Example:
+```
+async function filteredCategories(req: Request, currentEntity: any, search: string, page: number): Promise<[{key: any, value: string}[], boolean]> {
+    let skip = 10 * (page - 1);
+    let take = 10;
+    let qb = Category.createQueryBuilder("q");
+    if (search && search.length > 0) {
+        qb = qb.where("q.name LIKE :l", { l: '%'+search+'%' });
+    }
+    let searched = map(await qb.skip(skip).take(take).getMany());
+    return [searched, searched.length > 0];
+}
+...
+    @ManyToOne(type => Category, { eager: true })
+    @AdminField({
+        name: "Categoria con filtro ajax",
+        type: AdminType.AjaxSelection,
+        searchRequest: filteredCategories,
+        onSummary: true,
+        searchable: true
+    })
+    categoryAjax: Category;
+```
+
 #### `AdminType.RichText`
 Indicates that the field is a long Html text. It uses a RichText editor.
 By default, the Quill editor is used.
@@ -244,6 +273,17 @@ async function fetchComments(req: Request, entity: Post, params: QueryParams): P
 In addition to the usual `Datagrid` parameter (third argument), the `query` function has also the current `req` Request (as first argument), and also the current `entity` (as second argument). As depicted in the example, it is possible to use the the `entity` to correctly filter the useful data.
 
 If the `selfType` of the current object is available as an `AdminUI` entity, after the execution of the `query` function, the returned data will be automatically cleaned as defined by their annotation (only annotated visible fields will be available in the grid or table view).
+
+### `searchRequest` parameter
+The `searchRequest` parameter contains information on how to dinamically obtain options for a particular field.
+
+The `searchRequest` parameter shall be an asynchronus function with the following parameters:
+* `req`, the current Lynx request;
+* `currentEntity` is the current `entity`; 
+* `search` contains what the user typed for searching (can be empty);
+* `page` the current request page (if pagination is supported).
+
+The result of this function shall be a `Promise<[{key: any, value: string}[], boolean]>`. The first element of the tupla is the usual key-value array, containing the list of options (the `map` method can be used to automatically transform an `EditableEntity` to this type). The second element contains info about pagintation. If its value is `true`, it means that other data can be requested (and other request, with greater `page` value, will be delivered). If `false`, no further date is available.
 
 
 ### `uiSettings` parameter

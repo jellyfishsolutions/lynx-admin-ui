@@ -1,4 +1,4 @@
-import { Route, GET, POST, Name, IsDisabledOn, MultipartForm } from "lynx-framework/decorators";
+import { Route, GET, POST, Name, IsDisabledOn, MultipartForm, API } from "lynx-framework/decorators";
 import Request from "lynx-framework/request";
 import MediaEntity from "lynx-framework/entities/media.entity";
 import { BaseUIController } from "../base-ui-controller";
@@ -21,6 +21,13 @@ export default class UIController extends BaseUIController {
             throw this.error(404, 'Media not found');
         }
         return this.download(media, { width: 300 });
+    }
+
+    @Name("adminUI.ajax-selection")
+    @API()
+    @GET("/ajaxRequest/:entityName/:id/:field")
+    async ajaxRequest(entityName: string, id: any, field: string, req: Request) {
+        return this.performAjaxRequest(entityName, id, field, req);
     }
 
     @Name("adminUI.delete")

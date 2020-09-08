@@ -1,0 +1,64 @@
+<div class="form-group">
+    <label for="{{key}}">{{ field.name | tr }} </label>
+    <select id="select2-{{key}}" class="form-control" name={{key}} {{ "disabled" if field.readOnly }}>
+        <option disabled selected>Select...</option>
+        {% if data[key] %}
+            <option disabled>Select...</option>
+        {% else %}
+            <option disabled selected>Select...</option>
+        {% endif %}
+    </select>
+    {% if field.readOnly %}
+    <input type="hidden" name="{{key}}" value="{{currentSelectionValue}}" />
+    {% endif %}
+</div>
+
+
+<script>
+if (!window.select2) {
+    window.select2 = [];
+}
+window.select2.push(function() {
+    var url = '{{route("adminUI.ajax-selection", { entityName: req.params.entityName, id: req.params.id, field: key })}}';
+    $('#select2-{{key}}').select2({
+        ajax: {
+            transport: function (params, success, failure) {
+                var xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function() {
+                    if (this.readyState == 4 && this.status == 200) {
+                        success(JSON.parse(this.response));
+                    } else if (this.readyState == 4 && this.status != 200) {
+                        failure();
+                    }
+                };
+                xhttp.open("GET", params.url+'?term='+(params.data.term || '')+'&page='+(params.data.page || 1), true);
+                xhttp.send();
+            },
+            url: url,
+            dataType: 'json',
+            processResults: function (data) {            
+                let out = {
+                    results: data.data.data,
+                    pagination: {
+                        more: data.data.pagination
+                    }
+                };
+                return out;
+            }
+        }
+    });
+    {% if data[key] %}
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            let obj = JSON.parse(this.response);
+            let selection = obj.data.data[0];
+            var option = new Option(selection.text, selection.id, true, true);
+            $('#select2-{{key}}').append(option).trigger('change');
+        }
+    };
+    xhttp.open("GET", url+'?selection=true', true);
+    xhttp.send();
+    {% endif %}
+});
+</script>
