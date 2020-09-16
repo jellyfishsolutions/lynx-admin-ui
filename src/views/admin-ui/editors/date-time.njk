@@ -2,8 +2,8 @@
     <label for="{{key}}">{{ field.name | tr }} </label>
     <input class="form-control" 
         name="{{key}}" 
-        value="{{data[key] | date('YYYY-MM-DD')}}" 
-        type="date"
+        value="{{data[key] | date('YYYY-MM-DDTHH:mm') }}" 
+        type="datetime-local"
         {{ "readonly" if field.readOnly }} 
     />
 </div>

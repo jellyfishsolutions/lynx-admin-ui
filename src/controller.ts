@@ -165,7 +165,7 @@ export class Controller extends BaseController {
                         obj[key] = await obj[key];
                     } 
                     if (obj[key] instanceof Date) {
-                        obj[key] = moment(data[key]).format("YYYY-MM-DD");
+                        obj[key] = moment(data[key]);
                     } else if (obj[key] instanceof Array) {
                         if (forList) {
                             obj[key] = obj[key].map((e: EditableEntity) => e.getLabel());

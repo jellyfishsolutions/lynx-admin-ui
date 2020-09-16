@@ -158,6 +158,13 @@ export default class Complex extends BaseEntity implements EditableEntity {
     })
     dateOfBirth: Date;
 
+    @Column({ nullable: true})
+    @AdminField({
+        name: "Date and Time",
+        type: AdminType.DateTime
+    })
+    date: Date;
+
     @Column()
     @AdminField({ name: "Bio", type: AdminType.RichText, readOnly: isReadOnly })
     biography: string;

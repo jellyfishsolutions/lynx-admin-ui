@@ -111,6 +111,12 @@ It is possible to specify the `min`, `max` and `step` values.
 #### `AdminType.Date`
 Indicates that the field is a date. It uses the standard input with type date.
 
+#### `AdminType.Time`
+Indicates that the field is a time. It uses the standard input with type time. It is possible to indicates the minimum and the maximum times using the `min` and `max` parameters (they shall be a string using the 'HH:mm' format).
+
+#### `AdminType.DateTime`
+Indicates that the field is a date. It uses the standard input with type `datetime-local`. 
+
 #### `AdminType.Text`
 Indicates that the field is a long text. It uses the textarea.
 
@@ -203,9 +209,6 @@ It works only if the [`query` parameter](#query-parameter) is set.
 #### `AdminType.Expanded`
 This type can be used for `OneToOne` relations, when the target entity of the relation is available to the AdminUI.
 In this case, the fields of the target entity will be available inside the interface of the main entity.
-
-#### `AdminType.Time`
-Indicates that the field is a time. It uses the standard input with type time. It is possible to indicates the minimum and the maximum times using the `min` and `max` parameters (they shall be a string using the 'HH:mm' format).
 
 #### `AdminType.Color`
 Indicates that the field is a color. It uses the standard input with type color.

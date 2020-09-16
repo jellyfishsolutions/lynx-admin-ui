@@ -17,7 +17,7 @@ export enum AdminType {
     Color = 13,
     Media = 14,
     AjaxSelection = 15,
-    //DateTime
+    DateTime = 16
 }
 
 export interface UISettings {
