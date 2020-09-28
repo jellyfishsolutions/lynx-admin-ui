@@ -53,7 +53,8 @@ The `AdminUI` annotation supports also an optional object argument, with the fol
 * `listTemplate` and `listParentTemplate` allow to specifies a custom list template for the current entity;
 * `listActionTemplate` allows to specifies a custom template to be used as the 'action' column (the last one) in the listing template;
 * `batchDelete` if true (or if resolve to true), checkboxes will be displayed for each list element, enabling a batch delete of elements;
-* `relations` allows to specifies other TypeORM relations to load with the entity (useful for "lazy" relations).
+* `relations` allows to specifies other TypeORM relations to load with the entity (useful for "lazy" relations);
+* `disableCreation` if true (or if resolve to true), the button to create a new entity is not displayed. 
 
 Each "template" parameter accepts both a `string`, containing the specified path, or a function that accept the current `req` request as argument and returns a `string`. Using the function version, it is possible to customize a template based on a specific request.
 
@@ -93,6 +94,7 @@ There is a set of optional parameters, available on all types:
 * `searchable`: indicates if the field can be searchable in the list view; default: `false`.
 * `smartSearchable`: indicates if the field can be searchable, added to a general "string-like" search; default: `false`.
 * `readOnly`: indicates if the field can be only readable in the editor view; default: `false`. This parameter can be a `boolean` value, or a function like `(req: Request, currentEntity: any) => Promise<boolean>` (same as the `values` but with different return type).
+* `hide`: indicates if the field should be displayed or not in the editor view; default: `false`. This parameter can be a `boolean` value, or a function like `(req: Request, currentEntity: any) => Promise<boolean>` (same as the `values` but with different return type).
 * `uiSettings`: contains information on the visual appearance of the field. See the `uiSettings` paragraph for more information.
 
 ### `AdminField` types
@@ -226,6 +228,24 @@ Example:
 
 It is possible to specify the `accept` parameter, in order to filter the type of file to be uploaded. This parameter maps the input `accept` attribute.
 
+#### `AdminType.ActionButton`
+This special type shall be used with a class method, and not with the classic class attribute.
+In the editor page, instead of an input field, a button is displayed. The `name` parameter is used as text of the button.
+Clicking the button automatically submit the editor form. During the saving process, the corresponding method will be executed.
+
+By default, a `btn` class is added to the button widget, but it can be overrided using the property `innerEditorClasses` of `uiSettings`. 
+
+> Asynchronous functions are supported
+
+Example:
+```
+    @AdminField({ name: 'I am a BUTTON', type: AdminType.ActionButton, uiSettings: { innerEditorClasses: 'btn btn-warning' }, hide: async (_, k) => k.display  })
+    async actionButton() {
+        console.log("I'm a function!!");
+        this.display = true;
+    }
+```
+
 ### `values` parameter
 It indicates a list of key-value items that can be used to evaluate the field. 
 It accepts both a static array, or a function.
@@ -296,6 +316,7 @@ By default, both in the editor and in the filtering section, widgets are display
 This parameter defines the following optional properties:
 
 * `editorClasses`: indicates custom CSS classes to the widget when displayed in the editor section (default to `col-12`).
+* `innerEditorClasses` indicates custom CSS classes, internally used by the widget (for example, for the `input` tag). This can be used diffenently by different types.
 * `filterClasses`: indicates custom CSS classes to the widget when displayed in the filtering section (default to `col-12`).
 * `listTemplate`: indicates a custom template to be used in the list view. The template can access the `value` variable, containing the current value of the field.
 * `additionalEditorInfo`: additional info that can be used by the editor template; `any` values accepted.

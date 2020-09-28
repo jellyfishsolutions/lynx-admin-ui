@@ -17,11 +17,13 @@ export enum AdminType {
     Color = 13,
     Media = 14,
     AjaxSelection = 15,
-    DateTime = 16
+    DateTime = 16,
+    ActionButton = 17
 }
 
 export interface UISettings {
     editorClasses?: string;
+    innerEditorClasses?: string;
     filterClasses?: string;
     listTemplate?: string;
     additionalEditorInfo?: any;
@@ -42,7 +44,8 @@ export interface ClassParameters {
     listParentTemplate?: string | ((req: Request) => Promise<string>),
     listActionTemplate?: string | ((req: Request) => Promise<string>),
     batchDelete?: boolean | ((req: Request) => Promise<boolean>),
-    relations?: string[]
+    relations?: string[],
+    disableCreation?: boolean | ((req: Request) => Promise<boolean>)
 }
 
 export interface QueryParams {
@@ -56,7 +59,10 @@ export interface FieldParameters {
     type: AdminType;
     readOnly?:
         | boolean
-        | ((req: Request, currentEntity: any) => Promise<boolean>); //potrebbe essere una funzione che dipende dall'attuale req e dai valori stessi della entity.
+        | ((req: Request, currentEntity: any) => Promise<boolean>);
+    hide?:
+        | boolean
+        | ((req: Request, currentEntity: any) => Promise<boolean>);
     values?:
         | { key: any; value: string }[]
         | ((

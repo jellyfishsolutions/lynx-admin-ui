@@ -35,12 +35,15 @@ function closePopup() {
 
 
 <form method="POST" action="{{route('adminUI.save', {entityName: req.params.entityName, id: req.params.id, popup: req.query.popup} )}}" enctype="multipart/form-data" onsubmit='closePopup()'>
+<input type="hidden" name="__admin_ui_action" id="__admin_ui_action" />
 <div class="container-fluid">
 <div class="row">
 {% for key, field in fields %}
-    <div id="field-{{req.params.entityName}}-{{key}}" class="{{ field.uiSettings.editorClasses if field.uiSettings and field.uiSettings.editorClasses else 'col-12' }} ">
-        {% include resolvePath(configuration[field.type]) %}
-    </div>
+    {% if not field.hide %}
+        <div id="field-{{req.params.entityName}}-{{key}}" class="{{ field.uiSettings.editorClasses if field.uiSettings and field.uiSettings.editorClasses else 'col-12' }} ">
+            {% include resolvePath(configuration[field.type]) %}
+        </div>
+    {% endif %}
 {% endfor %}
 </div>
 </div>

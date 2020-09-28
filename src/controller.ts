@@ -223,6 +223,9 @@ export class Controller extends BaseController {
                 continue;
             }
             let originalMeta = this.retrieveMetadata(entity.constructor.name);
+            if (m.type == AdminType.ActionButton && req.body['__admin_ui_action'] == key) {
+                await (entity as any)[key]();
+            }
             if (originalMeta.fields[key].values instanceof Function) {
                 let values = m.values as any[];
                 if (m.type == AdminType.Selection) {
@@ -299,6 +302,7 @@ export class Controller extends BaseController {
         requests.push(this.evaluateTemplate(meta, 'popupEditorParentTemplate', AdminUIModule.popupEditorParentTemplatePath, req));
         requests.push(this.evaluateTemplate(meta, 'popupEditorTemplate', AdminUIModule.popupEditorTemplatePath, req));
         requests.push(this.evaluateTemplate(meta, 'batchDelete', null as any, req));
+        requests.push(this.evaluateTemplate(meta, 'disableCreation', null as any, req));
         await Promise.all(requests);
         if (meta.classParameters.listActionTemplate && meta.classParameters.listActionTemplate instanceof Function) {
             meta.classParameters.listActionTemplate = await (meta.classParameters.listActionTemplate as any)(req);
@@ -316,6 +320,11 @@ export class Controller extends BaseController {
             if (field.readOnly instanceof Function) {
                 fields[key] = { ...field };
                 fields[key].readOnly = await (field.readOnly as Function)(req, entityData);
+                field = fields[key] as FieldParameters;
+            }
+            if (field.hide instanceof Function) {
+                fields[key] = { ...field };
+                fields[key].hide = await (field.hide as Function)(req, entityData);
                 field = fields[key] as FieldParameters;
             }
             if (field.values instanceof Function) {

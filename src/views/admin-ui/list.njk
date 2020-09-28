@@ -139,11 +139,13 @@ $('#deleteAllModal').on('show.bs.modal', function (event) {
 </div>
 {% endif %}
 
+{% if not metadata.classParameters.disableCreation %}
 <div class="mb-2">
     <a href="{{ route('adminUI.details', {entityName: req.params.entityName, id: 0}) }}" class="btn btn-primary btn-create btn-create-{{req.params.entityName}}">
         <i class="fas fa-plus"></i> {{ 'admin-ui.create' | tr }}
     </a>
 </div>
+{% endif %}
 
 <table class="table table-{{req.params.entityName}}">
     <thead>

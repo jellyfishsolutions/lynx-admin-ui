@@ -33,6 +33,7 @@ export default class AdminUIModule extends SimpleModule {
         AdminUIModule.configuration[AdminType.Media] = '/admin-ui/editors/media';
         AdminUIModule.configuration[AdminType.AjaxSelection] = '/admin-ui/editors/ajax-selection';
         AdminUIModule.configuration[AdminType.DateTime] = '/admin-ui/editors/date-time';
+        AdminUIModule.configuration[AdminType.ActionButton] = '/admin-ui/editors/action-button';
     }
 
     /**
