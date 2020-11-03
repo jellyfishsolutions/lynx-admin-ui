@@ -182,6 +182,13 @@ export class Controller extends BaseController {
                     }
                 }
                 obj[key] = datagrid;
+                obj[key + '__disable_creation'] = false;
+                if (metadata.fields[key].max) {
+                    if (datagrid.length >= (metadata.fields[key].max as number)) {
+                        obj[key + '__disable_creation'] = true;
+                    }
+                }
+
             } else {
                 obj[key] = data[key];
                 if (obj[key] instanceof Object) {

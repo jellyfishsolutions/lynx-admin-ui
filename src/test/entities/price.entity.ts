@@ -31,10 +31,17 @@ export default class PriceEntity extends BaseEntity implements EditableEntity {
     contract: ContractEntity;
 
     getId() {
-        throw new Error("Method not implemented.");
+        return this.id;
     }
     getLabel(): string {
-        throw new Error("Method not implemented.");
+        if (!this.price) {
+            return 'Not set';
+        }
+        try {
+        return this.price.toFixed(2);
+        } catch (e) {
+            return ''+this.price;
+        }
     }
 
 }

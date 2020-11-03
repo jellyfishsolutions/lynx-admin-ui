@@ -40,7 +40,7 @@ export default class ContractEntity extends BaseEntity implements EditableEntity
     name: string;
 
     @OneToMany((type) => PriceEntity, (price) => price.contract)
-    @AdminField({ name: "Prezzi", type: AdminType.Table, selfType: "PriceEntity", query: fetchPrices, inverseSide: 'contract' })
+    @AdminField({ name: "Prezzi", type: AdminType.Table, selfType: "PriceEntity", query: fetchPrices, inverseSide: 'contract', max: 10 })
     prices: PriceEntity[];
 
     getId() {

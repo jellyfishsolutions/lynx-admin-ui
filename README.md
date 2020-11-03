@@ -213,6 +213,7 @@ It works exactly as the `AdminType.Selection`, but it will use the radio buttons
 #### `AdminType.Table`
 This type can be used for `OneToMany` relations. It allows to display the relationship elements in a table, supporting pagination and column orders.
 It works only if the [`query` parameter](#query-parameter) is set.
+If the `max` parameter is specified, the "Add" button will be displayed only if the total number returned by the `query` parameter is minor or equal then the `max` parameter.
 
 #### `AdminType.Expanded`
 This type can be used for `OneToOne` relations, when the target entity of the relation is available to the AdminUI.

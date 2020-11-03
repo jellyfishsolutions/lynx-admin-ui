@@ -2,7 +2,7 @@
 
 {% if nested %}
 <label> {{ field.name | tr }} </label>
-{% if req.params.id != 0 and field.readOnly != true %}
+{% if req.params.id != 0 and field.readOnly != true and data[key + '__disable_creation'] != true %}
 <button type="button" class="btn btn-primary" onclick='openModal{{key}}(0)'>
   {{ "admin-ui.add" | tr }}
 </button>
