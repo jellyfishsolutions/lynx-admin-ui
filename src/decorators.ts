@@ -45,7 +45,8 @@ export interface ClassParameters {
     listActionTemplate?: string | ((req: Request) => Promise<string>),
     batchDelete?: boolean | ((req: Request) => Promise<boolean>),
     relations?: string[],
-    disableCreation?: boolean | ((req: Request) => Promise<boolean>)
+    disableCreation?: boolean | ((req: Request) => Promise<boolean>),
+    defaultOrderBy?: string | ((req: Request) => Promise<string>)
 }
 
 export interface QueryParams {

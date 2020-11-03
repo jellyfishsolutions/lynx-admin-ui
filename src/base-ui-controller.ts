@@ -250,7 +250,7 @@ export class BaseUIController extends Controller {
         await this.setData(req, entity, req.body, metadata);
         let updated;
         try {
-            updated = await entity.save();
+            updated = await Controller.saveEntity(entity);
         } catch (e) {
             try {
                 let errorField = (/'([a-zA-Z0-0_)]+)'/.exec(e.message) as any)[1];

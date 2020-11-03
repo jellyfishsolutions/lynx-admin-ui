@@ -54,7 +54,8 @@ The `AdminUI` annotation supports also an optional object argument, with the fol
 * `listActionTemplate` allows to specifies a custom template to be used as the 'action' column (the last one) in the listing template;
 * `batchDelete` if true (or if resolve to true), checkboxes will be displayed for each list element, enabling a batch delete of elements;
 * `relations` allows to specifies other TypeORM relations to load with the entity (useful for "lazy" relations);
-* `disableCreation` if true (or if resolve to true), the button to create a new entity is not displayed. 
+* `disableCreation` if true (or if resolve to true), the button to create a new entity is not displayed;
+* `defaultOrderBy` if specified, defines a default order by used in the entity list (it uses the same notation of the ordering string used when a column header is tapped).
 
 Each "template" parameter accepts both a `string`, containing the specified path, or a function that accept the current `req` request as argument and returns a `string`. Using the function version, it is possible to customize a template based on a specific request.
 
@@ -73,6 +74,11 @@ The `getId` method shall return the primary key of the entity. The `getLabel` sh
 The `getId` method is used to find the entity by id, and it can be used to correctly return the corresponding property.
 
 NOTE: if the entity does not implements the `EditableEntity`, the AdminUI behavior can be unpredictable.
+
+
+The `EditableEntity` allows also the definition of methods to intercept the life-cycle of the entity:
+* `onBeforeSave`: this method (if implemented) will be executeded just BEFORE the saving action of an entity. The entity is already updated with the latest value inserted by the user. If an expection is throwed in this method, the saving process will be interrupted.
+* `onAfterSave`: this method (if implemented) will be executeded just AFTER the saving action of an entity.
 
 ## `AdminField` annotation
 The `AdminField` annotation indicates that the field should be editable from the AdminUI interface.

@@ -6,6 +6,7 @@ import EditableEntity from "../../editable-entity";
 
 @Entity("addresses")
 @AdminUI("Address",{
+    defaultOrderBy: '+city',
     batchDelete: true
 })
 export default class Address extends BaseEntity implements EditableEntity {
@@ -30,6 +31,17 @@ export default class Address extends BaseEntity implements EditableEntity {
 
     getLabel(): string {
         return this.street + " " + this.city;
+    }
+
+
+    async onBeforeSave(): Promise<void> {
+        console.log('before saving '+this.street+' con id '+this.id);
+        return;
+    }
+
+    async onAfterSave(): Promise<void> {
+        console.log('after saving '+this.street+' con id '+this.id);
+        return;
     }
 
 }

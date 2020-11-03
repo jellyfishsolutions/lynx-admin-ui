@@ -14,6 +14,18 @@ let _adminUI: { entity: any; meta: EntityMetadata }[];
 let hasInit = false;
 
 export class Controller extends BaseController {
+
+    static async saveEntity(entity: any): Promise<any> {
+        if ((entity as EditableEntity).onBeforeSave) {
+            await entity.onBeforeSave();
+        }
+        let updated = await entity.save();
+        if ((updated as EditableEntity).onAfterSave) {
+            await updated.onAfterSave();
+        }
+        return updated;
+    }
+
     async postConstructor() {
         await super.postConstructor();
         if (!hasInit) {
@@ -121,14 +133,26 @@ export class Controller extends BaseController {
             where = ors;
         }
 
-        await datagrid.fetchData((params) => 
-            repository.findAndCount({
-                where: where,
-                order: params.order,
-                skip: params.skip,
-                take: params.take,
-                relations: metadata.classParameters.relations
-            })
+        await datagrid.fetchData((params) => { 
+            let order = params.order;
+            if (Object.keys(order).length == 0 && metadata.classParameters.defaultOrderBy) {
+                let tmp = metadata.classParameters.defaultOrderBy as string;
+                if (tmp.startsWith("-")) {
+                    order[tmp.substring(1)] = 'ASC';
+                  } else if (tmp.startsWith("+")) {
+                    order[tmp.substring(1)] = 'DESC';
+                  } else {
+                    order[tmp] = 'DESC';
+                  }
+            }
+            return repository.findAndCount({
+                    where: where,
+                    order: order,
+                    skip: params.skip,
+                    take: params.take,
+                    relations: metadata.classParameters.relations
+                }); 
+            }
         );
         let tmp = datagrid.data as BaseEntity[];
         let promises: Promise<void>[] = [];
@@ -264,7 +288,7 @@ export class Controller extends BaseController {
                 }
                 let currentMeta = this.retrieveMetadata(m.selfType as string);
                 await this.setData(req, e[key], data, currentMeta, prefix+key+'-');
-                await e[key].save();
+                await Controller.saveEntity(e[key]);
             } else if (m.type == AdminType.Media) {
                 for (let f of req.files) {
                     if (f.fieldname == prefix + key) {
@@ -303,6 +327,7 @@ export class Controller extends BaseController {
         requests.push(this.evaluateTemplate(meta, 'popupEditorTemplate', AdminUIModule.popupEditorTemplatePath, req));
         requests.push(this.evaluateTemplate(meta, 'batchDelete', null as any, req));
         requests.push(this.evaluateTemplate(meta, 'disableCreation', null as any, req));
+        requests.push(this.evaluateTemplate(meta, 'defaultOrderBy', null as any, req));
         await Promise.all(requests);
         if (meta.classParameters.listActionTemplate && meta.classParameters.listActionTemplate instanceof Function) {
             meta.classParameters.listActionTemplate = await (meta.classParameters.listActionTemplate as any)(req);

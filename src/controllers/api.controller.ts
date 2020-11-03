@@ -26,9 +26,16 @@ export default class ApiController extends Controller {
             }
         }
         let orderBy: any = null;
+        let strOrderBy = null;
+        if (metadata.classParameters.filterBy) {
+            strOrderBy = metadata.classParameters.filterBy;
+        }
         if (req.query.orderBy) {
+            strOrderBy = req.query.orderBy;
+        }
+        if (strOrderBy) {
             orderBy = {};
-            let o = req.query.orderBy as string;
+            let o = strOrderBy as string;
             if (o.startsWith('-')) {
                 orderBy[o.substring(1)] = 'ASC';
             } else if (o.startsWith('+')) {
