@@ -5,7 +5,7 @@ import MediaEntity from "lynx-framework/entities/media.entity";
 import Request from "lynx-framework/request";
 import EditableEntity from "./editable-entity";
 import { generateSchema } from "./generator";
-import { Like, getConnection, Repository } from "typeorm";
+import { Like, FindOperator, getConnection, Repository } from "typeorm";
 import * as moment from "moment";
 import Datagrid from "lynx-datagrid/datagrid";
 import AdminUIModule from ".";
@@ -101,37 +101,112 @@ export class Controller extends BaseController {
             filterWhere = await metadata.classParameters.filterBy(req);
         }
         let where = {} as any;
-        let hasSmartSearchable = false;
+        let smartWhere = {} as any;
         for (let key in metadata.fields) {
             let f = metadata.fields[key];
-            let v = datagrid.getQueryValue(key) || datagrid.getQueryValue('smartSearch');
-            if ((f.searchable || f.smartSearchable) && v) {
-                if (f.smartSearchable) {
-                    hasSmartSearchable = true;
-                }
+            if (!f.searchable && !f.smartSearchable) {
+                continue;
+            }
+            let v = null;
+            if (f.searchable) {
+                v = datagrid.getQueryValue(key);
+            } else if (f.smartSearchable) {
+                v = datagrid.getQueryValue('smartSearch');
+            }
+            if (v) {
+                let right;
+                let left = '';
                 if (f.type == AdminType.String) {
-                    where[key] = Like("%" + (v as string).toLowerCase() + "%");
+                    right = Like("%" + (v as string).toLowerCase() + "%");
+                    key = 'e.' + key;
                 } else {
-                    where[key] = v;
+                    let Class = this.retrieveEntityClass(f.selfType as string);
+                    if (Class) {
+                        if ((metadata.classParameters.relations || []).indexOf(key) == -1) {
+                            this.logger.error('Searching for the column `'+key+'` is enabled only if `'+key+'` is specified in the `relations` parmeter of `AdminUI`');
+                            throw new Error('The `relation` field of AdminUI not include '+key);
+                        }
+                        right = v;
+                        key = key.toUpperCase();
+                        left = '.id';
+                    } else {
+                        right = v;
+                        key = 'e.' + key;
+                    }
+                }
+                if (f.smartSearchable) {
+                    smartWhere[key+left] = right;
+                } else {
+                    where[key+left] = right;
                 }
             }
         }
 
         let repository = getConnection().getRepository(Class) as Repository<any>;
 
-        if (!hasSmartSearchable) {
-            if (filterWhere) {
-                where = { ...filterWhere, ...where};
+        let ors = [];
+        if (Object.keys(smartWhere).length > 0) {
+            for (let key in smartWhere) {
+                let tmp = {...filterWhere, ...where} as any;
+                tmp[key] = smartWhere[key];
+                ors.push(tmp);
             }
         } else {
-            let ors = [] as any[];
             for (let key in where) {
                 let tmp = {...filterWhere} as any;
                 tmp[key] = where[key];
                 ors.push(tmp);
             }
-            where = ors;
         }
+        
+        where = ors;
+
+
+        let qb = repository.createQueryBuilder("e");
+        for (let relation of metadata.classParameters.relations || []) {
+            qb = qb.leftJoinAndSelect("e."+relation, relation.toUpperCase());
+        }
+
+        for (let orOption of where) {
+            let parts = [];
+            let params: any = {};
+            let counter = 0;
+            for (let key in orOption) {
+                let _q = '';
+                let value = orOption[key];
+                if (value instanceof Array) {
+                    _q += '(';
+                    for (let i = 0; i<value.length; i++) {
+                        let _v = 'param'+counter;
+                        params[_v] = value[i];
+                        counter++;
+                        _q += key + ' = :' + _v;
+                        if (i < value.length - 1) {
+                            _q += ' OR';
+                        }
+                        _q += ' ';
+                    }
+                    _q += ') ';
+                } else if (value instanceof FindOperator) {
+                    let _v = 'param'+counter;
+                    params[_v] = value.value;
+                    counter++;
+                    _q += key + ' LIKE :' + _v + ' ';
+                } else {
+                    let _v = 'param'+counter;
+                    params[_v] = value;
+                    counter++;
+                    _q += key + ' = :' + _v + ' ';
+                }
+                parts.push(_q.trim());
+            }
+            let q = parts.join(' AND ');
+            qb = qb.orWhere(q, params);
+        }
+
+
+
+
 
         await datagrid.fetchData((params) => { 
             let order = params.order;
@@ -145,13 +220,12 @@ export class Controller extends BaseController {
                     order[tmp] = 'DESC';
                   }
             }
-            return repository.findAndCount({
-                    where: where,
-                    order: order,
-                    skip: params.skip,
-                    take: params.take,
-                    relations: metadata.classParameters.relations
-                }); 
+            for (let key in order) {
+                qb = qb.addOrderBy(key, order[key]);
+            }
+            qb = qb.skip(params.skip);
+            qb = qb.take(params.take);
+            return qb.getManyAndCount();
             }
         );
         let tmp = datagrid.data as BaseEntity[];

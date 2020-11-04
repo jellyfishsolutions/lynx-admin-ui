@@ -135,12 +135,28 @@ export class BaseUIController extends Controller {
                 break;
             }
         }
+        let data: any = {};
+        for (let k in req.query) {
+            let tmp = req.query[k];
+            if (tmp instanceof Array) {
+                let u = [];
+                for (let t of tmp) {
+                    try {
+                        u.push(parseInt(t as string));
+                    } catch (e) {
+                        u.push(t);
+                    }
+                }
+                tmp = u as any;
+            }
+            data[k] = tmp;
+        }
         let ctx = {
             metadata: metadata,
             configuration: AdminUIModule.configuration,
             parentTemplate: metadata.classParameters.listParentTemplate,
             gridData: datagrid,
-            data: req.query,
+            data: data,
             fields: fields,
             hasSmartSearchable: hasSmartSearchable
         } as any;

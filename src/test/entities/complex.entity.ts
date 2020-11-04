@@ -94,7 +94,8 @@ async function actionTemplate(req: Request): Promise<string> {
 @AdminUI("Complex Entity", {
     filterBy: filteringList,
     listParentTemplate: listTemplate,
-    listActionTemplate: actionTemplate
+    listActionTemplate: actionTemplate,
+    relations: ['subcategories', 'category']
 })
 export default class Complex extends BaseEntity implements EditableEntity {
     @PrimaryGeneratedColumn()
@@ -111,7 +112,8 @@ export default class Complex extends BaseEntity implements EditableEntity {
         name: "Name",
         type: AdminType.String,
         onSummary: true,
-        searchable: true,
+        smartSearchable: true,
+        //searchable: true,
         uiSettings: { editorClasses: "col-6", filterClasses: "col-6" }
     })
     name: string;
@@ -121,7 +123,7 @@ export default class Complex extends BaseEntity implements EditableEntity {
         name: "Surname",
         type: AdminType.String,
         onSummary: true,
-        searchable: true,
+        //searchable: true,
         uiSettings: { editorClasses: "col-6", filterClasses: "col-6" }
     })
     surname: string;
@@ -203,8 +205,7 @@ export default class Complex extends BaseEntity implements EditableEntity {
         name: "Categoria con filtro ajax",
         type: AdminType.AjaxSelection,
         searchRequest: filteredCategories,
-        onSummary: true,
-        searchable: true
+        onSummary: true
     })
     categoryAjax: Category;
 
@@ -216,6 +217,7 @@ export default class Complex extends BaseEntity implements EditableEntity {
         values: getCategories,
         selfType: 'Category',
         onSummary: true,
+        searchable: true,
         uiSettings: {
             listTemplate: '/chips'
         }
