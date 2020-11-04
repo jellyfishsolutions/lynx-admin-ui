@@ -221,7 +221,7 @@ export class Controller extends BaseController {
                   }
             }
             for (let key in order) {
-                qb = qb.addOrderBy(key, order[key]);
+                qb = qb.addOrderBy('e.' + key, order[key]);
             }
             qb = qb.skip(params.skip);
             qb = qb.take(params.take);
