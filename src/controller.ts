@@ -379,6 +379,9 @@ export class Controller extends BaseController {
                     }
                 }
             } else {
+                if (m.selfType == 'Number' && data[prefix+key] === '') {
+                    data[prefix+key] = null;
+                }
                 (entity as any)[key] = data[prefix+key];
             }
         }

@@ -268,6 +268,7 @@ export class BaseUIController extends Controller {
         try {
             updated = await Controller.saveEntity(entity);
         } catch (e) {
+            console.log('error saving the entity', e);
             try {
                 let errorField = (/'([a-zA-Z0-0_)]+)'/.exec(e.message) as any)[1];
                 let field = metadata.fields[errorField];
