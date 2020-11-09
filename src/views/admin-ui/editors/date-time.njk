@@ -1,5 +1,9 @@
 <div class="form-group">
-    <label for="{{key}}">{{ field.name | tr }} </label>
+    <label for="{{key}}">{{ field.name | tr }} 
+        {% if field.uiSettings.descriptionText %}
+            <small id="{{key}}-help" class="{{ field.uiSettings.descriptionTextClasses if field.uiSettings.descriptionTextClasses }} description-label">{{ field.uiSettings.descriptionText | tr }}</small>
+        {% endif %}
+    </label>
     <input class="form-control" 
         name="{{key}}" 
         value="{{data[key] | date('YYYY-MM-DDTHH:mm') }}" 

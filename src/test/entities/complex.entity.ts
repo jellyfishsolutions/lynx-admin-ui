@@ -114,7 +114,7 @@ export default class Complex extends BaseEntity implements EditableEntity {
         onSummary: true,
         smartSearchable: true,
         //searchable: true,
-        uiSettings: { editorClasses: "col-6", filterClasses: "col-6" }
+        uiSettings: { editorClasses: "col-6", filterClasses: "col-6", descriptionText: 'ah no?', descriptionTextClasses: 'text-primary' }
     })
     name: string;
 

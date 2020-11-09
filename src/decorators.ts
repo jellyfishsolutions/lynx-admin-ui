@@ -29,6 +29,8 @@ export interface UISettings {
     additionalEditorInfo?: any;
     additionalFilterInfo?: any;
     additionalListInfo?: any;
+    descriptionText?: string;
+    descriptionTextClasses?: string;
     //TODO: editorOrder?: number;
     //TODO: editorFilter?: number;
     //TODO: editorList?: number;

@@ -329,6 +329,8 @@ This parameter defines the following optional properties:
 * `additionalEditorInfo`: additional info that can be used by the editor template; `any` values accepted.
 * `additionalFilterInfo`: additional info that can be used by the editor template; `any` values accepted.
 * `additionalListInfo`: additional info that can be used by the editor template; `any` values accepted.
+* `descriptionText`: additional `small` text rendered inside the `label` tag. Supports localized strings.
+* `descriptionTextClasses`: custom CSS classes for the `descritionText`.
 
 Moreover, in the editor section, each field is wrapped inside a `div` with an unique id. The id is defined as `field-{{entity-name}}-{{name-of-the-field}}`. Using the id, it is possible to customize though CSS rules the aspect of a single field.
 

@@ -1,5 +1,9 @@
 <div class="form-group">
-    <label for="{{key}}">{{ field.name | tr }} </label>
+    <label for="{{key}}">{{ field.name | tr }}
+        {% if field.uiSettings.descriptionText %}
+            <small id="{{key}}-help" class="{{ field.uiSettings.descriptionTextClasses if field.uiSettings.descriptionTextClasses }} description-label">{{ field.uiSettings.descriptionText | tr }}</small>
+        {% endif %}
+    </label>
     {% if data[key] %}
         <br/><img src="{{route('adminUI.previewMedia', { id: data[key] }) }}" aclass="img-thumbnail">
     {% endif %}

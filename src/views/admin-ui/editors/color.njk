@@ -1,5 +1,8 @@
 <div class="form-group">
     <label for="{{key}}">{{ field.name | tr }} </label>
+    {% if field.uiSettings.descriptionText %}
+        <small id="{{key}}-help" class="form-text text-muted">{{ field.uiSettings.descriptionText | tr }}</small>
+    {% endif %}
     <input class="form-control" 
         type="color"
         name="{{key}}" 

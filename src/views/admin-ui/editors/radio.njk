@@ -1,5 +1,9 @@
 <div class="form-group">
-    <label for="{{key}}">{{ field.name | tr }} </label>
+    <label for="{{key}}">{{ field.name | tr }}
+        {% if field.uiSettings.descriptionText %}
+            <small id="{{key}}-help" class="{{ field.uiSettings.descriptionTextClasses if field.uiSettings.descriptionTextClasses }} description-label">{{ field.uiSettings.descriptionText | tr }}</small>
+        {% endif %}
+    </label>
     {% for element in field.values %}
         <div class="form-check">
             <input class="form-check-input" type="radio" name="{{key}}" value="{{element.key}}" {{ "readonly" if field.readOnly }} {{"checked" if data[key] == element.key }} />

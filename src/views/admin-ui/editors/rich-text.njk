@@ -1,7 +1,11 @@
 
 
 <div class="form-group">
-    <label for="{{key}}">{{ field.name | tr }} </label>
+    <label for="{{key}}">{{ field.name | tr }}
+        {% if field.uiSettings.descriptionText %}
+            <small id="{{key}}-help" class="{{ field.uiSettings.descriptionTextClasses if field.uiSettings.descriptionTextClasses }} description-label">{{ field.uiSettings.descriptionText | tr }}</small>
+        {% endif %}
+    </label>
     <div id="rich-text-{{key}}">{{data[key] | safe}}</div>
     <input type="hidden" name="{{key}}" value="{{data[key]}}" />
 </div>
