@@ -9,7 +9,7 @@
 <style>
 .modal-footer {
     position: absolute;
-    bottom: 15px;
+    bottom: 0px;
     border-top: 1px solid #dee2e6;
     width: 100%;
 }
@@ -37,7 +37,7 @@ function closePopup() {
 <form method="POST" action="{{route('adminUI.save', {entityName: req.params.entityName, id: req.params.id, popup: req.query.popup} )}}" enctype="multipart/form-data" onsubmit='closePopup()'>
 <input type="hidden" name="__admin_ui_action" id="__admin_ui_action" />
 <div class="container-fluid">
-<div class="row">
+<div class="row mt-1">
 {% for key, field in fields %}
     {% if not field.hide %}
         <div id="field-{{req.params.entityName}}-{{key}}" class="{{ field.uiSettings.editorClasses if field.uiSettings and field.uiSettings.editorClasses else 'col-12' }} ">

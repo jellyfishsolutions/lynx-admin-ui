@@ -79,7 +79,7 @@ function openModal{{key}}(id) {
         </button>
       </div>
       <div class="modal-body nested-frame">
-        <iframe class="nested-frame nested-frame-modal" id="modalEditFrame{{key}}" src=""></iframe>
+        <iframe class="nested-frame nested-frame-modal" id="modalEditFrame{{key}}" onLoad="calculateFrameHeightForPopup(this);"  src=""></iframe>
       </div>
     </div>
   </div>

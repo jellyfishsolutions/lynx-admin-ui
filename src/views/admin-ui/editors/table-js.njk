@@ -1,7 +1,17 @@
 <script type="text/javascript">
 function calculateFrameHeight(iframeElement){
-    var the_height = iframeElement.contentWindow.document.body.scrollHeight;
-    iframeElement.height = the_height;
+    setTimeout(function() {
+        var the_height = iframeElement.contentWindow.document.body.scrollHeight;
+        iframeElement.height = the_height;
+    }, 0);
+}
+function calculateFrameHeightForPopup(iframeElement){
+    setTimeout(function() {
+        var the_height = iframeElement.contentWindow.document.body.scrollHeight + 100;
+        iframeElement.height = the_height;
+        iframeElement.style.height = the_height;
+        $(iframeElement.parentElement).height(the_height+'px');
+    }, 0);
 }
 {% if nested %}
 function openPopup(id, frameId, url) {

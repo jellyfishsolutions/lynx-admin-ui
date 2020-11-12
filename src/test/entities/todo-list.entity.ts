@@ -8,7 +8,7 @@ import Todo from "./todo.entity";
 async function fetchComments(req: Request, todo: TodoList, params: QueryParams): Promise<[any[], number]> {
     return await Todo.findAndCount({
         where: {
-            todo: todo,
+            list: todo,
         },
         take: params.take,
         skip: params.skip,
@@ -17,7 +17,7 @@ async function fetchComments(req: Request, todo: TodoList, params: QueryParams):
 }
 
 @Entity("todo_lists")
-@AdminUI("Todo List")
+@AdminUI("Todo List", { relations: ['todo']})
 export default class TodoList extends BaseEntity implements EditableEntity {
     @PrimaryGeneratedColumn()
     @AdminField({
@@ -28,8 +28,9 @@ export default class TodoList extends BaseEntity implements EditableEntity {
     })
     id: number;
 
-    @OneToMany((type) => Todo, (todo) => todo.list)
+    
     @AdminField({ name: "Todo List", type: AdminType.Table, selfType: "Todo", query: fetchComments, inverseSide: 'list' })
+    @OneToMany((type) => Todo, (todo) => todo.list)
     todo: Todo[];
 
     getId() {
