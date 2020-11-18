@@ -6,6 +6,8 @@ import BaseEntity from "lynx-framework/entities/base.entity";
 import Response from "lynx-framework/response";
 import EditableEntity from "./editable-entity";
 
+import { sprintf } from 'sprintf-js';
+
 /**
  * Basic controller that generates all the UI that contains the logic to perform the
  * different operations.
@@ -78,7 +80,8 @@ export class BaseUIController extends Controller {
             await entityData.remove();
         } catch (e) {
             this.logger.error(e);
-            this.addErrorMessage('Unable to delete '+(entityData as any).getLabel()+'. Please check its dependencies.', req);
+            let msg = this.tr('admin-ui.unable-delete', req);
+            this.addErrorMessage(sprintf(msg, (entityData as any).getLabel()), req);
         }
         if (req.query.redirect as string) {
             return this.redirect(req.query.redirect as string);
@@ -104,7 +107,8 @@ export class BaseUIController extends Controller {
                 await entityData.remove();
             } catch (e) {
                 this.logger.error(e);
-                this.addErrorMessage('Unable to delete '+(entityData as any).getLabel()+'. Please check its dependencies.', req);
+                let msg = this.tr('admin-ui.unable-delete', req);
+                this.addErrorMessage(sprintf(msg, (entityData as any).getLabel()), req);
             }
         }
         if (req.query.redirect as string) {

@@ -15,5 +15,6 @@
     "admin-ui.delete": "Cancella",
     "admin-ui.success-update": "Aggiornamento riuscito!",
     "admin-ui.success-create": "Elemento creato!",
-    "admin-ui.add": "Aggiungi"
+    "admin-ui.add": "Aggiungi",
+    "admin-ui.unable-delete": "Impossibile cancellare %1$s. Per favore, verifica le sue dipendenze."
 }
