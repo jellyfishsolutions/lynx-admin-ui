@@ -15,12 +15,12 @@ export default interface EditableEntity {
      * The entity is already updated with the latest value inserted by the user.
      * If an expection is throwed in this method, the saving process will be interrupted. 
      */
-    onBeforeSave?(): Promise<void>;
+    onBeforeSave?(req: Request): Promise<void>;
 
     /**
      * this method (if implemented) will be executeded just AFTER the saving action of an entity.
      */
-    onAfterSave?(): Promise<void>;
+    onAfterSave?(req: Request): Promise<void>;
 }
 
 export function map(values: EditableEntity[]): {key: any, value: string}[] {

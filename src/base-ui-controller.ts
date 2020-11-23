@@ -270,7 +270,7 @@ export class BaseUIController extends Controller {
         await this.setData(req, entity, req.body, metadata);
         let updated;
         try {
-            updated = await Controller.saveEntity(entity);
+            updated = await Controller.saveEntity(entity, req);
         } catch (e) {
             console.log('error saving the entity', e);
             try {

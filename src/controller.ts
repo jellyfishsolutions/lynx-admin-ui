@@ -15,13 +15,13 @@ let hasInit = false;
 
 export class Controller extends BaseController {
 
-    static async saveEntity(entity: any): Promise<any> {
+    static async saveEntity(entity: any, req: Request): Promise<any> {
         if ((entity as EditableEntity).onBeforeSave) {
-            await entity.onBeforeSave();
+            await entity.onBeforeSave(req);
         }
         let updated = await entity.save();
         if ((updated as EditableEntity).onAfterSave) {
-            await updated.onAfterSave();
+            await updated.onAfterSave(req);
         }
         return updated;
     }
@@ -369,7 +369,7 @@ export class Controller extends BaseController {
                 }
                 let currentMeta = this.retrieveMetadata(m.selfType as string);
                 await this.setData(req, e[key], data, currentMeta, prefix+key+'-');
-                await Controller.saveEntity(e[key]);
+                await Controller.saveEntity(e[key], req);
             } else if (m.type == AdminType.Media) {
                 for (let f of req.files) {
                     if (f.fieldname == prefix + key) {

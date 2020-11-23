@@ -79,6 +79,7 @@ NOTE: if the entity does not implements the `EditableEntity`, the AdminUI behavi
 The `EditableEntity` allows also the definition of methods to intercept the life-cycle of the entity:
 * `onBeforeSave`: this method (if implemented) will be executeded just BEFORE the saving action of an entity. The entity is already updated with the latest value inserted by the user. If an expection is throwed in this method, the saving process will be interrupted.
 * `onAfterSave`: this method (if implemented) will be executeded just AFTER the saving action of an entity.
+Both methods are executed with the current `req` request as argument (that can be used or accessed by this methods to perform additional operations or checks).
 
 ## `AdminField` annotation
 The `AdminField` annotation indicates that the field should be editable from the AdminUI interface.

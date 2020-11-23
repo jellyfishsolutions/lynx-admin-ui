@@ -3,6 +3,7 @@ import { AdminUI, AdminField, AdminType } from '../../decorators';
 import BaseEntity from "lynx-framework/entities/base.entity";
 import Customer from "./customer.entity";
 import EditableEntity from "../../editable-entity";
+import Request from "lynx-framework/request";
 
 @Entity("addresses")
 @AdminUI("Address",{
@@ -34,12 +35,12 @@ export default class Address extends BaseEntity implements EditableEntity {
     }
 
 
-    async onBeforeSave(): Promise<void> {
+    async onBeforeSave(_: Request): Promise<void> {
         console.log('before saving '+this.street+' con id '+this.id);
         return;
     }
 
-    async onAfterSave(): Promise<void> {
+    async onAfterSave(_: Request): Promise<void> {
         console.log('after saving '+this.street+' con id '+this.id);
         return;
     }
