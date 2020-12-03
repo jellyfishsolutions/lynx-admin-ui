@@ -1,4 +1,4 @@
-import Request from "lynx-framework/request";
+import Request from 'lynx-framework/request';
 
 export default interface EditableEntity {
     /**
@@ -13,7 +13,7 @@ export default interface EditableEntity {
     /**
      * this method (if implemented) will be executeded just BEFORE the saving action of an entity.
      * The entity is already updated with the latest value inserted by the user.
-     * If an expection is throwed in this method, the saving process will be interrupted. 
+     * If an expection is throwed in this method, the saving process will be interrupted.
      */
     onBeforeSave?(req: Request): Promise<void>;
 
@@ -23,17 +23,20 @@ export default interface EditableEntity {
     onAfterSave?(req: Request): Promise<void>;
 }
 
-export function map(values: EditableEntity[]): {key: any, value: string}[] {
+export function map(values: EditableEntity[]): { key: any; value: string }[] {
     return values.map((element: EditableEntity) => {
         return {
             key: element.getId(),
-            value: element.getLabel()
-        }
+            value: element.getLabel(),
+        };
     });
 }
 
-export async function notEditableFromPopup(req: Request, _: any): Promise<boolean> {
-    if (req.method == "POST") {
+export async function notEditableFromPopup(
+    req: Request,
+    _: any
+): Promise<boolean> {
+    if (req.method == 'POST') {
         return false;
     }
     return req.query.popup != null;

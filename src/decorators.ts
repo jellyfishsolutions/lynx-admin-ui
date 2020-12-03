@@ -1,5 +1,5 @@
-import { Request } from "lynx-framework/request";
-import BaseEntity from "lynx-framework/entities/base.entity";
+import { Request } from 'lynx-framework/request';
+import BaseEntity from 'lynx-framework/entities/base.entity';
 
 export enum AdminType {
     Id = 1,
@@ -18,7 +18,7 @@ export enum AdminType {
     Media = 14,
     AjaxSelection = 15,
     DateTime = 16,
-    ActionButton = 17
+    ActionButton = 17,
 }
 
 export interface UISettings {
@@ -37,18 +37,19 @@ export interface UISettings {
 }
 
 export interface ClassParameters {
-    filterBy?: (req: Request) => Promise<any>,
-    editorTemplate?: string | ((req: Request) => Promise<string>),
-    editorParentTemplate?: string | ((req: Request) => Promise<string>),
-    popupEditorTemplate?: string | ((req: Request) => Promise<string>),
-    popupEditorParentTemplate?: string | ((req: Request) => Promise<string>),
-    listTemplate?: string | ((req: Request) => Promise<string>),
-    listParentTemplate?: string | ((req: Request) => Promise<string>),
-    listActionTemplate?: string | ((req: Request) => Promise<string>),
-    batchDelete?: boolean | ((req: Request) => Promise<boolean>),
-    relations?: string[],
-    disableCreation?: boolean | ((req: Request) => Promise<boolean>),
-    defaultOrderBy?: string | ((req: Request) => Promise<string>)
+    filterBy?: (req: Request) => Promise<any>;
+    editorTemplate?: string | ((req: Request) => Promise<string>);
+    editorParentTemplate?: string | ((req: Request) => Promise<string>);
+    popupEditorTemplate?: string | ((req: Request) => Promise<string>);
+    popupEditorParentTemplate?: string | ((req: Request) => Promise<string>);
+    listTemplate?: string | ((req: Request) => Promise<string>);
+    listParentTemplate?: string | ((req: Request) => Promise<string>);
+    listActionTemplate?: string | ((req: Request) => Promise<string>);
+    batchDelete?: boolean | ((req: Request) => Promise<boolean>);
+    relations?: string[];
+    disableCreation?: boolean | ((req: Request) => Promise<boolean>);
+    disableDelete?: boolean | ((req: Request) => Promise<boolean>);
+    defaultOrderBy?: string | ((req: Request) => Promise<string>);
 }
 
 export interface QueryParams {
@@ -63,21 +64,28 @@ export interface FieldParameters {
     readOnly?:
         | boolean
         | ((req: Request, currentEntity: any) => Promise<boolean>);
-    hide?:
-        | boolean
-        | ((req: Request, currentEntity: any) => Promise<boolean>);
+    hide?: boolean | ((req: Request, currentEntity: any) => Promise<boolean>);
     values?:
         | { key: any; value: string }[]
         | ((
               req: Request,
               currentEntity: any
           ) => Promise<{ key: any; value: string }[]>);
-    query?: ((req: Request, currentEntity: any, params: QueryParams) => Promise<[BaseEntity[], number]>);
-    searchRequest?: ((req: Request, currentEntity: any, search: string, page: number) => Promise<[{key: any, value: string}[], boolean]>);
+    query?: (
+        req: Request,
+        currentEntity: any,
+        params: QueryParams
+    ) => Promise<[BaseEntity[], number]>;
+    searchRequest?: (
+        req: Request,
+        currentEntity: any,
+        search: string,
+        page: number
+    ) => Promise<[{ key: any; value: string }[], boolean]>;
     pattern?: string;
     accept?: string;
-    min?: number|string;
-    max?: number|string;
+    min?: number | string;
+    max?: number | string;
     step?: number;
     onSummary?: boolean;
     searchable?: boolean;
@@ -109,16 +117,28 @@ export function AdminUI(name: string, params?: ClassParameters) {
 
 export function AdminField(params: FieldParameters) {
     return (target: any, key: string) => {
-        var type = Reflect.getMetadata("design:type", target, key);
+        var type = Reflect.getMetadata('design:type', target, key);
         if (!params.selfType) {
             if (!type) {
-                throw new Error('AdminUI: Unable to understand the current type. Please add the \'selfType\' parameter for the \''+key+'\' field.');
+                throw new Error(
+                    "AdminUI: Unable to understand the current type. Please add the 'selfType' parameter for the '" +
+                        key +
+                        "' field."
+                );
             }
             if (type.name == 'Promise') {
-                throw new Error('AdminUI: Please specify the Promise type for the \''+key+'\' field.');
+                throw new Error(
+                    "AdminUI: Please specify the Promise type for the '" +
+                        key +
+                        "' field."
+                );
             }
             if (type.name == 'Array') {
-                throw new Error('AdminUI: Please specify the Arrays type for the \''+key+'\' field.');
+                throw new Error(
+                    "AdminUI: Please specify the Arrays type for the '" +
+                        key +
+                        "' field."
+                );
             }
             params.selfType = type.name;
         }
