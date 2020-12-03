@@ -584,6 +584,14 @@ export class Controller extends BaseController {
                 );
                 field = fields[key] as FieldParameters;
             }
+            if (field.required instanceof Function) {
+                fields[key] = { ...field };
+                fields[key].required = await (field.required as Function)(
+                    req,
+                    entityData
+                );
+                field = fields[key] as FieldParameters;
+            }
             if (field.hide instanceof Function) {
                 fields[key] = { ...field };
                 fields[key].hide = await (field.hide as Function)(

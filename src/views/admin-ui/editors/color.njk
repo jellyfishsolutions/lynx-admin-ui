@@ -1,5 +1,6 @@
 <div class="form-group">
-    <label for="{{key}}">{{ field.name | tr }} </label>
+    <label for="{{key}}">{{ field.name | tr }}
+    </label>
     {% if field.uiSettings.descriptionText %}
         <small id="{{key}}-help" class="form-text text-muted">{{ field.uiSettings.descriptionText | tr }}</small>
     {% endif %}
@@ -8,5 +9,6 @@
         name="{{key}}" 
         value="{{data[key]}}"   
         {{ "readonly" if field.readOnly }} 
-    />
+        {{ "required" if field.required }}
+/>
 </div>

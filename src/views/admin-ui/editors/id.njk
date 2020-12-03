@@ -4,5 +4,5 @@
             <small id="{{key}}-help" class="{{ field.uiSettings.descriptionTextClasses if field.uiSettings.descriptionTextClasses }} description-label">{{ field.uiSettings.descriptionText | tr }}</small>
         {% endif %}
     </label>
-    <input class="form-control" name="{{key}}" value="{{data[key]}}" {{ "readonly" if field.readOnly }} />
+    <input class="form-control" name="{{key}}" value="{{data[key]}}" {{ "readonly" if field.readOnly }} {{ "required" if field.required }}/>
 </div>

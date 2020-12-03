@@ -115,6 +115,7 @@ There is a set of optional parameters, available on all types:
 -   `searchable`: indicates if the field can be searchable in the list view; default: `false`.
 -   `smartSearchable`: indicates if the field can be searchable, added to a general "string-like" search; default: `false`.
 -   `readOnly`: indicates if the field can be only readable in the editor view; default: `false`. This parameter can be a `boolean` value, or a function like `(req: Request, currentEntity: any) => Promise<boolean>` (same as the `values` but with different return type).
+-   `required`: indicates if the field is "required" in the editor view; default: `false`. It adds the "required" attribute to the generated input. This parameter can be a `boolean` value, or a function like `(req: Request, currentEntity: any) => Promise<boolean>` (same as the `values` but with different return type).
 -   `hide`: indicates if the field should be displayed or not in the editor view; default: `false`. This parameter can be a `boolean` value, or a function like `(req: Request, currentEntity: any) => Promise<boolean>` (same as the `values` but with different return type).
 -   `uiSettings`: contains information on the visual appearance of the field. See the `uiSettings` paragraph for more information.
 

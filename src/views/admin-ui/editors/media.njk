@@ -14,5 +14,6 @@
         accept="{{field.accept}}"
         {% endif %}
         {{ "readonly" if field.readOnly }} 
-    />
+        {{ "required" if field.required }}
+/>
 </div>

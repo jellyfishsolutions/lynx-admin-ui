@@ -82,6 +82,9 @@ export interface FieldParameters {
         search: string,
         page: number
     ) => Promise<[{ key: any; value: string }[], boolean]>;
+    required?:
+        | boolean
+        | ((req: Request, currentEntity: any) => Promise<boolean>);
     pattern?: string;
     accept?: string;
     min?: number | string;
