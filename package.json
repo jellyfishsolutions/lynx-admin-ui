@@ -1,6 +1,6 @@
 {
     "name": "lynx-admin-ui",
-    "version": "0.5.29",
+    "version": "0.5.30",
     "description": "this module adds annotations for entities in order to automatically generate an Administration UI",
     "main": "dist/index.js",
     "scripts": {

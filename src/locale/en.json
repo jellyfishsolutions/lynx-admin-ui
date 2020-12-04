@@ -16,5 +16,6 @@
     "admin-ui.success-update": "Updated completed!",
     "admin-ui.success-create": "Element created!",
     "admin-ui.add": "Add",
-    "admin-ui.unable-delete": "Unable to delete %1$s. Please check its dependencies."
+    "admin-ui.unable-delete": "Unable to delete %1$s. Please check its dependencies.",
+    "admin-ui.select": "Select..."
 }

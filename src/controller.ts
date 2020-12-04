@@ -411,6 +411,8 @@ export class Controller extends BaseController {
                         } else {
                             (entity as any)[key] = await _class.findOne(v.key);
                         }
+                    } else {
+                        (entity as any)[key] = null;
                     }
                 }
                 if (m.type == AdminType.Checkbox) {
@@ -459,6 +461,11 @@ export class Controller extends BaseController {
                         break;
                     }
                 }
+            } else if (
+                m.type == AdminType.AjaxSelection &&
+                data[prefix + key] == '0'
+            ) {
+                (entity as any)[key] = null;
             } else {
                 if (m.selfType == 'Number' && data[prefix + key] === '') {
                     data[prefix + key] = null;

@@ -5,7 +5,7 @@
         {% endif %}
     </label>
     <select class="form-control" name={{key}} {{ "disabled" if field.readOnly }} {{ "required" if field.required }}>
-        <option value="" disabled selected hidden>Select...</option>
+        <option value="" selected>{{ 'admin-ui.select' | tr }}</option>
         {% set currentSelectionValue = '' %}
         {% for element in field.values %}
             <option value="{{element.key}}" {{"selected" if data[key] == element.key }} >{{element.value | tr}}</option>
