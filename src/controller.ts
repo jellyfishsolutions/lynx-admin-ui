@@ -334,8 +334,6 @@ export class Controller extends BaseController {
                             let ee = obj[key] as EditableEntity;
                             if (ee.getLabel) {
                                 obj[key] = ee.getLabel();
-                            } else if (ee.toString) {
-                                obj[key] = ee.toString();
                             }
                         } else {
                             let nestedMeta = this.retrieveMetadata(
