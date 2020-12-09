@@ -4,14 +4,16 @@
             <small id="{{key}}-help" class="{{ field.uiSettings.descriptionTextClasses if field.uiSettings.descriptionTextClasses }} description-label">{{ field.uiSettings.descriptionText | tr }}</small>
         {% endif %}
     </label>
-    <select class="form-control" name={{key}} {{ "disabled" if field.readOnly }} {{ "required" if field.required }}>
-        <option value="" selected>{{ 'admin-ui.select' | tr }}</option>
+    <select class="form-control" name="{{key}}" {{ "disabled" if field.readOnly }} {{ "required" if field.required }}>
         {% set currentSelectionValue = '' %}
         {% for element in field.values %}
-            <option value="{{element.key}}" {{"selected" if data[key] == element.key }} >{{element.value | tr}}</option>
             {% if data[key] == element.key %}
                 {% set currentSelectionValue = element.key %}
             {% endif %}
+        {% endfor %}
+        <option value="" {{"selected" if currentSelectionValue == '' }}>{{ 'admin-ui.select' | tr }}</option>
+        {% for element in field.values %}
+            <option value="{{element.key}}" {{"selected" if data[key] == element.key }} >{{element.value | tr}}</option>
         {% endfor %}
     </select>
     {% if field.readOnly %}

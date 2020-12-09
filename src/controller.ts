@@ -349,11 +349,13 @@ export class Controller extends BaseController {
                                     obj[key + '-' + k] = cleanData[k];
                                 }
                             }
-                            let ee = obj[key] as EditableEntity;
-                            if (ee.getId) {
-                                obj[key] = ee.getId();
-                            } else {
-                                obj[key] = obj[key].id;
+                            if (obj[key]) {
+                                let ee = obj[key] as EditableEntity;
+                                if (ee.getId) {
+                                    obj[key] = ee.getId();
+                                } else {
+                                    obj[key] = obj[key].id;
+                                }
                             }
                         }
                     }
@@ -395,6 +397,9 @@ export class Controller extends BaseController {
                 req.body['__admin_ui_action'] == key
             ) {
                 await (entity as any)[key]();
+            }
+            if ((entity as any)[key] instanceof Promise) {
+                (entity as any)[key] = await (entity as any)[key];
             }
             if (originalMeta.fields[key].values instanceof Function) {
                 let values = m.values as any[];
