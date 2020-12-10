@@ -19,6 +19,7 @@ export enum AdminType {
     AjaxSelection = 15,
     DateTime = 16,
     ActionButton = 17,
+    Currency = 18,
 }
 
 export interface UISettings {
@@ -90,6 +91,13 @@ export interface FieldParameters {
     min?: number | string;
     max?: number | string;
     step?: number;
+    groupSeparator?:
+        | string
+        | ((req: Request, currentEntity: any) => Promise<string>);
+    radixPoint?:
+        | string
+        | ((req: Request, currentEntity: any) => Promise<string>);
+    digits?: number;
     onSummary?: boolean;
     searchable?: boolean;
     smartSearchable?: boolean;

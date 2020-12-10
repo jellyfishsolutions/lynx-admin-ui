@@ -1,0 +1,32 @@
+<div class="form-group">
+    <label for="{{key}}">{{ field.name | tr }}
+        {% if field.uiSettings.descriptionText %}
+            <small id="{{key}}-help" class="{{ field.uiSettings.descriptionTextClasses if field.uiSettings.descriptionTextClasses }} description-label">{{ field.uiSettings.descriptionText | tr }}</small>
+        {% endif %}
+    </label>
+    <input class="form-control" 
+        id="currency-{{key}}"
+        inputmode="decimal" 
+        value="{{data[key]}}" 
+        {{ "min="+field.min if field.min}}
+        {{ "max="+field.min if field.max}}    
+        {{ "step="+field.step if field.step}}
+        {{ "readonly" if field.readOnly }} 
+        {{ "required" if field.required }}
+    />
+    <input name="{{key}}" value="{{data[key]}}" type="hidden" />
+</div>
+<script>
+    if (!window.currencies) {
+        window.currencies = [];
+    }
+    window
+        .currencies
+        .push(function () {
+            console.log("eseguo");
+            {% set groupSeparator = field.groupSeparator if field.groupSeparator else ',' %}
+            {% set radixPoint = field.radixPoint if field.radixPoint else '.' %}
+            
+            $("#currency-{{key}}").inputmask("currency", { rightAlign: false, groupSeparator: "{{ groupSeparator }}", radixPoint: "{{ radixPoint }}", digits: {{field.digits if field.digits else 2 }} });
+        });
+</script>

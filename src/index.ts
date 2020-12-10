@@ -1,8 +1,7 @@
-import SimpleModule from "lynx-framework/simple.module";
-import { AdminType } from "./decorators";
+import SimpleModule from 'lynx-framework/simple.module';
+import { AdminType } from './decorators';
 
 export default class AdminUIModule extends SimpleModule {
-
     static configuration: any = {};
     static indexParentTemplatePath = '/admin-ui/layouts/base';
     static indexTemplatePath = 'admin-ui/index';
@@ -18,22 +17,37 @@ export default class AdminUIModule extends SimpleModule {
     constructor() {
         super();
         AdminUIModule.configuration[AdminType.Id] = '/admin-ui/editors/id';
-        AdminUIModule.configuration[AdminType.String] = '/admin-ui/editors/string';
+        AdminUIModule.configuration[AdminType.String] =
+            '/admin-ui/editors/string';
         AdminUIModule.configuration[AdminType.Text] = '/admin-ui/editors/text';
-        AdminUIModule.configuration[AdminType.Selection] = '/admin-ui/editors/selection';
-        AdminUIModule.configuration[AdminType.RichText] = '/admin-ui/editors/rich-text';
-        AdminUIModule.configuration[AdminType.Checkbox] = '/admin-ui/editors/checkbox';
-        AdminUIModule.configuration[AdminType.Radio] = '/admin-ui/editors/radio';
-        AdminUIModule.configuration[AdminType.Number] = '/admin-ui/editors/number';
+        AdminUIModule.configuration[AdminType.Selection] =
+            '/admin-ui/editors/selection';
+        AdminUIModule.configuration[AdminType.RichText] =
+            '/admin-ui/editors/rich-text';
+        AdminUIModule.configuration[AdminType.Checkbox] =
+            '/admin-ui/editors/checkbox';
+        AdminUIModule.configuration[AdminType.Radio] =
+            '/admin-ui/editors/radio';
+        AdminUIModule.configuration[AdminType.Number] =
+            '/admin-ui/editors/number';
         AdminUIModule.configuration[AdminType.Date] = '/admin-ui/editors/date';
-        AdminUIModule.configuration[AdminType.Table] = '/admin-ui/editors/table';
-        AdminUIModule.configuration[AdminType.Expanded] = '/admin-ui/editors/expanded';
+        AdminUIModule.configuration[AdminType.Table] =
+            '/admin-ui/editors/table';
+        AdminUIModule.configuration[AdminType.Expanded] =
+            '/admin-ui/editors/expanded';
         AdminUIModule.configuration[AdminType.Time] = '/admin-ui/editors/time';
-        AdminUIModule.configuration[AdminType.Color] = '/admin-ui/editors/color';
-        AdminUIModule.configuration[AdminType.Media] = '/admin-ui/editors/media';
-        AdminUIModule.configuration[AdminType.AjaxSelection] = '/admin-ui/editors/ajax-selection';
-        AdminUIModule.configuration[AdminType.DateTime] = '/admin-ui/editors/date-time';
-        AdminUIModule.configuration[AdminType.ActionButton] = '/admin-ui/editors/action-button';
+        AdminUIModule.configuration[AdminType.Color] =
+            '/admin-ui/editors/color';
+        AdminUIModule.configuration[AdminType.Media] =
+            '/admin-ui/editors/media';
+        AdminUIModule.configuration[AdminType.AjaxSelection] =
+            '/admin-ui/editors/ajax-selection';
+        AdminUIModule.configuration[AdminType.DateTime] =
+            '/admin-ui/editors/date-time';
+        AdminUIModule.configuration[AdminType.ActionButton] =
+            '/admin-ui/editors/action-button';
+        AdminUIModule.configuration[AdminType.Currency] =
+            '/admin-ui/editors/currency';
     }
 
     /**
@@ -85,8 +99,6 @@ export default class AdminUIModule extends SimpleModule {
         AdminUIModule.popupEditorTemplatePath = path;
     }
 
-
-
     /**
      * Customize the index template
      * @param path the index father template path
@@ -94,7 +106,6 @@ export default class AdminUIModule extends SimpleModule {
     static setIndexParentTemplatePath(path: string) {
         AdminUIModule.indexParentTemplatePath = path;
     }
-
 
     /**
      * Customize the editor template
@@ -128,21 +139,19 @@ export default class AdminUIModule extends SimpleModule {
         AdminUIModule.popupEditorParentTemplatePath = path;
     }
 
-
     get translation(): string {
-        return __dirname + "/locale";
+        return __dirname + '/locale';
     }
 
-
     get controllers(): string {
-        return __dirname + "/controllers";
+        return __dirname + '/controllers';
     }
 
     get views(): string {
-        return __dirname + "/views";
+        return __dirname + '/views';
     }
 
     get public(): string {
-        return __dirname + "/public";
+        return __dirname + '/public';
     }
 }

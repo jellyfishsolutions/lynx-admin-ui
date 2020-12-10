@@ -617,6 +617,24 @@ export class Controller extends BaseController {
                     entityData
                 );
             }
+            if (field.groupSeparator instanceof Function) {
+                fields[key] = { ...field };
+                fields[
+                    key
+                ].groupSeparator = await (field.groupSeparator as Function)(
+                    req,
+                    entityData
+                );
+                field = fields[key] as FieldParameters;
+            }
+            if (field.radixPoint instanceof Function) {
+                fields[key] = { ...field };
+                fields[key].radixPoint = await (field.radixPoint as Function)(
+                    req,
+                    entityData
+                );
+                field = fields[key] as FieldParameters;
+            }
             let meta = this.retrieveMetadata(field.selfType as string);
             if (meta) {
                 if (!field.query) {

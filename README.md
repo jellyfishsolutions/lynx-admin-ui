@@ -278,7 +278,7 @@ This special type shall be used with a class method, and not with the classic cl
 In the editor page, instead of an input field, a button is displayed. The `name` parameter is used as text of the button.
 Clicking the button automatically submit the editor form. During the saving process, the corresponding method will be executed.
 
-By default, a `btn` class is added to the button widget, but it can be overrided using the property `innerEditorClasses` of `uiSettings`.
+By default, a `btn` class is added to the button widget, but it can be overridden using the property `innerEditorClasses` of `uiSettings`.
 
 > Asynchronous functions are supported
 
@@ -291,6 +291,11 @@ Example:
         this.display = true;
     }
 ```
+
+#### `AdminType.Currency`
+
+Indicates that the field is a currency. The implementation uses the [Jquery.inputmask plugin](https://robinherbots.github.io/Inputmask/) to correctly display a mark for decimal and hundreds. Moreover, it is not possible to input characters.
+It is possible to override the decimal separator with the `radixPoint` attribute (`.` as default), the hundreds separator with the `groupSeparator` attribute (`,` as default) and the number of decimal numbers with the `decimal` attribute (`2` as default).
 
 ### `values` parameter
 
