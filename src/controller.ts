@@ -472,8 +472,12 @@ export class Controller extends BaseController {
             } else {
                 if (m.selfType == 'Number' && data[prefix + key] === '') {
                     data[prefix + key] = null;
+                } else {
+                    if (m.selfType == 'Number') {
+                        data[prefix + key] = Number(data[prefix + key]);
+                    }
+                    (entity as any)[key] = data[prefix + key];
                 }
-                (entity as any)[key] = data[prefix + key];
             }
         }
     }
@@ -616,6 +620,26 @@ export class Controller extends BaseController {
                     req,
                     entityData
                 );
+            }
+            if (field.hundredsSeparator instanceof Function) {
+                fields[key] = { ...field };
+                fields[
+                    key
+                ].hundredsSeparator = await (field.hundredsSeparator as Function)(
+                    req,
+                    entityData
+                );
+                field = fields[key] as FieldParameters;
+            }
+            if (field.decimalSeparator instanceof Function) {
+                fields[key] = { ...field };
+                fields[
+                    key
+                ].decimalSeparator = await (field.decimalSeparator as Function)(
+                    req,
+                    entityData
+                );
+                field = fields[key] as FieldParameters;
             }
             let meta = this.retrieveMetadata(field.selfType as string);
             if (meta) {
