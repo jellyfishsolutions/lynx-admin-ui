@@ -13,8 +13,8 @@
         {{ "step="+field.step if field.step}}
         {{ "readonly" if field.readOnly }} 
         {{ "required" if field.required }}
-    />
-    <input name="{{key}}" value="{{data[key]}}" type="hidden" />
+/>
+    <input id="currency-{{key}}-real" name="{{key}}" value="{{data[key]}}" type="hidden"/>
 </div>
 <script>
     if (!window.currencies) {
@@ -23,10 +23,28 @@
     window
         .currencies
         .push(function () {
-            console.log("eseguo");
-            {% set groupSeparator = field.groupSeparator if field.groupSeparator else ',' %}
-            {% set radixPoint = field.radixPoint if field.radixPoint else '.' %}
-            
-            $("#currency-{{key}}").inputmask("currency", { rightAlign: false, groupSeparator: "{{ groupSeparator }}", radixPoint: "{{ radixPoint }}", digits: {{field.digits if field.digits else 2 }} });
+            {% set groupSeparator = field.hundredsSeparator if field.hundredsSeparator else ',' %}
+            {% set radixPoint = field.decimalSeparator if field.radidecimalSeparatorPoint else '.' %}
+
+            $("#currency-{{key}}").inputmask("currency", {
+                rightAlign: false,
+                groupSeparator: "{{ groupSeparator }}",
+                radixPoint: "{{ radixPoint }}",
+                digits: {{field.digits if field.digits else 2 }}
+            });
+            $("#currency-{{key}}").on("input", function (e) {
+                var input = $(this);
+                var val = input.val();
+
+                if (input.data("lastval") != val) {
+                    input.data("lastval", val);
+
+                    val = val
+                        .replaceAll('{{ groupSeparator }}', '')
+                        .replaceAll('{{radixPoint}}', '.');
+                    $("#currency-{{key}}-real").val(val);
+                }
+
+            });
         });
 </script>

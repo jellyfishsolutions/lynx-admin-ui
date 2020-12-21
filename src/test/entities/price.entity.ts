@@ -24,11 +24,11 @@ export default class PriceEntity extends BaseEntity implements EditableEntity {
         type: AdminType.Currency,
         onSummary: true,
     })
-    @Column({ type: 'decimal', precision: 2 })
+    @Column({ type: 'decimal', precision: 10, scale: 2 })
     price: number;
 
     @AdminField({
-        name: 'Prezzo',
+        name: 'Test',
         type: AdminType.String,
         onSummary: true,
     })

@@ -295,7 +295,7 @@ Example:
 #### `AdminType.Currency`
 
 Indicates that the field is a currency. The implementation uses the [Jquery.inputmask plugin](https://robinherbots.github.io/Inputmask/) to correctly display a mark for decimal and hundreds. Moreover, it is not possible to input characters.
-It is possible to override the decimal separator with the `radixPoint` attribute (`.` as default), the hundreds separator with the `groupSeparator` attribute (`,` as default) and the number of decimal numbers with the `decimal` attribute (`2` as default).
+It is possible to override the decimal separator with the `decimalSeparator` attribute (`.` as default), the hundreds separator with the `hundredsSeparator` attribute (`,` as default) and the number of decimal numbers with the `decimal` attribute (`2` as default). Both attributes can be a `string`, or a function defined as `(req: Request, currentEntity: any) => Promise<string>`, where `req` is the current request, and `currentEntity` is the current displayed entity.
 
 ### `values` parameter
 

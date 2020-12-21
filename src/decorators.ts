@@ -91,10 +91,10 @@ export interface FieldParameters {
     min?: number | string;
     max?: number | string;
     step?: number;
-    groupSeparator?:
+    hundredsSeparator?:
         | string
         | ((req: Request, currentEntity: any) => Promise<string>);
-    radixPoint?:
+    decimalSeparator?:
         | string
         | ((req: Request, currentEntity: any) => Promise<string>);
     digits?: number;
