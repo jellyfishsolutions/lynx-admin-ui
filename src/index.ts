@@ -1,3 +1,4 @@
+import { app } from 'lynx-framework/app';
 import SimpleModule from 'lynx-framework/simple.module';
 import { AdminType } from './decorators';
 
@@ -48,6 +49,15 @@ export default class AdminUIModule extends SimpleModule {
             '/admin-ui/editors/action-button';
         AdminUIModule.configuration[AdminType.Currency] =
             '/admin-ui/editors/currency';
+
+        setTimeout(() => {
+            app.nunjucksEnvironment.addFilter(
+                '_adminUIMasterFilter_',
+                (str: any, filterName: string) => {
+                    return app.nunjucksEnvironment.getFilter(filterName)(str);
+                }
+            );
+        }, 2000);
     }
 
     /**

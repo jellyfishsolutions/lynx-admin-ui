@@ -27,6 +27,7 @@ export interface UISettings {
     innerEditorClasses?: string;
     filterClasses?: string;
     listTemplate?: string;
+    listFilter?: string;
     additionalEditorInfo?: any;
     additionalFilterInfo?: any;
     additionalListInfo?: any;

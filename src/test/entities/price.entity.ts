@@ -23,6 +23,9 @@ export default class PriceEntity extends BaseEntity implements EditableEntity {
         name: 'Prezzo',
         type: AdminType.Currency,
         onSummary: true,
+        uiSettings: {
+            listFilter: 'currency',
+        },
     })
     @Column({ type: 'decimal', precision: 10, scale: 2 })
     price: number;
