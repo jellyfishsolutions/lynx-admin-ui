@@ -17,5 +17,6 @@
     "admin-ui.success-create": "Elemento creato!",
     "admin-ui.add": "Aggiungi",
     "admin-ui.unable-delete": "Impossibile cancellare %1$s. Per favore, verifica le sue dipendenze.",
-    "admin-ui.select": "Seleziona..."
+    "admin-ui.select": "Seleziona...",
+    "admin-ui.remove-media": "Rimuovi"
 }

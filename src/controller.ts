@@ -457,11 +457,18 @@ export class Controller extends BaseController {
                 );
                 await Controller.saveEntity(e[key], req);
             } else if (m.type == AdminType.Media) {
-                for (let f of req.files) {
-                    if (f.fieldname == prefix + key) {
-                        let file = await MediaEntity.persist(f, req.user);
-                        (entity as any)[key] = file;
-                        break;
+                if (data['remove-' + prefix + key] == prefix + key) {
+                    let old = (entity as any)[prefix + key] as MediaEntity;
+                    if (old) {
+                        (entity as any)[prefix + key] = null;
+                    }
+                } else {
+                    for (let f of req.files) {
+                        if (f.fieldname == prefix + key) {
+                            let file = await MediaEntity.persist(f, req.user);
+                            (entity as any)[prefix + key] = file;
+                            break;
+                        }
                     }
                 }
             } else if (

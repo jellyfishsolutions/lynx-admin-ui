@@ -5,7 +5,14 @@
         {% endif %}
     </label>
     {% if data[key] %}
-        <br/><img src="{{route('adminUI.previewMedia', { id: data[key] }) }}" aclass="img-thumbnail">
+        <span id="current-media-{{key}}">
+            <br/><img src="{{route('adminUI.previewMedia', { id: data[key] }) }}" class="img-thumbnail">
+            {% if field.readOnly %}
+            {% else %}
+                <button class="btn btn-danger" onclick="_adminUI_removeMedia('{{key}}')">{{ 'admin-ui.remove-media' | tr }}</button>
+            {% endif %}
+        </span>
+        <input type="hidden" id="remove-{{key}}" name="remove-{{key}}" value=""/>
     {% endif %}
     <input class="form-control" 
         type="file"
