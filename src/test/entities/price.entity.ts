@@ -22,6 +22,9 @@ export default class PriceEntity extends BaseEntity implements EditableEntity {
     @AdminField({
         name: 'Prezzo',
         type: AdminType.Currency,
+        decimalSeparator: ',',
+        hundredsSeparator: '.',
+        digits: 2,
         onSummary: true,
         uiSettings: {
             listFilter: 'currency',

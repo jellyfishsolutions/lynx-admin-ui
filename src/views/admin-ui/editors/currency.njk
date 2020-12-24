@@ -1,13 +1,22 @@
+{% set groupSeparator = field.hundredsSeparator if field.hundredsSeparator else 
+    ',' %}
+{% set radixPoint = field.decimalSeparator if field.decimalSeparator else 
+    '.' %}
+
 <div class="form-group">
     <label for="{{key}}">{{ field.name | tr }}
         {% if field.uiSettings.descriptionText %}
             <small id="{{key}}-help" class="{{ field.uiSettings.descriptionTextClasses if field.uiSettings.descriptionTextClasses }} description-label">{{ field.uiSettings.descriptionText | tr }}</small>
         {% endif %}
     </label>
+    {% set _val = data[key] + '' %}
+    {% if _val and _val.indexOf('.') > -1 %}
+        {% set _val = _val.split('.')[0] + radixPoint + _val.split('.')[1] %}
+    {% endif %}
     <input class="form-control" 
         id="currency-{{key}}"
         inputmode="decimal" 
-        value="{{data[key]}}" 
+        value="{{_val}}" 
         {{ "min="+field.min if field.min}}
         {{ "max="+field.min if field.max}}    
         {{ "step="+field.step if field.step}}
@@ -23,8 +32,6 @@
     window
         .currencies
         .push(function () {
-            {% set groupSeparator = field.hundredsSeparator if field.hundredsSeparator else ',' %}
-            {% set radixPoint = field.decimalSeparator if field.radidecimalSeparatorPoint else '.' %}
 
             $("#currency-{{key}}").inputmask("currency", {
                 rightAlign: false,
