@@ -184,8 +184,8 @@
                         {% endif %}
                         {% for key, field in fields %}
                             {% if field.onSummary %}
-                                {% set value = d[key] %}
                                 {% if field.uiSettings and field.uiSettings.listTemplate %}
+                                    {% set value = d[key] %}
                                     <td class="cell-{{field.name}}">{% include resolvePath(field.uiSettings.listTemplate) %}
                                     </td>
                                 {% elif field.uiSettings and field.uiSettings.listFilter %}

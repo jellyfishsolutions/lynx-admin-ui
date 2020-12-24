@@ -1,87 +1,95 @@
-{% import resolvePath('/datagrid/utility') as dgUtils %}
+{% import resolvePath('/datagrid/utility')as dgUtils %}
 
 {% if nested %}
-<label> {{ field.name | tr }}
-    {% if field.uiSettings.descriptionText %}
-        <small id="{{key}}-help" class="{{ field.uiSettings.descriptionTextClasses if field.uiSettings.descriptionTextClasses }} description-label">{{ field.uiSettings.descriptionText | tr }}</small>
-    {% endif %}
-</label>
-{% if req.params.id != 0 and field.readOnly != true and data[key + '__disable_creation'] != true %}
-<button type="button" class="btn btn-primary" onclick='openModal{{key}}(0)'>
-  {{ "admin-ui.add" | tr }}
-</button>
-{% endif %}
-<table class="table">
-    <thead>
-        <tr>
-            {% for _key, _field in field.metadata.fields %}
-                {% if _field.onSummary %}
-                    <th> {{dgUtils.orderableHeader(_field.name, _key, data[key])}} </th>
-                {% endif %}
-            {% endfor %}
-            <th></th>
-        </tr>
-    </thead>
-        <tbody>
-        {% for d in data[key].data %}
-            <tr>
-            {% for _key, _field in field.metadata.fields %}
-                {% if _field.onSummary %}
-                    {% if _field.uiSettings and _field.uiSettings.listTemplate %}
-                        {% set value = d[_key] %}
-                        <td>{% include resolvePath(_field.uiSettings.listTemplate) %} </td>
-                    {% else %}
-                        <td>{{d[_key]}}</td>
-                    {% endif %}
-                {% endif %}
-            {% endfor %}
-                <td>
-                    <button type="button" class="btn btn-primary btn-details" onclick='openModal{{key}}({{d.id}})'>{{ 'admin-ui.details' | tr }}</button>
-                    {% if field.readOnly != true %}
-                        <a class="btn btn-danger btn-delete" href="{{ route('adminUI.nested', {entityName: req.params.entityName, id: req.params.id, nestedKey: key, remove: d.getId() }) }}"><i class="far fa-trash-alt"></i></a>
-                    {% endif %}
-
-                </td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
-{{ dgUtils.pagination(data[key]) }}
-<script>
-function openModal{{key}}(id) {
-    var src = "{{ route('adminUI.details', {entityName: field.selfType, id: ''}) }}";
-    var index = src.lastIndexOf('/');
-    src = src.substring(0, index);
-    src += '/' + id + '?popup=true&frameKey={{key}}';
-    {% if field.inverseSide %}
-    if (id == 0) {
-        var dv = {
-            {{field.inverseSide}}: "{{req.params.id}}"
-        };
-        src += '&defaultValues=' + JSON.stringify(dv);
-    }
-    {% endif %}
-    console.log('src:',src);
-    openPopup("#modalEdit{{key}}", "#modalEditFrame{{key}}", src);
-    //$("#modalEditFrame{{key}}").attr('src', src);
-    //$("#modalEdit{{key}}").modal();
-}
-</script>
-{% else %}
-<iframe id="nested-frame-{{key}}" class="nested-frame" onLoad="calculateFrameHeight(this);" src="{{ route('adminUI.nested', {entityName: req.params.entityName, id: req.params.id, nestedKey: key }) }}"> </iframe>
-<div class="modal fade" id="modalEdit{{key}}" tabindex="-1" role="dialog">
-  <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Modifica {{field.name | tr }}</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
+    <label>
+        {{ field.name | tr }}
+        {% if field.uiSettings.descriptionText %}
+            <small id="{{key}}-help" class="{{ field.uiSettings.descriptionTextClasses if field.uiSettings.descriptionTextClasses }} description-label">{{ field.uiSettings.descriptionText | tr }}</small>
+        {% endif %}
+    </label>
+    {% if req.params.id != 0 and field.readOnly != true and data[key + '__disable_creation'] != true %}
+        <button type="button" class="btn btn-primary" onclick='openModal{{key}}(0)'>
+            {{ "admin-ui.add" | tr }}
         </button>
-      </div>
-      <div class="modal-body nested-frame">
-        <iframe class="nested-frame nested-frame-modal" id="modalEditFrame{{key}}" onLoad="calculateFrameHeightForPopup(this);"  src=""></iframe>
-      </div>
+    {% endif %}
+    <table class="table">
+        <thead>
+            <tr>
+                {% for _key, _field in field.metadata.fields %}
+                    {% if _field.onSummary %}
+                        <th>
+                            {{dgUtils.orderableHeader(_field.name, _key, data[key])}}
+                        </th>
+                    {% endif %}
+                {% endfor %}
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for d in data[key].data %}
+                <tr>
+                    {% for _key, _field in field.metadata.fields %}
+                        {% if _field.onSummary %}
+                            {% if _field.uiSettings and _field.uiSettings.listTemplate %}
+                                {% set value = d[_key] %}
+                                <td>{% include resolvePath(_field.uiSettings.listTemplate) %}
+                                </td>
+                            {% elif _field.uiSettings and _field.uiSettings.listFilter %}
+                                <td>{{ d[_key] | _adminUIMasterFilter_(_field.uiSettings.listFilter) | safe }}</td>
+                            {% else %}
+                                <td>{{d[_key]}}</td>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                    <td>
+                        <button type="button" class="btn btn-primary btn-details" onclick='openModal{{key}}({{d.id}})'>{{ 'admin-ui.details' | tr }}</button>
+                        {% if field.readOnly != true %}
+                            <a class="btn btn-danger btn-delete" href="{{ route('adminUI.nested', {entityName: req.params.entityName, id: req.params.id, nestedKey: key, remove: d.getId() }) }}">
+                                <i class="far fa-trash-alt"></i>
+                            </a>
+                        {% endif %}
+
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {{ dgUtils.pagination(data[key]) }}
+    <script>
+        function openModal{{key}}(id) {
+            var src = "{{ route('adminUI.details', {entityName: field.selfType, id: ''}) }}";
+            var index = src.lastIndexOf('/');
+            src = src.substring(0, index);
+            src += '/' + id + '?popup=true&frameKey={{key}}';
+            {% if field.inverseSide %}
+                if (id == 0) {
+                    var dv = {
+                        {{field.inverseSide}}: "{{req.params.id}}"
+                    };
+                    src += '&defaultValues=' + JSON.stringify(dv);
+                }
+            {% endif %}
+            console.log('src:', src);
+            openPopup("#modalEdit{{key}}", "#modalEditFrame{{key}}", src);
+            //$("#modalEditFrame{{key}}").attr('src', src);
+            //$("#modalEdit{{key}}").modal();
+        }
+    </script>
+{% else %}
+    <iframe id="nested-frame-{{key}}" class="nested-frame" onLoad="calculateFrameHeight(this);" src="{{ route('adminUI.nested', {entityName: req.params.entityName, id: req.params.id, nestedKey: key }) }}"></iframe>
+    <div class="modal fade" id="modalEdit{{key}}" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Modifica {{field.name | tr }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body nested-frame">
+                    <iframe class="nested-frame nested-frame-modal" id="modalEditFrame{{key}}" onLoad="calculateFrameHeightForPopup(this);"  src=""></iframe>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
 {% endif %}
