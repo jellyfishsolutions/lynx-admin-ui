@@ -1,11 +1,11 @@
-import { Route, GET, POST, DELETE, API } from "lynx-framework/decorators";
-import BaseEntity from "lynx-framework/entities/base.entity";
-import Request from "lynx-framework/request";
-import { Controller } from "../controller";
+import { Route /*GET, POST, DELETE, API*/ } from 'lynx-framework/decorators';
+//import BaseEntity from 'lynx-framework/entities/base.entity';
+//import Request from 'lynx-framework/request';
+import { Controller } from '../controller';
 
-@Route("/adminUI/api")
+@Route('/adminUI/api')
 export default class ApiController extends Controller {
-
+    /*
     @API()
     @GET("/:entityName")
     async list(entityName: string, req: Request) {
@@ -90,6 +90,5 @@ export default class ApiController extends Controller {
         return true;
     }
 
-
-
+*/
 }

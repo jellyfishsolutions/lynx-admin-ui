@@ -1,6 +1,23 @@
 import { app } from 'lynx-framework/app';
 import SimpleModule from 'lynx-framework/simple.module';
 import { AdminType } from './decorators';
+import { ExecutorParameter } from 'lynx-datagrid/datagrid';
+
+export interface IRepository {
+    name: string;
+    factory(): IEntity;
+    findOne(id: any, options?: any): Promise<any>;
+    customFindAndCount(
+        where: any,
+        params: ExecutorParameter
+    ): Promise<[any[], number]>;
+}
+
+export interface IEntity {
+    save(): Promise<IEntity>;
+    remove(): Promise<IEntity>;
+    reload(): Promise<IEntity>;
+}
 
 export default class AdminUIModule extends SimpleModule {
     static configuration: any = {};
@@ -14,6 +31,8 @@ export default class AdminUIModule extends SimpleModule {
     static nestedTemplatePath = 'admin-ui/nested';
     static popupEditorParentTemplatePath = '/admin-ui/layouts/base';
     static popupEditorTemplatePath = 'admin-ui/edit-popup';
+
+    static _additionalClassesPath: string[] = [];
 
     constructor() {
         super();
@@ -147,6 +166,15 @@ export default class AdminUIModule extends SimpleModule {
      */
     static setEditorPopupParentTemplatePath(path: string) {
         AdminUIModule.popupEditorParentTemplatePath = path;
+    }
+
+    /**
+     * Register a custom class automatically loading from its path.
+     * The class should be a non-entity class, since it needs to be loaded explicitly.
+     * @param path The path of the class to be loaded
+     */
+    static registerClassFile(path: string) {
+        AdminUIModule._additionalClassesPath.push(path);
     }
 
     get translation(): string {

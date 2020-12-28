@@ -5,12 +5,19 @@ import MediaEntity from 'lynx-framework/entities/media.entity';
 import Request from 'lynx-framework/request';
 import EditableEntity from './editable-entity';
 import { generateSchema } from './generator';
-import { Like, FindOperator, getConnection, Repository } from 'typeorm';
+import {
+    Like,
+    FindOperator,
+    getConnection,
+    Repository,
+    SelectQueryBuilder,
+} from 'typeorm';
 import * as moment from 'moment';
 import Datagrid from 'lynx-datagrid/datagrid';
-import AdminUIModule from '.';
+import AdminUIModule, { IRepository } from '.';
+import { app } from 'lynx-framework/app';
 
-let _adminUI: { entity: any; meta: EntityMetadata }[];
+let _adminUI: { entity: IRepository; meta: EntityMetadata }[];
 let hasInit = false;
 
 export class Controller extends BaseController {
@@ -33,7 +40,18 @@ export class Controller extends BaseController {
         }
     }
 
-    get adminUI(): { entity: any; meta: EntityMetadata }[] {
+    static dynamicRegisterClass(entityMetadata: EntityMetadata) {
+        if (!hasInit) {
+            hasInit = true;
+            _adminUI = generateSchema(app.config.db.entities);
+        }
+        _adminUI.push({
+            entity: entityMetadata.classParameters!.customRepository!(),
+            meta: entityMetadata,
+        });
+    }
+
+    get adminUI(): { entity: IRepository; meta: EntityMetadata }[] {
         return _adminUI;
     }
 
@@ -55,7 +73,10 @@ export class Controller extends BaseController {
         for (let d of this.adminUI) {
             if (d.entity.name == entityName) {
                 if (!id || id == '0') {
-                    return new d.entity();
+                    if (d.entity.factory !== undefined) {
+                        return d.entity.factory() as any;
+                    }
+                    return new (d.entity as any)();
                 }
                 return await d.entity.findOne(id, {
                     relations: d.meta.classParameters.relations,
@@ -65,7 +86,7 @@ export class Controller extends BaseController {
         return null;
     }
 
-    retrieveEntityClass(entityName: string): any {
+    retrieveEntityClass(entityName: string): IRepository | null {
         for (let d of this.adminUI) {
             if (d.entity.name == entityName) {
                 return d.entity;
@@ -91,7 +112,14 @@ export class Controller extends BaseController {
         let current = await this.retrieveEntity(entityName, id);
         if (!current) {
             if (!id || id == 0) {
-                return new (this.retrieveEntityClass(entityName))();
+                let repo = this.retrieveEntityClass(entityName);
+                if (repo) {
+                    if (repo.factory !== undefined) {
+                        return repo.factory();
+                    } else {
+                        return new (repo as any)();
+                    }
+                }
             }
             return null;
         }
@@ -171,10 +199,6 @@ export class Controller extends BaseController {
             }
         }
 
-        let repository = getConnection().getRepository(
-            Class
-        ) as Repository<any>;
-
         let ors = [];
         if (Object.keys(smartWhere).length > 0) {
             for (let key in smartWhere) {
@@ -192,46 +216,61 @@ export class Controller extends BaseController {
 
         where = ors;
 
-        let qb = repository.createQueryBuilder('e');
-        for (let relation of metadata.classParameters.relations || []) {
-            qb = qb.leftJoinAndSelect('e.' + relation, relation.toUpperCase());
+        let repository: Repository<any>;
+        let qb: SelectQueryBuilder<any>;
+        if (Class.customFindAndCount == undefined) {
+            repository = getConnection().getRepository(
+                Class as any
+            ) as Repository<any>;
+        } else {
+            repository = null as any;
         }
 
-        for (let orOption of where) {
-            let parts = [];
-            let params: any = {};
-            let counter = 0;
-            for (let key in orOption) {
-                let _q = '';
-                let value = orOption[key];
-                if (value instanceof Array) {
-                    _q += '(';
-                    for (let i = 0; i < value.length; i++) {
-                        let _v = 'param' + counter;
-                        params[_v] = value[i];
-                        counter++;
-                        _q += key + ' = :' + _v;
-                        if (i < value.length - 1) {
-                            _q += ' OR';
-                        }
-                        _q += ' ';
-                    }
-                    _q += ') ';
-                } else if (value instanceof FindOperator) {
-                    let _v = 'param' + counter;
-                    params[_v] = value.value;
-                    counter++;
-                    _q += key + ' LIKE :' + _v + ' ';
-                } else {
-                    let _v = 'param' + counter;
-                    params[_v] = value;
-                    counter++;
-                    _q += key + ' = :' + _v + ' ';
-                }
-                parts.push(_q.trim());
+        if (repository) {
+            qb = repository.createQueryBuilder('e');
+            for (let relation of metadata.classParameters.relations || []) {
+                qb = qb.leftJoinAndSelect(
+                    'e.' + relation,
+                    relation.toUpperCase()
+                );
             }
-            let q = parts.join(' AND ');
-            qb = qb.orWhere(q, params);
+
+            for (let orOption of where) {
+                let parts = [];
+                let params: any = {};
+                let counter = 0;
+                for (let key in orOption) {
+                    let _q = '';
+                    let value = orOption[key];
+                    if (value instanceof Array) {
+                        _q += '(';
+                        for (let i = 0; i < value.length; i++) {
+                            let _v = 'param' + counter;
+                            params[_v] = value[i];
+                            counter++;
+                            _q += key + ' = :' + _v;
+                            if (i < value.length - 1) {
+                                _q += ' OR';
+                            }
+                            _q += ' ';
+                        }
+                        _q += ') ';
+                    } else if (value instanceof FindOperator) {
+                        let _v = 'param' + counter;
+                        params[_v] = value.value;
+                        counter++;
+                        _q += key + ' LIKE :' + _v + ' ';
+                    } else {
+                        let _v = 'param' + counter;
+                        params[_v] = value;
+                        counter++;
+                        _q += key + ' = :' + _v + ' ';
+                    }
+                    parts.push(_q.trim());
+                }
+                let q = parts.join(' AND ');
+                qb = qb.orWhere(q, params);
+            }
         }
 
         await datagrid.fetchData((params) => {
@@ -249,12 +288,18 @@ export class Controller extends BaseController {
                     order[tmp] = 'DESC';
                 }
             }
-            for (let key in order) {
-                qb = qb.addOrderBy('e.' + key, order[key]);
+            params.order = order;
+
+            if (repository) {
+                for (let key in order) {
+                    qb = qb.addOrderBy('e.' + key, order[key]);
+                }
+                qb = qb.skip(params.skip);
+                qb = qb.take(params.take);
+                return qb.getManyAndCount();
+            } else {
+                return Class!.customFindAndCount(where, params);
             }
-            qb = qb.skip(params.skip);
-            qb = qb.take(params.take);
-            return qb.getManyAndCount();
         });
         let tmp = datagrid.data as BaseEntity[];
         let promises: Promise<void>[] = [];
@@ -391,7 +436,7 @@ export class Controller extends BaseController {
             } else if (m.readOnly) {
                 continue;
             }
-            let originalMeta = this.retrieveMetadata(entity.constructor.name);
+            let originalMeta = this.retrieveMetadata(req.params.entityName);
             if (
                 m.type == AdminType.ActionButton &&
                 req.body['__admin_ui_action'] == key
@@ -427,7 +472,7 @@ export class Controller extends BaseController {
                                 updated.push(
                                     await this.retrieveEntityClass(
                                         m.selfType as string
-                                    ).findOne(v.key)
+                                    )!.findOne(v.key)
                                 );
                             }
                         }
@@ -445,7 +490,11 @@ export class Controller extends BaseController {
                 }
                 let e = entity as any;
                 if (!e[key]) {
-                    e[key] = new entityClass();
+                    if (entityClass.factory !== undefined) {
+                        e[key] = entityClass.factory();
+                    } else {
+                        e[key] = new (entityClass as any)();
+                    }
                 }
                 let currentMeta = this.retrieveMetadata(m.selfType as string);
                 await this.setData(

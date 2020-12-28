@@ -1,5 +1,6 @@
 import { Request } from 'lynx-framework/request';
 import BaseEntity from 'lynx-framework/entities/base.entity';
+import { IRepository } from '.';
 
 export enum AdminType {
     Id = 1,
@@ -52,6 +53,7 @@ export interface ClassParameters {
     disableCreation?: boolean | ((req: Request) => Promise<boolean>);
     disableDelete?: boolean | ((req: Request) => Promise<boolean>);
     defaultOrderBy?: string | ((req: Request) => Promise<string>);
+    customRepository?: () => IRepository;
 }
 
 export interface QueryParams {
