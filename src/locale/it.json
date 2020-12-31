@@ -18,5 +18,6 @@
     "admin-ui.add": "Aggiungi",
     "admin-ui.unable-delete": "Impossibile cancellare %1$s. Per favore, verifica le sue dipendenze.",
     "admin-ui.select": "Seleziona...",
-    "admin-ui.remove-media": "Rimuovi"
+    "admin-ui.remove-media": "Rimuovi",
+    "admin-ui.edit": "Modifica"
 }

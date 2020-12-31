@@ -383,6 +383,7 @@ This parameter defines the following optional properties:
 -   `additionalListInfo`: additional info that can be used by the editor template; `any` values accepted.
 -   `descriptionText`: additional `small` text rendered inside the `label` tag. Supports localized strings.
 -   `descriptionTextClasses`: custom CSS classes for the `descritionText`.
+-   `displayMode`: used with the `AdminUI.Table` type, allow to change the visualization strategy used for display the details. Default value is `DisplayMode.popup`. The `DisplayMode.panel` enable a visualization in a full-height right panel.
 
 Moreover, in the editor section, each field is wrapped inside a `div` with an unique id. The id is defined as `field-{{entity-name}}-{{name-of-the-field}}`. Using the id, it is possible to customize though CSS rules the aspect of a single field.
 
@@ -457,3 +458,52 @@ IMPORTANT: for custom field type, please use numbers greater then `300`, in orde
 Starting from version `v0.5.0`, a new "low level" API is available.
 This API allows to create a custom controller to display and edit the entities.
 Thought the API it is possible to customize urls and add custom validation based, for example, on the user role.
+In that case, it is strictly necessary that the following `Name` decorators are used, in order to correctly visualize the different pages:
+
+-   `adminUI.index`
+-   `adminUI.previewMedia`
+-   `adminUI.ajax-selection`
+-   `adminUI.delete`
+-   `adminUI.delete_multiple`
+-   `adminUI.list`
+-   `adminUI.details`
+-   `adminUI.nested`
+-   `adminUI.save`
+
+## No-database entity support
+
+It is not strictly necessary that AdminUI decorators are used with a database Entity class. Any decorators can be used also with a standard Typescript class, if the following requirements are respected:
+
+-   The class shall implements the usual `EditableEntity` interface;
+-   The class shall have a repository-like backended class. This class shall implements method to persist and retrieve the entities, or perform query operation. An implementation of the `IRepository` shall be provided using the `customRepository` property of the `AdminUI` decorator.
+
+## Dynamic register an entity
+
+The `builder` API allows to define and register a new AdminUI type inside the AdminUI repository without using decorators. In this case, the new registered class shall also provide a custom repository, following the required depicted [here](no-database-entity-support).
+
+In the following lines, an example of dynamic class registration is exposed:
+
+```
+let dynamicClass = new Builder('Dynamic Class', {
+    customRepository: () => dynamicRepo as any,
+});
+dynamicClass.addField('id', {
+    name: 'Id',
+    type: AdminType.Id,
+    readOnly: true,
+    onSummary: true,
+    selfType: 'String',
+});
+dynamicClass.addField('html', {
+    name: 'html',
+    type: AdminType.RichText,
+    onSummary: true,
+    selfType: 'String',
+});
+
+dynamicClass.register();
+```
+
+## `AdminUIRepository` API
+
+The `AdminUIRepository` class provide a set of static methods that can be used to access information about the current registered classes in the AdminUI. This class is also used internally by AdminUI to build and provide the current editing interface.

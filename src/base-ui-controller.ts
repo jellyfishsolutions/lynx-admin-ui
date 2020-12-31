@@ -7,6 +7,7 @@ import Response from 'lynx-framework/response';
 import EditableEntity from './editable-entity';
 
 import { sprintf } from 'sprintf-js';
+import { AdminUIRepository } from './admin-ui-repository';
 
 /**
  * Basic controller that generates all the UI that contains the logic to perform the
@@ -20,7 +21,7 @@ export class BaseUIController extends Controller {
     async generateEntitiesIndex(req: Request): Promise<Response> {
         let ctx = {
             parentTemplate: AdminUIModule.indexParentTemplatePath,
-            entities: this.entitiesList(),
+            entities: AdminUIRepository.entitiesList(),
         };
         return this.render(AdminUIModule.indexTemplatePath, req, ctx);
     }
@@ -38,11 +39,11 @@ export class BaseUIController extends Controller {
         field: string,
         req: Request
     ) {
-        let entityData = await this.retrieveEntity(entityName, id);
+        let entityData = await AdminUIRepository.retrieveEntity(entityName, id);
         if (!entityData) {
             throw this.error(404, 'not found');
         }
-        let metadata = this.retrieveMetadata(entityName);
+        let metadata = AdminUIRepository.getMetadataForEntity(entityName);
         metadata = await this.generateContextMetadata(metadata, req);
         let _field = metadata.fields[field];
         if (!_field) {
@@ -88,14 +89,14 @@ export class BaseUIController extends Controller {
         id: any,
         req: Request
     ): Promise<Response> {
-        let entityData = await this.retrieveEntity(entityName, id);
+        let entityData = await AdminUIRepository.retrieveEntity(entityName, id);
         if (!entityData) {
             throw this.error(404, 'not found');
         }
         try {
             await entityData.remove();
         } catch (e) {
-            this.logger.error(e);
+            this.logger.error('error performing delete', e);
             let msg = this.tr('admin-ui.unable-delete', req);
             this.addErrorMessage(
                 sprintf(msg, (entityData as any).getLabel()),
@@ -120,14 +121,17 @@ export class BaseUIController extends Controller {
         let ids = JSON.parse(req.query.ids as string) as string[];
 
         for (let id of ids) {
-            let entityData = await this.retrieveEntity(entityName, id);
+            let entityData = await AdminUIRepository.retrieveEntity(
+                entityName,
+                id
+            );
             if (!entityData) {
                 throw this.error(404, 'not found');
             }
             try {
                 await entityData.remove();
             } catch (e) {
-                this.logger.error(e);
+                this.logger.error('error performing multiple delete', e);
                 let msg = this.tr('admin-ui.unable-delete', req);
                 this.addErrorMessage(
                     sprintf(msg, (entityData as any).getLabel()),
@@ -150,7 +154,7 @@ export class BaseUIController extends Controller {
         entityName: string,
         req: Request
     ): Promise<Response> {
-        let metadata = this.retrieveMetadata(entityName);
+        let metadata = AdminUIRepository.getMetadataForEntity(entityName);
         if (!metadata) {
             throw this.error(404, 'Not found');
         }
@@ -175,6 +179,8 @@ export class BaseUIController extends Controller {
                     try {
                         u.push(parseInt(t as string));
                     } catch (e) {
+                        console.log('unable to parse int from ' + tmp);
+                        console.log(e);
                         u.push(t);
                     }
                 }
@@ -209,11 +215,11 @@ export class BaseUIController extends Controller {
         id: any,
         req: Request
     ): Promise<Response> {
-        let entityData = await this.retrieveEntity(entityName, id);
+        let entityData = await AdminUIRepository.retrieveEntity(entityName, id);
         if (!entityData) {
             throw this.error(404, 'not found');
         }
-        let metadata = this.retrieveMetadata(entityName);
+        let metadata = AdminUIRepository.getMetadataForEntity(entityName);
         metadata = await this.generateContextMetadata(metadata, req);
         let data = await this.cleanData(req, entityData, metadata);
         let fields = await this.generateContextFields(
@@ -262,18 +268,20 @@ export class BaseUIController extends Controller {
         nestedKey: string,
         req: Request
     ): Promise<Response> {
-        let entityData = await this.retrieveEntity(entityName, id);
+        let entityData = await AdminUIRepository.retrieveEntity(entityName, id);
         if (!entityData) {
             throw this.error(404, 'not found');
         }
-        let metadata = { ...this.retrieveMetadata(entityName) };
+        let metadata = {
+            ...AdminUIRepository.getMetadataForEntity(entityName),
+        };
         metadata = await this.generateContextMetadata(metadata, req);
         let nestedField = metadata.fields[nestedKey];
         metadata.fields = {};
         metadata.fields[nestedKey] = nestedField;
 
         if (req.query.remove) {
-            let entityData = await this.retrieveEntity(
+            let entityData = await AdminUIRepository.retrieveEntity(
                 nestedField.selfType as string,
                 req.query.remove
             );
@@ -283,7 +291,7 @@ export class BaseUIController extends Controller {
             try {
                 await entityData.remove();
             } catch (e) {
-                this.logger.error(e);
+                this.logger.error('Error performing delete', e);
                 this.addErrorMessage(
                     'Unable to delete ' +
                         (entityData as any).getLabel() +
@@ -316,20 +324,23 @@ export class BaseUIController extends Controller {
         id: any,
         req: Request
     ): Promise<Response> {
-        let metadata = this.retrieveMetadata(entityName);
+        let metadata = AdminUIRepository.getMetadataForEntity(entityName);
         if (!metadata) {
             throw this.error(404, 'not found');
         }
         let entity: BaseEntity;
         if (!id || id == '0') {
-            let repo = this.retrieveEntityClass(entityName);
+            let repo = AdminUIRepository.getRepositoryForEntity(entityName);
             if (repo?.factory !== undefined) {
                 entity = repo.factory() as any;
             } else {
                 entity = new (repo as any)();
             }
         } else {
-            entity = (await this.retrieveEntity(entityName, id)) as BaseEntity;
+            entity = (await AdminUIRepository.retrieveEntity(
+                entityName,
+                id
+            )) as BaseEntity;
             if (!entity) {
                 throw this.error(404, 'not found');
             }
@@ -355,8 +366,8 @@ export class BaseUIController extends Controller {
                     this.addErrorMessage(e.message, req);
                 }
             } catch (ee) {
-                this.logger.error(e);
-                this.logger.error(ee);
+                this.logger.error('original error: ', e);
+                this.logger.error('catch error trying to resolve it', ee);
                 this.addErrorMessage(e.message, req);
             }
             metadata = await this.generateContextMetadata(metadata, req);

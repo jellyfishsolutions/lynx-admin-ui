@@ -4,7 +4,6 @@ import BaseEntity from 'lynx-framework/entities/base.entity';
 import MediaEntity from 'lynx-framework/entities/media.entity';
 import Request from 'lynx-framework/request';
 import EditableEntity from './editable-entity';
-import { generateSchema } from './generator';
 import {
     Like,
     FindOperator,
@@ -14,11 +13,8 @@ import {
 } from 'typeorm';
 import * as moment from 'moment';
 import Datagrid from 'lynx-datagrid/datagrid';
-import AdminUIModule, { IRepository } from '.';
-import { app } from 'lynx-framework/app';
-
-let _adminUI: { entity: IRepository; meta: EntityMetadata }[];
-let hasInit = false;
+import AdminUIModule from '.';
+import { AdminUIRepository } from './admin-ui-repository';
 
 export class Controller extends BaseController {
     static async saveEntity(entity: any, req: Request): Promise<any> {
@@ -34,74 +30,7 @@ export class Controller extends BaseController {
 
     async postConstructor() {
         await super.postConstructor();
-        if (!hasInit) {
-            hasInit = true;
-            _adminUI = generateSchema(this.app.config.db.entities);
-        }
-    }
-
-    static dynamicRegisterClass(entityMetadata: EntityMetadata) {
-        if (!hasInit) {
-            hasInit = true;
-            _adminUI = generateSchema(app.config.db.entities);
-        }
-        _adminUI.push({
-            entity: entityMetadata.classParameters!.customRepository!(),
-            meta: entityMetadata,
-        });
-    }
-
-    get adminUI(): { entity: IRepository; meta: EntityMetadata }[] {
-        return _adminUI;
-    }
-
-    entitiesList(): { name: string; readableName: string }[] {
-        let list = [];
-        for (let d of this.adminUI) {
-            list.push({
-                name: d.entity.name,
-                readableName: d.meta.name,
-            });
-        }
-        return list;
-    }
-
-    async retrieveEntity(
-        entityName: string,
-        id: any
-    ): Promise<BaseEntity | null> {
-        for (let d of this.adminUI) {
-            if (d.entity.name == entityName) {
-                if (!id || id == '0') {
-                    if (d.entity.factory !== undefined) {
-                        return d.entity.factory() as any;
-                    }
-                    return new (d.entity as any)();
-                }
-                return await d.entity.findOne(id, {
-                    relations: d.meta.classParameters.relations,
-                });
-            }
-        }
-        return null;
-    }
-
-    retrieveEntityClass(entityName: string): IRepository | null {
-        for (let d of this.adminUI) {
-            if (d.entity.name == entityName) {
-                return d.entity;
-            }
-        }
-        return null;
-    }
-
-    retrieveMetadata(entityName: string): EntityMetadata {
-        for (let d of this.adminUI) {
-            if (d.entity.name == entityName) {
-                return d.meta;
-            }
-        }
-        return null as any;
+        AdminUIRepository.init();
     }
 
     async retrieveData(
@@ -109,10 +38,10 @@ export class Controller extends BaseController {
         entityName: string,
         id: any
     ): Promise<any> {
-        let current = await this.retrieveEntity(entityName, id);
+        let current = await AdminUIRepository.retrieveEntity(entityName, id);
         if (!current) {
             if (!id || id == 0) {
-                let repo = this.retrieveEntityClass(entityName);
+                let repo = AdminUIRepository.getRepositoryForEntity(entityName);
                 if (repo) {
                     if (repo.factory !== undefined) {
                         return repo.factory();
@@ -126,7 +55,7 @@ export class Controller extends BaseController {
         return await this.cleanData(
             req,
             current,
-            this.retrieveMetadata(entityName)
+            AdminUIRepository.getMetadataForEntity(entityName)
         );
     }
 
@@ -135,11 +64,11 @@ export class Controller extends BaseController {
         entityName: string,
         datagrid: Datagrid<any>
     ): Promise<void> {
-        let Class = this.retrieveEntityClass(entityName);
+        let Class = AdminUIRepository.getRepositoryForEntity(entityName);
         if (!Class) {
             return null as any;
         }
-        let metadata = this.retrieveMetadata(entityName);
+        let metadata = AdminUIRepository.getMetadataForEntity(entityName);
         let filterWhere = null as any;
         if (metadata.classParameters.filterBy) {
             filterWhere = await metadata.classParameters.filterBy(req);
@@ -164,7 +93,9 @@ export class Controller extends BaseController {
                     right = Like('%' + (v as string).toLowerCase() + '%');
                     key = 'e.' + key;
                 } else {
-                    let Class = this.retrieveEntityClass(f.selfType as string);
+                    let Class = AdminUIRepository.getRepositoryForEntity(
+                        f.selfType as string
+                    );
                     if (Class) {
                         if (
                             (metadata.classParameters.relations || []).indexOf(
@@ -334,7 +265,7 @@ export class Controller extends BaseController {
                 await datagrid.fetchData((params) =>
                     executor(req, data, params)
                 );
-                let gridMetadata = this.retrieveMetadata(
+                let gridMetadata = AdminUIRepository.getMetadataForEntity(
                     metadata.fields[key].selfType as string
                 );
                 if (gridMetadata) {
@@ -381,7 +312,7 @@ export class Controller extends BaseController {
                                 obj[key] = ee.getLabel();
                             }
                         } else {
-                            let nestedMeta = this.retrieveMetadata(
+                            let nestedMeta = AdminUIRepository.getMetadataForEntity(
                                 metadata.fields[key].selfType as string
                             );
                             if (nestedMeta) {
@@ -436,7 +367,9 @@ export class Controller extends BaseController {
             } else if (m.readOnly) {
                 continue;
             }
-            let originalMeta = this.retrieveMetadata(req.params.entityName);
+            let originalMeta = AdminUIRepository.getMetadataForEntity(
+                req.params.entityName
+            );
             if (
                 m.type == AdminType.ActionButton &&
                 req.body['__admin_ui_action'] == key
@@ -451,7 +384,7 @@ export class Controller extends BaseController {
                 if (m.type == AdminType.Selection) {
                     let v = values.find((s) => s.key == data[prefix + key]);
                     if (v) {
-                        let _class = this.retrieveEntityClass(
+                        let _class = AdminUIRepository.getRepositoryForEntity(
                             m.selfType as string
                         );
                         if (!_class) {
@@ -470,7 +403,7 @@ export class Controller extends BaseController {
                             let v = values.find((s) => s.key == id);
                             if (v) {
                                 updated.push(
-                                    await this.retrieveEntityClass(
+                                    await AdminUIRepository.getRepositoryForEntity(
                                         m.selfType as string
                                     )!.findOne(v.key)
                                 );
@@ -482,7 +415,7 @@ export class Controller extends BaseController {
             } else if (m.type == AdminType.Checkbox) {
                 (entity as any)[key] = data[prefix + key] ? true : false;
             } else if (m.type == AdminType.Expanded) {
-                let entityClass = await this.retrieveEntityClass(
+                let entityClass = await AdminUIRepository.getRepositoryForEntity(
                     m.selfType as string
                 );
                 if (!entityClass) {
@@ -496,7 +429,9 @@ export class Controller extends BaseController {
                         e[key] = new (entityClass as any)();
                     }
                 }
-                let currentMeta = this.retrieveMetadata(m.selfType as string);
+                let currentMeta = AdminUIRepository.getMetadataForEntity(
+                    m.selfType as string
+                );
                 await this.setData(
                     req,
                     e[key],
@@ -697,7 +632,9 @@ export class Controller extends BaseController {
                 );
                 field = fields[key] as FieldParameters;
             }
-            let meta = this.retrieveMetadata(field.selfType as string);
+            let meta = AdminUIRepository.getMetadataForEntity(
+                field.selfType as string
+            );
             if (meta) {
                 if (!field.query) {
                     let updatedFields: Record<string, FieldParameters> = {};

@@ -23,6 +23,11 @@ export enum AdminType {
     Currency = 18,
 }
 
+export enum DisplayMode {
+    popup = 'popup',
+    panel = 'panel',
+}
+
 export interface UISettings {
     editorClasses?: string;
     innerEditorClasses?: string;
@@ -34,6 +39,7 @@ export interface UISettings {
     additionalListInfo?: any;
     descriptionText?: string;
     descriptionTextClasses?: string;
+    displayMode?: DisplayMode;
     //TODO: editorOrder?: number;
     //TODO: editorFilter?: number;
     //TODO: editorList?: number;

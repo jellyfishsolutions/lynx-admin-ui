@@ -1,4 +1,4 @@
-import { Controller } from './controller';
+import { AdminUIRepository } from './admin-ui-repository';
 import { ClassParameters, EntityMetadata, FieldParameters } from './decorators';
 
 export default class Builder {
@@ -43,6 +43,6 @@ export default class Builder {
 
     register() {
         let e = this.build();
-        Controller.dynamicRegisterClass(e);
+        AdminUIRepository.dynamicRegisterClass(e);
     }
 }

@@ -1,43 +1,57 @@
 <script type="text/javascript">
-function calculateFrameHeight(iframeElement){
-    setTimeout(function() {
-        var the_height = iframeElement.contentWindow.document.body.scrollHeight;
-        iframeElement.height = the_height;
-    }, 0);
-}
-function calculateFrameHeightForPopup(iframeElement){
-    setTimeout(function() {
-        var the_height = iframeElement.contentWindow.document.body.scrollHeight + 100;
-        iframeElement.height = the_height;
-        iframeElement.style.height = the_height;
-        $(iframeElement.parentElement).height(the_height+'px');
-    }, 0);
-}
-{% if nested %}
-function openPopup(id, frameId, url) {
-    window.parent.postMessage({
-        type: 'openPopup',
-        id: id,
-        frameId: frameId,
-        url: url
-    });
-}
-{% else %}
-window.addEventListener("message", function(event) {
-    console.log(event);
-    var data = event.data;
-    if (data.type == 'openPopup') {
-        $(data.frameId).attr('src', data.url);
-        $(data.id).modal();
+    function calculateFrameHeight(iframeElement) {
+        setTimeout(function () {
+            var the_height = iframeElement.contentWindow.document.body.scrollHeight;
+            iframeElement.height = the_height;
+        }, 0);
     }
-    if (data.type == 'closePopup') {
-        setTimeout(function() {
-            var frameId = data.frameId;
-            $(frameId).attr('src', $(frameId).attr('src'));
-            $('.modal').modal('hide');
-        }, 200);
+    function calculateFrameHeightForPopup(iframeElement) {
+        setTimeout(function () {
+            var the_height = iframeElement.contentWindow.document.body.scrollHeight + 100;
+            iframeElement.height = the_height;
+            iframeElement.style.height = the_height;
+            $(iframeElement.parentElement).height(the_height + 'px');
+        }, 0);
     }
-});
-{% endif %}
-
+    {% if nested %}
+        function openPopup(id, frameId, url, displayMode, title) {
+            window
+                .parent
+                .postMessage({
+                    type: 'openPopup',
+                    id: id,
+                    frameId: frameId,
+                    url: url,
+                    displayMode: displayMode,
+                    title: title
+                });
+        }
+    {% else %}
+        window.addEventListener("message", function (event) {
+            console.log(event);
+            var data = event.data;
+            if (data.type == 'openPopup') {
+                if (data.displayMode == 'panel') {
+                    console.log('titolo: ', data.title);
+                    $("#right-panel-title").text(data.title);
+                    $("#right-panel-content-frame").attr('src', data.url);
+                    $("#right-panel").addClass('cd-panel--is-visible');
+                } else {
+                    $(data.frameId).attr('src', data.url);
+                    $(data.id).modal();
+                }
+            }
+            if (data.type == 'closePopup') {
+                setTimeout(function () {
+                    if (data.displayMode == 'panel') {
+                        $("#right-panel").removeClass('cd-panel--is-visible');
+                    } else {
+                        var frameId = data.frameId;
+                        $(frameId).attr('src', $(frameId).attr('src'));
+                        $('.modal').modal('hide');
+                    }
+                }, 200);
+            }
+        });
+    {% endif %}
 </script>
