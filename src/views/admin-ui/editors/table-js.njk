@@ -46,10 +46,10 @@
                     if (data.displayMode == 'panel') {
                         $("#right-panel").removeClass('cd-panel--is-visible');
                     } else {
-                        var frameId = data.frameId;
-                        $(frameId).attr('src', $(frameId).attr('src'));
                         $('.modal').modal('hide');
                     }
+                    var frameId = data.frameId;
+                    $(frameId).attr('src', $(frameId).attr('src'));
                 }, 200);
             }
         });

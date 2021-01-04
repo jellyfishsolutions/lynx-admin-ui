@@ -1,1 +1,4 @@
 src/test/
+src/dynamic/
+dist/test/
+dist/dynamic
