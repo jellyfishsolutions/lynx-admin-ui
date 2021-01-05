@@ -1,6 +1,6 @@
 {
     "name": "lynx-admin-ui",
-    "version": "0.6.0-beta.3",
+    "version": "0.6.0-beta.5",
     "description": "this module adds annotations for entities in order to automatically generate an Administration UI",
     "main": "dist/index.js",
     "scripts": {
@@ -27,15 +27,18 @@
     "dependencies": {
         "@types/sprintf-js": "^1.1.2",
         "lynx-datagrid": "^0.1.2",
-        "lynx-framework": "^1.1.13",
+        "lynx-framework": "1.x",
         "sprintf-js": "^1.1.2"
     },
     "devDependencies": {
-        "del": "^5.1.0",
+        "del": "^6.0.0",
         "gulp": "^4.0.2",
+        "gulp-jsdoc3": "^3.0.0",
         "gulp-typescript": "^5.0.1",
-        "merge2": "^1.3.0",
-        "typescript": "^3.9.6"
+        "gulp-sourcemaps": "^3.0.0",
+        "merge2": "^1.4.1",
+        "path": "^0.12.7",
+        "typescript": "^4.1.3"
     },
     "prettier": {
         "trailingComma": "es5",
