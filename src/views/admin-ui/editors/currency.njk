@@ -37,7 +37,7 @@
                 rightAlign: false,
                 groupSeparator: "{{ groupSeparator }}",
                 radixPoint: "{{ radixPoint }}",
-                digits: {{field.digits if field.digits else 2 }}
+                digits: {{field.digits if field.digits !== null or field.digits !== undefined  else 2 }}
             });
             $("#currency-{{key}}").on("input", function (e) {
                 var input = $(this);
