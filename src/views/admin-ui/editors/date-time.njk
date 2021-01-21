@@ -6,7 +6,11 @@
     </label>
     <input class="form-control" 
         name="{{key}}" 
+        {% if data[key] | length == 0 %}
+        value=""
+        {% else %}
         value="{{data[key] | date('YYYY-MM-DDTHH:mm') }}" 
+        {% endif %}
         type="datetime-local"
         {{ "readonly" if field.readOnly }} 
         {{ "required" if field.required }}
