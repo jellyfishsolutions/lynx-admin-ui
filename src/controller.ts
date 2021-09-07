@@ -314,8 +314,11 @@ export class Controller extends BaseController {
             } else {
                 obj[key] = data[key];
                 if (obj[key] instanceof Object) {
-                    if (obj[key] instanceof Promise) {
+                    if (obj[key] instanceof Promise && obj[key]) {
                         obj[key] = await obj[key];
+                        if (!obj[key]) {
+                            continue;
+                        }
                     }
                     if (obj[key] instanceof Date) {
                         obj[key] = moment(data[key]);
@@ -580,8 +583,9 @@ export class Controller extends BaseController {
             meta.classParameters.listActionTemplate &&
             meta.classParameters.listActionTemplate instanceof Function
         ) {
-            meta.classParameters.listActionTemplate = await (meta
-                .classParameters.listActionTemplate as any)(req);
+            meta.classParameters.listActionTemplate = await (
+                meta.classParameters.listActionTemplate as any
+            )(req);
         }
         return meta;
     }
@@ -630,22 +634,16 @@ export class Controller extends BaseController {
             }
             if (field.hundredsSeparator instanceof Function) {
                 fields[key] = { ...field };
-                fields[
-                    key
-                ].hundredsSeparator = await (field.hundredsSeparator as Function)(
-                    req,
-                    entityData
-                );
+                fields[key].hundredsSeparator = await (
+                    field.hundredsSeparator as Function
+                )(req, entityData);
                 field = fields[key] as FieldParameters;
             }
             if (field.decimalSeparator instanceof Function) {
                 fields[key] = { ...field };
-                fields[
-                    key
-                ].decimalSeparator = await (field.decimalSeparator as Function)(
-                    req,
-                    entityData
-                );
+                fields[key].decimalSeparator = await (
+                    field.decimalSeparator as Function
+                )(req, entityData);
                 field = fields[key] as FieldParameters;
             }
             let meta = this.retrieveMetadata(field.selfType as string);
