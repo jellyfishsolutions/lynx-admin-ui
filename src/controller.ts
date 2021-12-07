@@ -649,9 +649,12 @@ export class Controller extends BaseController {
             let meta = this.retrieveMetadata(field.selfType as string);
             if (meta) {
                 if (!field.query) {
+                    fields[key] = { ... field };
+                    let currentEntity = entityData[key];
+                    let evaluatedFields = await this.generateContextFields(meta, req, currentEntity);
                     let updatedFields: Record<string, FieldParameters> = {};
                     for (let f in meta.fields) {
-                        updatedFields[key + '-' + f] = meta.fields[f];
+                        updatedFields[key + '-' + f] = evaluatedFields[f];
                     }
                     meta = { ...meta, fields: updatedFields };
                 }

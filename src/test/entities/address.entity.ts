@@ -5,6 +5,11 @@ import Customer from './customer.entity';
 import EditableEntity from '../../editable-entity';
 import Request from 'lynx-framework/request';
 
+async function _myOnly(req: Request, e: any) {
+    console.log("asd eccomi", e);
+    return true;
+}
+
 @Entity('addresses')
 @AdminUI('Address', {
     defaultOrderBy: '+city',
@@ -32,10 +37,11 @@ export default class Address extends BaseEntity implements EditableEntity {
 
     @Column()
     @AdminField({
-        name: 'Street',
+        name: 'City',
         type: AdminType.String,
         onSummary: true,
         smartSearchable: true,
+        readOnly: _myOnly
     })
     city: string;
 
