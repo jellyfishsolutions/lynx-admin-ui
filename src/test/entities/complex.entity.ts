@@ -234,11 +234,19 @@ export default class Complex extends BaseEntity implements EditableEntity {
         selfType: 'Category',
         onSummary: true,
         searchable: true,
+        readOnly: true,
         uiSettings: {
             listTemplate: '/chips',
         },
     })
     subcategories: Category[];
+
+    @AdminField({
+      name: 'Altre categorie ancora',
+      type: AdminType.Checkbox,
+      values: map([new Category]),
+      readOnly: true,
+    })
 
     @AdminField({
         name: 'Giorno della settimana',
