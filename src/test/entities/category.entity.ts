@@ -36,6 +36,15 @@ export default class Category extends BaseEntity implements EditableEntity {
     })
     date: Date;
 
+    @Column({ nullable: true })
+    @AdminField({
+      name: 'Sensible Content',
+      type: AdminType.Checkbox,
+      readOnly: true,
+      onSummary: true,
+    })
+    sensible: boolean;
+
     getId() {
         return this.id;
     }

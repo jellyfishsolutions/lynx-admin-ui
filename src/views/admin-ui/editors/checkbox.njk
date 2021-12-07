@@ -7,7 +7,7 @@
         </label>
         {% for element in field.values %}
             <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="{{key}}" id="{{key}}-{{element.key}}" value="{{element.key}}" {{ "readonly" if field.readOnly }} {{ "required" if field.required }}  {{"checked" if data[key] and data[key].indexOf(element.key)!=-1}}/>
+                <input class="form-check-input" type="checkbox" name="{{key}}" id="{{key}}-{{element.key}}" value="{{element.key}}" {{ "disabled" if field.readOnly }} {{ "required" if field.required }}  {{"checked" if data[key] and data[key].indexOf(element.key)!=-1}}/>
                 <label class="form-check-label" for="{{key}}-{{element.key}}">{{ element.value | tr }}
                 </label>
             </div>
@@ -15,7 +15,7 @@
     </div>
 {% else %}
     <div class="form-check">
-        <input class="form-check-input" type="checkbox" name="{{key}}" value="checked" {{ "readonly" if field.readOnly }} {{ "required" if field.required }}  {{"checked" if data[key]}}/>
+        <input class="form-check-input" type="checkbox" name="{{key}}" value="checked" {{ "disabled" if field.readOnly }} {{ "required" if field.required }}  {{"checked" if data[key]}}/>
         <label class="form-check-label" for="{{key}}">{{ field.name | tr }}
         </label>
     </div>
