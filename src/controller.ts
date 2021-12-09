@@ -601,6 +601,20 @@ export class Controller extends BaseController {
         }
         for (let key in fields) {
             let field = fields[key] as FieldParameters;
+            let meta = this.retrieveMetadata(field.selfType as string);
+            if (meta) {
+                if (!field.query) {
+                    fields[key] = { ... field };
+                    let currentEntity = entityData[key];
+                    let evaluatedFields = await this.generateContextFields(meta, req, currentEntity);
+                    let updatedFields: Record<string, FieldParameters> = {};
+                    for (let f in meta.fields) {
+                        updatedFields[key + '-' + f] = evaluatedFields[f];
+                    }
+                    meta = { ...meta, fields: updatedFields };
+                }
+                fields[key].metadata = meta;
+            }
             if (field.readOnly instanceof Function) {
                 fields[key] = { ...field };
                 fields[key].readOnly = await (field.readOnly as Function)(
@@ -646,20 +660,7 @@ export class Controller extends BaseController {
                 )(req, entityData);
                 field = fields[key] as FieldParameters;
             }
-            let meta = this.retrieveMetadata(field.selfType as string);
-            if (meta) {
-                if (!field.query) {
-                    fields[key] = { ... field };
-                    let currentEntity = entityData[key];
-                    let evaluatedFields = await this.generateContextFields(meta, req, currentEntity);
-                    let updatedFields: Record<string, FieldParameters> = {};
-                    for (let f in meta.fields) {
-                        updatedFields[key + '-' + f] = evaluatedFields[f];
-                    }
-                    meta = { ...meta, fields: updatedFields };
-                }
-                fields[key].metadata = meta;
-            }
+            
         }
         return fields;
     }
