@@ -609,7 +609,7 @@ export class Controller extends BaseController {
                     let evaluatedFields = await this.generateContextFields(meta, req, currentEntity);
                     let updatedFields: Record<string, FieldParameters> = {};
                     for (let f in meta.fields) {
-                        updatedFields[key + '-' + f] = evaluatedFields[f];
+                        updatedFields[key + '-' + f] = field.type == AdminType.Expanded ? evaluatedFields[f] : meta.fields[f];
                     }
                     meta = { ...meta, fields: updatedFields };
                 }

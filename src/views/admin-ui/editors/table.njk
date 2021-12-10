@@ -76,7 +76,7 @@
         }
     </script>
 {% else %}
-    <iframe id="nested-frame-{{key}}" class="nested-frame" onLoad="calculateFrameHeight(this);" src="{{ route('adminUI.nested', {entityName: req.params.entityName, id: req.params.id, nestedKey: key }) }}"></iframe>
+    <iframe id="nested-frame-{{key}}" class="nested-frame" onLoad="var self = this; setTimeout(function() { calculateFrameHeight(self); }, 100)" src="{{ route('adminUI.nested', {entityName: req.params.entityName, id: req.params.id, nestedKey: key }) }}"></iframe>
     <div class="modal fade" id="modalEdit{{key}}" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
@@ -87,7 +87,7 @@
                     </button>
                 </div>
                 <div class="modal-body nested-frame">
-                    <iframe class="nested-frame nested-frame-modal" id="modalEditFrame{{key}}" onLoad="calculateFrameHeightForPopup(this);"  src=""></iframe>
+                    <iframe class="nested-frame nested-frame-modal" id="modalEditFrame{{key}}" onLoad=" var self = this; setTimeout(function() { calculateFrameHeightForPopup(self); }, 200)"  src=""></iframe>
                 </div>
             </div>
         </div>
