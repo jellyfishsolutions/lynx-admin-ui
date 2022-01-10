@@ -57,6 +57,9 @@ typings/
 # dotenv environment variables file
 .env
 
+# vscode files
+.vscode/
+
 *.rdb
 
 !package.json

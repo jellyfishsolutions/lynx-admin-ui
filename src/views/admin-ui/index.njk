@@ -1,5 +1,9 @@
 {% extends resolvePath(parentTemplate) %}
 
+<!-- Bootstrap CSS -->
+  {% block additional_styles %}
+    <link href="{{ route('/adminUI/assets/css/admin.css') }}" rel="stylesheet">
+  {% endblock %}
 {% block body %}
 <div class="container">
 <table class="table table-entities-list">

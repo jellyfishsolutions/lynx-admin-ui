@@ -12,7 +12,65 @@
     <title></title>
   </head>
   <body>
-    {% block body %}{% endblock %}
+    <div id="wrapper">
+      <!-- Sidebar -->
+      <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion toggled" id="accordionSidebar">
+        
+        <!-- Sidebar - Brand -->
+        {% block sidebar_brand %}
+          <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ route('/') }}">
+            <img class="sidebar-logo" src="{{ route('/adminUI/assets/logo-placeholder-png.png') }}">
+          </a>
+        {% endblock %}
+
+        <!-- Divider -->
+        <hr class="sidebar-divider my-0" style="background: rgba(255,255,255, 0.3)">
+
+        <!-- Nav Items -->
+        {% block sidebar_nav_items %}{% endblock %}
+  
+      </ul>
+      <!-- / Sidebar -->
+      
+      <!-- Content Wrapper -->
+      <div id="content-wrapper" class="flex flex-column">
+        
+        <!-- Main Content -->
+        <div id="content">
+
+          <!-- Topbar -->
+          <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+            <!-- Sidebar Toggle (Topbar) -->
+            <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+              <i class="fa fa-bars"></i>
+            </button>
+
+            <!-- Topbar Navbar -->
+            <ul class="navbar-nav ml-auto">
+
+              <!-- Nav Items -->
+            {% block top_bar_nav_items %}{% endblock %}
+
+            </ul>
+
+          </nav>
+          <!-- / Topbar -->
+
+          <!-- Page Content -->
+          <div class="container-fluid">
+
+              {% block body %}{% endblock %}
+          
+          </div>
+            <!-- / Page Content -->
+
+        </div>
+        <!-- / Main Content -->
+
+      </div>
+      <!-- / Content Wrapper -->
+    <div>
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->

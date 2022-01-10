@@ -5,7 +5,11 @@ import DatagridModule from 'lynx-datagrid';
 
 const port = Number(process.env.PORT) || 3000;
 
-let myConfig = new ConfigBuilder(__dirname).setDatabase('adminui').build();
+let myConfig = new ConfigBuilder(__dirname)
+  .setDatabase('admin_ui')
+  .setDatabaseLogin('root', '')
+  .setDatabasePort(3306)
+  .build();
 
 const app = new App(myConfig, [
     new DatagridModule(),
@@ -15,3 +19,4 @@ const app = new App(myConfig, [
 app.nunjucksEnvironment.addFilter('currency', (str) => str + '€');
 
 app.startServer(port);
+  

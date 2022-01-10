@@ -4,7 +4,9 @@
 {% import resolvePath('/datagrid/utility')as dgUtils %}
 
 {% block additional_styles %}
-    <link href="{{route('/adminUI/fontawesome/css/all.css')}}" rel="stylesheet">
+    <link href="{{ route('/adminUI/fontawesome/css/all.css') }}" rel="stylesheet">
+    <link href="{{ route('/adminUI/assets/css/admin.css') }}" rel="stylesheet">
+
     <!--load all styles -->
     {% for key, field in fields %}
         {% include resolvePath(configuration[field.type] + '-css') ignore missing %}
@@ -45,9 +47,9 @@
 
         function toggleAllSelections() {
             var all = [];
-            {% for d in gridData.data %}
+            /*{% for d in gridData.data %}
                 all.push('{{d.getId()}}');
-            {% endfor %}
+            {% endfor %} @todo uncomment*/
 
             var selected = true;
             if (currentSelections.length != all.length) {
@@ -107,162 +109,173 @@
     {% if hasSmartSearchable %}
         {% set filtersCount = filtersCount + 1 %}
     {% endif %}
-    <div class="container">
-        {{ utils.alert(flash) }}
-        {% if filtersCount > 0 %}
-            <div id="filterBy" class="mb-2">
-                <button class="btn btn-light btn-search mb-2" type="button" data-toggle="collapse" data-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
-                    <i class="fas fa-search"></i>
-                    {{ 'admin-ui.filter-title' | tr }}
-                </button>
-                <div class="collapse" id="collapseFilter">
-                    <div class="card card-body">
-                        <form method="GET" action="{{route('adminUI.list', { entityName: req.params.entityName })}}">
-                            <div class="row">
+    <div class="card">
+      <div class="card-body">
+        <div class="table-header mb-3">
+          {{ utils.alert(flash) }}
+          <div id="filterBy">
+            {% if filtersCount > 0 %}
+              <button class="btn btn-light btn-search mb-2" type="button" data-toggle="collapse" data-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
+                <i class="fas fa-search"></i>
+                {{ 'admin-ui.filter-title' | tr }}
+              </button>
+              <div class="collapse" id="collapseFilter">
+                <div class="card card-body">
+                  <form method="GET" action="{{route('adminUI.list', { entityName: req.params.entityName })}}">
+                    <div class="row">
 
-                                {% if hasSmartSearchable %}
-                                    <div class="smart-search col-12">
-                                        <div class="form-group">
-                                            <input class="form-control" 
+                      {% if hasSmartSearchable %}
+                        <div class="smart-search col-12">
+                          <div class="form-group">
+                            <input class="form-control" 
                                     name="smartSearch" 
-                                    value="{{req.query.smartSearch}}" 
-/>
-                                        </div>
-                                    </div>
-                                {% endif %}
+                                    value="{{req.query.smartSearch}}"
+                            />
+                          </div>
+                        </div>
+                      {% endif %}
 
-                                {% for key, field in fields %}
-                                    {% if field.searchable %}
-                                        <div class="{{ field.uiSettings.filterClasses if field.uiSettings and field.uiSettings.filterClasses else 'col-12' }} ">
-                                            {% include resolvePath(configuration[field.type]) %}
-                                        </div>
-                                    {% endif %}
-                                {% endfor %}
-                            </div>
-                            <button class="btn btn-primary">{{ 'admin-ui.filter-do' | tr }}</button>
-                            <a href="{{route('adminUI.list', { entityName: req.params.entityName })}}" class="btn btn-secondary">{{ 'admin-ui.filter-clean' | tr}}</a>
-                        </form>
+                      {% for key, field in fields %}
+                        {% if field.searchable %}
+                          <div class="{{ field.uiSettings.filterClasses if field.uiSettings and field.uiSettings.filterClasses else 'col-12' }} ">
+                            {% include resolvePath(configuration[field.type]) %}
+                          </div>
+                        {% endif %}
+                      {% endfor %}
+
                     </div>
+                    <button class="btn btn-primary">{{ 'admin-ui.filter-do' | tr }}</button>
+                    <a href="{{route('adminUI.list', { entityName: req.params.entityName })}}" class="btn btn-secondary">{{ 'admin-ui.filter-clean' | tr}}</a>
+                  </form>
                 </div>
-            </div>
-        {% endif %}
+              </div>
+            {% endif %}
+          </div>
 
-        {% if not metadata.classParameters.disableCreation %}
-            <div class="mb-2">
+          <div class="d-flex align-items-center justify-content-between">
+            <span class="entity-title mb-0">
+              {{ metadata.name }}
+            </span>
+            
+            <div>
+              {% if not metadata.classParameters.disableCreation %}
                 <a href="{{ route('adminUI.details', {entityName: req.params.entityName, id: 0}) }}" class="btn btn-primary btn-create btn-create-{{req.params.entityName}}">
                     <i class="fas fa-plus"></i>
                     {{ 'admin-ui.create' | tr }}
                 </a>
+              {% endif %}
             </div>
-        {% endif %}
-
-        <table class="table table-{{req.params.entityName}}">
-            <thead>
-                <tr>
-                    {% if metadata.classParameters.batchDelete %}
-                        <th class="header-delete-checkbox">
-                            <input type="checkbox" onclick="toggleAllSelections()"/>
-                        </th>
-                    {% endif %}
-                    {% for key, field in fields %}
-                        {% if field.onSummary %}
-                            <th class="header-{{field.name}}">
-                                {{ dgUtils.orderableHeader(field.name, key, gridData) }}
-                            </th>
-                        {% endif %}
-                    {% endfor %}
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for d in gridData.data %}
-                    <tr>
-                        {% if metadata.classParameters.batchDelete %}
-                            <th class="cell-delete-checkbox">
-                                <input type="checkbox" onclick="toggleSelection('{{d.getId()}}')" id="delete-checkbox-{{d.getId()}}"/>
-                            </th>
-                        {% endif %}
-                        {% for key, field in fields %}
-                            {% if field.onSummary %}
-                                {% if field.uiSettings and field.uiSettings.listTemplate %}
-                                    {% set value = d[key] %}
-                                    <td class="cell-{{field.name}}">{% include resolvePath(field.uiSettings.listTemplate) %}
-                                    </td>
-                                {% elif field.uiSettings and field.uiSettings.listFilter %}
-                                    <td class="cell-{{field.name}}">{{ d[key] | _adminUIMasterFilter_(field.uiSettings.listFilter) | safe }}</td>
-                                {% else %}
-                                    <td class="cell-{{field.name}}">{{d[key]}}</td>
-                                {% endif %}
-                            {% endif %}
-                        {% endfor %}
-                        <td>
-                            {% if metadata.classParameters.listActionTemplate %}
-                                {% include resolvePath(metadata.classParameters.listActionTemplate) %}
-                            {% else %}
-                                <a class="btn btn-primary btn-details btn-details-{{req.params.entityName}}" href="{{route('adminUI.details', {entityName: req.params.entityName, id: d.id})}}">{{ 'admin-ui.details' | tr }}</a>
-                                {% if not metadata.classParameters.disableDelete %}
-                                    <button class="btn btn-danger btn-delete btn-delete-{{req.params.entityName}}" type="button" data-toggle="modal" data-target="#deleteModal" data-name="{{d.getLabel()}}" data-id="{{d.getId()}}">
-                                        <i class="far fa-trash-alt"></i>
-                                    </button>
-                                {% endif %}
-
-                            {% endif %}
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-
-        {% if not metadata.classParameters.disableDelete %}
-            <div>
-                <button style="display: none;" id="deleteAllBtn" class="btn btn-danger btn-delete" type="button" data-toggle="modal" data-target="#deleteAllModal">{{ 'admin-ui.delete-selected-elements' | tr }}</button>
-            </div>
-        {% endif %}
-
-        {{ dgUtils.pagination(gridData) }}
-
-    </div>
-
-    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">{{ 'admin-ui.delete-element' | tr }}</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    {{ 'admin-ui.delete-confirm-single' | tr }}
-                    <b>
-                        <span class="element-name">ElementName</span>
-                    </b>?
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ 'admin-ui.abort' | tr }}</button>
-                    <a href="" class="delete-url btn btn-danger">{{ 'admin-ui.delete' | tr }}</a>
-                </div>
-            </div>
+          </div>
         </div>
-    </div>
 
-    <div class="modal fade" id="deleteAllModal" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">{{ 'admin-ui.delete-elements' | tr }}</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    {{ 'admin-ui.delete-confirm-multiple' | tr}}
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ 'admin-ui.abort' | tr }}</button>
-                    <a href="" class="delete-url btn btn-danger">{{ 'admin-ui.delete' | tr }}</a>
-                </div>
-            </div>
+          <table class="table table-sm table-striped table-{{req.params.entityName}}">
+              <thead>
+                  <tr>
+                      {% if metadata.classParameters.batchDelete %}
+                          <th class="header-delete-checkbox">
+                              <input type="checkbox" onclick="toggleAllSelections()"/>
+                          </th>
+                      {% endif %}
+                      {% for key, field in fields %}
+                          {% if field.onSummary %}
+                              <th class="header-{{field.name}}">
+                                  {{ dgUtils.orderableHeader(field.name, key, gridData) }}
+                              </th>
+                          {% endif %}
+                      {% endfor %}
+                      <th></th>
+                  </tr>
+              </thead>
+              <tbody>
+                  {% for d in gridData.data %}
+                      <tr>
+                          {% if metadata.classParameters.batchDelete %}
+                              <th class="cell-delete-checkbox">
+                                  <input type="checkbox" onclick="toggleSelection('{{d.getId()}}')" id="delete-checkbox-{{d.getId()}}"/>
+                              </th>
+                          {% endif %}
+                          {% for key, field in fields %}
+                              {% if field.onSummary %}
+                                  {% if field.uiSettings and field.uiSettings.listTemplate %}
+                                      {% set value = d[key] %}
+                                      <td class="cell-{{field.name}}">{% include resolvePath(field.uiSettings.listTemplate) %}
+                                      </td>
+                                  {% elif field.uiSettings and field.uiSettings.listFilter %}
+                                      <td class="cell-{{field.name}}">{{ d[key] | _adminUIMasterFilter_(field.uiSettings.listFilter) | safe }}</td>
+                                  {% else %}
+                                      <td class="cell-{{field.name}}">{{d[key]}}</td>
+                                  {% endif %}
+                              {% endif %}
+                          {% endfor %}
+                          <td class="text-center">
+                              {% if metadata.classParameters.listActionTemplate %}
+                                  {% include resolvePath(metadata.classParameters.listActionTemplate) %}
+                              {% else %}
+                                  <a class="btn btn-primary btn-details btn-details-{{req.params.entityName}}" href="{{route('adminUI.details', {entityName: req.params.entityName, id: d.id})}}">{{ 'admin-ui.details' | tr }}</a>
+                                  {% if not metadata.classParameters.disableDelete %}
+                                      <button class="btn btn-danger btn-delete btn-delete-{{req.params.entityName}}" type="button" data-toggle="modal" data-target="#deleteModal" data-name="{{d.getLabel()}}" data-id="{{d.getId()}}">
+                                          <i class="far fa-trash-alt"></i>
+                                      </button>
+                                  {% endif %}
+
+                              {% endif %}
+                          </td>
+                      </tr>
+                  {% endfor %}
+              </tbody>
+          </table>
+
+          {% if not metadata.classParameters.disableDelete %}
+              <div>
+                  <button style="display: none;" id="deleteAllBtn" class="btn btn-danger btn-delete" type="button" data-toggle="modal" data-target="#deleteAllModal">{{ 'admin-ui.delete-selected-elements' | tr }}</button>
+              </div>
+          {% endif %}
+
+          {{ dgUtils.pagination(gridData) }}
+
+      </div>
+
+      <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <h5 class="modal-title">{{ 'admin-ui.delete-element' | tr }}</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                      </button>
+                  </div>
+                  <div class="modal-body">
+                      {{ 'admin-ui.delete-confirm-single' | tr }}
+                      <b>
+                          <span class="element-name">ElementName</span>
+                      </b>?
+                  </div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ 'admin-ui.abort' | tr }}</button>
+                      <a href="" class="delete-url btn btn-danger">{{ 'admin-ui.delete' | tr }}</a>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+      <div class="modal fade" id="deleteAllModal" tabindex="-1" role="dialog" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <h5 class="modal-title">{{ 'admin-ui.delete-elements' | tr }}</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                      </button>
+                  </div>
+                  <div class="modal-body">
+                      {{ 'admin-ui.delete-confirm-multiple' | tr}}
+                  </div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ 'admin-ui.abort' | tr }}</button>
+                      <a href="" class="delete-url btn btn-danger">{{ 'admin-ui.delete' | tr }}</a>
+                  </div>
+              </div>
+          </div>
         </div>
     </div>
 

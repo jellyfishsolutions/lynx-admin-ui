@@ -2,47 +2,76 @@
 {% import resolvePath("/lynx/utils") as utils %}
 
 {% block additional_styles %}
-<link href="{{route('/adminUI/fontawesome/css/all.css')}}" rel="stylesheet">
-{% for type in usedTypes %}
-    {% include resolvePath(configuration[type] + '-css') ignore missing %}
-{% endfor %}
+  <link href="{{route('/adminUI/fontawesome/css/all.css')}}" rel="stylesheet">
+  <link href="{{ route('/adminUI/assets/css/admin.css') }}" rel="stylesheet">
+
+  {% for type in usedTypes %}
+      {% include resolvePath(configuration[type] + '-css') ignore missing %}
+  {% endfor %}
 {% endblock %}
+
 {% block additional_scripts %}
-{% for type in usedTypes %}
-    {% include resolvePath(configuration[type] + '-js') ignore missing %}
-{% endfor %}
+  {% for type in usedTypes %}
+      {% include resolvePath(configuration[type] + '-js') ignore missing %}
+  {% endfor %}
 {% endblock %}
 
 
 {% block body %}
-<div class="container">
-    <div class="lead entity-title entity-title-{{req.params.entityName}}">
-        <a class="btn btn-secondary btn-back btn-back-{{req.params.entityName}}" href="{{ route('adminUI.list', {entityName: req.params.entityName}) }}">
-            <i class="fas fa-chevron-left"></i> {{ 'admin-ui.back' | tr }}
-        </a>
-        {{ metadata.name }}
-    </div>
-{{ utils.alert(flash) }}
-<form method="POST" action="{{route('adminUI.save', {entityName: req.params.entityName, id: req.params.id} )}}" enctype="multipart/form-data">
-    <input type="hidden" name="__admin_ui_action" id="__admin_ui_action" />
-<div class="row">
-{% for key, field in fields %}
-    {% if not field.hide %}
-        <div id="field-{{req.params.entityName}}-{{key}}" class="{{ field.uiSettings.editorClasses if field.uiSettings and field.uiSettings.editorClasses else 'col-12' }} ">
-            {% include resolvePath(configuration[field.type]) %}
+  <div class="card">
+    <div class="card-body">
+      <div class="lead entity-title entity-title-{{req.params.entityName}}">
+          <a class="btn btn-secondary btn-back btn-back-{{req.params.entityName}}" href="{{ route('adminUI.list', {entityName: req.params.entityName}) }}">
+              <i class="fas fa-chevron-left"></i> {{ 'admin-ui.back' | tr }}
+          </a>
+      </div>
+
+      {{ utils.alert(flash) }}
+
+      <div class="container-fluid mt-5">
+
+        <div class="row entity-title">
+          {{ metadata.name }}
         </div>
-    {% endif %}
-{% endfor %}
-</div>
 
-<div>
-    <button class="btn btn-primary btn-save btn-save-{{req.params.entityName}}" type="submit">
-        <i class="fas fa-save"></i> {{'admin-ui.save' | tr }}
-    </button>
-</div>
+        <form method="POST" action="{{route('adminUI.save', {entityName: req.params.entityName, id: req.params.id} )}}" enctype="multipart/form-data">
+          <input type="hidden" name="__admin_ui_action" id="__admin_ui_action" />
+            {% set counter = 0 %}
+            {% set isRow = false %}
+            {% for key, field in fields %}
+                {% if not field.hide %}
+                  {% if counter%2 === 0 %}
+                    {% set isRow = true %}
+                  {% else %}
+                    {% set isRow = false %}
+                  {% endif %}
 
-</form>
+                  {% if isRow %}
+                    <div class="row">
+                  {% endif %}
+                    <div id="field-{{req.params.entityName}}-{{key}}" class="{{ field.uiSettings.editorClasses if field.uiSettings and field.uiSettings.editorClasses else 'col-6' }} ">
+                        {% include resolvePath(configuration[field.type]) %}
+                    </div>
+                  
+                  {% if not isRow %}
+                    </div>
+                  {% endif %}
 
-</div>
+                  {% set counter = counter + 1 %}
+                {% endif %}
+            {% endfor %}
+            {% if isRow %}
+              </div>
+            {% endif %}
+          <div class="mt-3">
+            <button class="btn btn-primary btn-save btn-save-{{req.params.entityName}}" type="submit">
+              <i class="fas fa-save"></i> {{'admin-ui.save' | tr }}
+            </button>
+          </div>
+        </form>
+      
+      </div>
+    </div>
+  </div>
 
 {% endblock %}
