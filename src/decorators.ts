@@ -33,6 +33,7 @@ export interface UISettings {
     additionalListInfo?: any;
     descriptionText?: string;
     descriptionTextClasses?: string;
+    editorFullWidth?: boolean;
     //TODO: editorOrder?: number;
     //TODO: editorFilter?: number;
     //TODO: editorList?: number;

@@ -126,7 +126,7 @@ export default class Complex extends BaseEntity implements EditableEntity {
         smartSearchable: true,
         //searchable: true,
         uiSettings: {
-            editorClasses: 'col-6',
+            editorClasses: 'col-12',
             filterClasses: 'col-6',
             descriptionText: 'ah no?',
             descriptionTextClasses: 'text-primary',
@@ -184,7 +184,9 @@ export default class Complex extends BaseEntity implements EditableEntity {
     date: Date;
 
     @Column()
-    @AdminField({ name: 'Bio', type: AdminType.RichText, readOnly: isReadOnly })
+    @AdminField({ name: 'Bio', type: AdminType.RichText, readOnly: isReadOnly, uiSettings: {
+      editorFullWidth: true,
+    }})
     biography: string;
 
     @Column()

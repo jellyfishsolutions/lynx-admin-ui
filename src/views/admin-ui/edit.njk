@@ -39,26 +39,36 @@
             {% set counter = 0 %}
             {% set isRow = false %}
             {% for key, field in fields %}
-                {% if not field.hide %}
-                  {% if counter%2 === 0 %}
-                    {% set isRow = true %}
-                  {% else %}
-                    {% set isRow = false %}
-                  {% endif %}
+              {% if not field.hide %}
 
-                  {% if isRow %}
-                    <div class="row">
-                  {% endif %}
-                    <div id="field-{{req.params.entityName}}-{{key}}" class="{{ field.uiSettings.editorClasses if field.uiSettings and field.uiSettings.editorClasses else 'col-6' }} ">
-                        {% include resolvePath(configuration[field.type]) %}
-                    </div>
-                  
-                  {% if not isRow %}
-                    </div>
-                  {% endif %}
-
-                  {% set counter = counter + 1 %}
+                {% if counter%2 === 0 %}
+                  {% set isRow = true %}
+                {% else %}
+                  {% set isRow = false %}
                 {% endif %}
+
+                {% if isRow %}
+                  <div class="row">
+                {% endif %}
+
+                {% if field.uiSettings and field.uiSettings.editorClasses %}
+                  <div id="field-{{req.params.entityName}}-{{key}}" class="{{ field.uiSettings.editorClasses }}">
+                {% elif field.uiSettings and field.uiSettings.fullwidth %}
+                  <div id="field-{{req.params.entityName}}-{{key}}" class="col-12">
+                {% else %}
+                  <div id="field-{{req.params.entityName}}-{{key}}" class="col-12 col-md-6">
+                {% endif %}
+                
+                    {% include resolvePath(configuration[field.type]) %}
+
+                  </div>
+                
+                {% if not isRow %}
+                  </div>
+                {% endif %}
+
+                {% set counter = counter + 1 %}
+              {% endif %}
             {% endfor %}
             {% if isRow %}
               </div>

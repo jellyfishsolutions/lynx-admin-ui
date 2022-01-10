@@ -373,7 +373,7 @@ By default, both in the editor and in the filtering section, widgets are display
 
 This parameter defines the following optional properties:
 
--   `editorClasses`: indicates custom CSS classes to the widget when displayed in the editor section (default to `col-12`).
+-   `editorClasses`: indicates custom CSS classes to the widget when displayed in the editor section.
 -   `innerEditorClasses` indicates custom CSS classes, internally used by the widget (for example, for the `input` tag). This can be used diffenently by different types.
 -   `filterClasses`: indicates custom CSS classes to the widget when displayed in the filtering section (default to `col-12`).
 -   `listTemplate`: indicates a custom template to be used in the list view. The template can access the `value` variable, containing the current value of the field.
@@ -383,6 +383,7 @@ This parameter defines the following optional properties:
 -   `additionalListInfo`: additional info that can be used by the editor template; `any` values accepted.
 -   `descriptionText`: additional `small` text rendered inside the `label` tag. Supports localized strings.
 -   `descriptionTextClasses`: custom CSS classes for the `descritionText`.
+-   `editorFullWidth`: indicates if the field should occupy the full width of the view in the editor instead of the half width as by default. This option will be overwritten by `editorClasses`.
 
 Moreover, in the editor section, each field is wrapped inside a `div` with an unique id. The id is defined as `field-{{entity-name}}-{{name-of-the-field}}`. Using the id, it is possible to customize though CSS rules the aspect of a single field.
 
