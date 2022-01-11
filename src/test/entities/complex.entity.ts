@@ -4,14 +4,16 @@ import {
     Column,
     ManyToOne,
     ManyToMany,
+    OneToMany,
     JoinTable,
 } from 'typeorm';
-import { AdminUI, AdminField, AdminType } from '../../decorators';
+import { AdminUI, AdminField, AdminType, QueryParams } from '../../decorators';
 import BaseEntity from 'lynx-framework/entities/base.entity';
 import Category from './category.entity';
 import EditableEntity, { map } from '../../editable-entity';
 import { Request } from 'lynx-framework/request';
 import { app } from 'lynx-framework/app';
+import Simple from './simple.entity';
 
 export enum Gender {
     male,
@@ -47,6 +49,21 @@ const days = [
 
 async function getCategories() {
     return map(await Category.find());
+}
+
+async function fetchSimples(req: Request, entity: Complex, params: QueryParams): Promise<[any[], number]>
+{
+  if (! entity.id) {
+    return [[], 0];
+  }
+  return await Simple.findAndCount({
+    where: {
+      complex: entity,
+    },
+    take: params.take,
+    skip: params.skip,
+    order: params.order,
+  });
 }
 
 async function filteredCategories(
@@ -106,7 +123,7 @@ async function actionTemplate(req: Request): Promise<string> {
     filterBy: filteringList,
     listParentTemplate: listTemplate,
     listActionTemplate: actionTemplate,
-    relations: ['subcategories', 'category'],
+    relations: ['subcategories', 'category', 'simple'],
 })
 export default class Complex extends BaseEntity implements EditableEntity {
     @PrimaryGeneratedColumn()
@@ -242,6 +259,17 @@ export default class Complex extends BaseEntity implements EditableEntity {
         },
     })
     subcategories: Category[];
+
+    @AdminField({
+      name: 'Simple',
+      type: AdminType.Table,
+      selfType: 'Simple',
+      inverseSide: 'complex',
+      query: fetchSimples,
+      readOnly: false,
+    })
+    @OneToMany(() => Simple, simple => simple.complex, { eager: true })
+    simple: Simple[];
 
     @AdminField({
       name: 'Altre categorie ancora',
