@@ -1,5 +1,5 @@
 import { AdminField, AdminType, AdminUI } from '../../decorators';
-import EditableEntity from '../../editable-entity';
+import EditableEntity, { map } from '../../editable-entity';
 import BaseEntity from 'lynx-framework/entities/base.entity';
 import {
   Entity,
@@ -33,7 +33,14 @@ export default class Simple extends BaseEntity implements EditableEntity
   @Column()
   time: string
 
-
+  @AdminField({
+    name: 'Complex',
+    type: AdminType.Selection,
+    selfType: 'Complex',
+    inverseSide: 'simple',
+    values: async () => map(await Complex.find()),
+    hide: true,
+  })
   @ManyToOne(() => Complex, complex => complex.simple)
   complex: Complex;
 
