@@ -5,8 +5,6 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     {% block additional_styles %}{% endblock %}
     
     <title></title>
@@ -14,7 +12,7 @@
   <body>
     <div id="wrapper">
       <!-- Sidebar -->
-      <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion toggled" id="accordionSidebar">
+      <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark collapse d-md-flex" id="sidebar">
         
         <!-- Sidebar - Brand -->
         {% block sidebar_brand %}
@@ -27,7 +25,14 @@
         <hr class="sidebar-divider my-0" style="background: rgba(255,255,255, 0.3)">
 
         <!-- Nav Items -->
-        {% block sidebar_nav_items %}{% endblock %}
+        {% block sidebar_nav_items %}
+          <li class="nav-item">
+            <a class="nav-link" href="{{ route('/adminUI/Customer') }}">
+              <i class="fas fa-users"></i>
+              <span>Clienti</span>
+            </a>
+          </li>
+        {% endblock %}
   
       </ul>
       <!-- / Sidebar -->
@@ -42,7 +47,15 @@
           <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
 
             <!-- Sidebar Toggle (Topbar) -->
-            <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+            <button 
+              id="sidebarToggleTop" 
+              class="btn btn-link d-md-none rounded-circle mr-3"
+              type="button"
+              data-toggle="collapse"
+              data-target="#sidebar"
+              aria-controls="sidebar"
+              aria-expaneded="true"
+            >
               <i class="fa fa-bars"></i>
             </button>
 

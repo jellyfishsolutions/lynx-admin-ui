@@ -2106,9 +2106,6 @@ input[type="button"].btn-block {
   .fade:not(.show) {
     opacity: 0; }
 
-.collapse:not(.show) {
-  display: none; }
-
 .collapsing {
   position: relative;
   height: 0;
@@ -7411,7 +7408,6 @@ a:focus {
       padding: 0.75rem 1rem;
       width: 6.5rem; }
       .sidebar .nav-item .nav-link span {
-        font-size: 0.65rem;
         display: block; }
     .sidebar .nav-item.active .nav-link {
       font-weight: 700; }
@@ -7487,7 +7483,7 @@ a:focus {
     text-decoration: none;
     font-size: 1rem;
     font-weight: 800;
-    padding: 1.5rem 1rem;
+    padding: 0;
     text-align: center;
     text-transform: uppercase;
     letter-spacing: 0.05rem;
@@ -7497,8 +7493,8 @@ a:focus {
     .sidebar .sidebar-brand .sidebar-brand-text {
       display: none; }
     .sidebar .sidebar-brand .sidebar-logo {
-      width: 100%;
-      height: auto;
+      width: auto;
+      height: 100%;
     }
   .sidebar hr.sidebar-divider {
     margin: 0 1rem 1rem; }
@@ -7507,6 +7503,10 @@ a:focus {
     padding: 0 1rem;
     font-weight: 800;
     font-size: 0.65rem; }
+
+    .collapse:not(.show) {
+        display: none;
+    }
 
 @media (min-width: 768px) {
   .sidebar {
@@ -7533,10 +7533,8 @@ a:focus {
       padding: 1rem;
       width: 14rem; }
       .sidebar .nav-item .nav-link i {
-        font-size: 0.85rem;
         margin-right: 0.25rem; }
       .sidebar .nav-item .nav-link span {
-        font-size: 0.85rem;
         display: inline; }
       .sidebar .nav-item .nav-link[data-toggle="collapse"]::after {
         width: 1rem;
@@ -7582,7 +7580,6 @@ a:focus {
         padding: 0.75rem 1rem;
         width: 6.5rem; }
         .sidebar.toggled .nav-item .nav-link span {
-          font-size: 0.65rem;
           display: block; }
         .sidebar.toggled .nav-item .nav-link i {
           margin-right: 0; }
