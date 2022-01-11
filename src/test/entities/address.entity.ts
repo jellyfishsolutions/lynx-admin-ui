@@ -6,7 +6,6 @@ import EditableEntity from '../../editable-entity';
 import Request from 'lynx-framework/request';
 
 async function _myOnly(req: Request, e: any) {
-    console.log("asd eccomi", e);
     return true;
 }
 

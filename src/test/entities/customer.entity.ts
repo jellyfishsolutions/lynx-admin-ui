@@ -3,6 +3,11 @@ import { AdminUI, AdminField, AdminType } from '../../decorators';
 import BaseEntity from "lynx-framework/entities/base.entity";
 import EditableEntity from "../../editable-entity";
 import Address from "./address.entity";
+import { Request } from 'lynx-framework/request';
+
+async function _myOnly(req: Request, e: any) {
+  return true;
+}
 
 @Entity("customers")
 @AdminUI("Customer")
@@ -22,7 +27,7 @@ export default class Customer extends BaseEntity implements EditableEntity {
 
     @OneToOne(type => Address, { eager: true })
     @JoinColumn()
-    @AdminField({name: "Shipping Address", type: AdminType.Expanded, selfType: 'Address' })
+    @AdminField({name: "Shipping Address", type: AdminType.Expanded, selfType: 'Address', readOnly: _myOnly })
     shippingAddress: Address;
 
 
