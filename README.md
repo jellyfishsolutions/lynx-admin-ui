@@ -433,6 +433,8 @@ This blocks will be used by each templates to correctly load any additional reso
 
 If you decide to extend the default base layout (eg. to change theme colors by adding a custom css), you can inject different elements to the base layout trough these blocks:
 
+- `custom_scripts`: is used to inject custom scripts at the end of the body
+- `custom_styles`: is used to inject custom styles inside the header
 - `sidebar_brand`: is used to override the placeholder brand
 - `sidebar_nav_items`: is used to fill the sidebar with custom nav items
 - `topbar_nav_items`: is used to fill the topbar wih custom nav items
