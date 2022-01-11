@@ -431,6 +431,12 @@ The only requirement for a father template, is that defines the following blocks
 
 This blocks will be used by each templates to correctly load any additional resource, and to display its content.
 
+If you decide to extend the default base layout (eg. to change theme colors by adding a custom css), you can inject different elements to the base layout trough these blocks:
+
+- `sidebar_brand`: is used to override the placeholder brand
+- `sidebar_nav_items`: is used to fill the sidebar with custom nav items
+- `topbar_nav_items`: is used to fill the topbar wih custom nav items
+
 ### CSS Classes
 
 Buttons, fields and tables have additional classes, allowing custom CSS themes.
