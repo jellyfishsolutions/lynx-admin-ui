@@ -209,8 +209,9 @@ export class BaseUIController extends Controller {
      * @param id The id of the entity to retrieve
      * @param nestedKey The name of the property of the entity to display
      * @param req The current Lynx request
+     * @param enableDelete Determines if the delete action is enabled 
      */
-    async retrieveNestedView(entityName: string, id: any, nestedKey: string, req: Request, isDelete: Boolean = false): Promise<Response> {
+    async retrieveNestedView(entityName: string, id: any, nestedKey: string, req: Request, enableDelete: Boolean = false): Promise<Response> {
         let entityData = await this.retrieveEntity(entityName, id);
         if (!entityData) {
             throw this.error(404, 'not found');
@@ -221,7 +222,7 @@ export class BaseUIController extends Controller {
         metadata.fields = {};
         metadata.fields[nestedKey] = nestedField;
 
-        if (isDelete) {
+        if (enableDelete && req.query.remove) {
             let entityData = await this.retrieveEntity(nestedField.selfType as string, req.query.remove);
             if (!entityData) {
                 throw this.error(404, 'not found');
