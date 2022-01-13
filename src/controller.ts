@@ -593,7 +593,9 @@ export class Controller extends BaseController {
     async generateContextFields(
         metadata: EntityMetadata,
         req: Request,
-        entityData: any
+        entityData: any,
+        forceReadOnly: boolean = false,
+        forceHide: boolean = false
     ) {
         let fields = {} as any;
         for (let key in metadata.fields) {
@@ -602,11 +604,37 @@ export class Controller extends BaseController {
         for (let key in fields) {
             let field = fields[key] as FieldParameters;
             let meta = this.retrieveMetadata(field.selfType as string);
+
+            if (forceReadOnly || field.readOnly instanceof Function) {
+                fields[key] = { ...field };
+                if (forceReadOnly) {
+                    fields[key].readOnly = true;
+                } else {
+                    fields[key].readOnly = await (field.readOnly as Function)(
+                        req,
+                        entityData
+                    );
+                }
+                field = fields[key] as FieldParameters;
+            }
+            if (forceHide || field.hide instanceof Function) {
+                fields[key] = { ...field };
+                if (forceHide) {
+                    fields[key].hide = true;
+                } else {
+                    fields[key].hide = await (field.hide as Function)(
+                        req,
+                        entityData
+                    );
+                }
+                field = fields[key] as FieldParameters;
+            }
+
             if (meta) {
                 if (!field.query) {
                     fields[key] = { ... field };
                     let currentEntity = entityData[key];
-                    let evaluatedFields = await this.generateContextFields(meta, req, currentEntity);
+                    let evaluatedFields = await this.generateContextFields(meta, req, currentEntity, field.readOnly as any, field.hide as any);
                     let updatedFields: Record<string, FieldParameters> = {};
                     for (let f in meta.fields) {
                         updatedFields[key + '-' + f] = field.type == AdminType.Expanded ? evaluatedFields[f] : meta.fields[f];
@@ -614,15 +642,9 @@ export class Controller extends BaseController {
                     meta = { ...meta, fields: updatedFields };
                 }
                 fields[key].metadata = meta;
+                (field as any).metadata = meta;
             }
-            if (field.readOnly instanceof Function) {
-                fields[key] = { ...field };
-                fields[key].readOnly = await (field.readOnly as Function)(
-                    req,
-                    entityData
-                );
-                field = fields[key] as FieldParameters;
-            }
+            
             if (field.required instanceof Function) {
                 fields[key] = { ...field };
                 fields[key].required = await (field.required as Function)(
@@ -631,14 +653,7 @@ export class Controller extends BaseController {
                 );
                 field = fields[key] as FieldParameters;
             }
-            if (field.hide instanceof Function) {
-                fields[key] = { ...field };
-                fields[key].hide = await (field.hide as Function)(
-                    req,
-                    entityData
-                );
-                field = fields[key] as FieldParameters;
-            }
+            
             if (field.values instanceof Function) {
                 fields[key] = { ...field };
                 fields[key].values = await (field.values as Function)(
