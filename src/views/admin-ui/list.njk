@@ -29,8 +29,8 @@
             var url = "{{route('adminUI.delete', { entityName: req.params.entityName, id: ':id' })}}".replace(':id', id);
             url += '?redirect=' + window.location;
             modal
-                .find('.delete-url')
-                .attr("href", url);
+                .find('.delete-form')
+                .attr("action", url);
         });
 
         var currentSelections = [];
@@ -93,8 +93,8 @@
             var url = "{{route('adminUI.delete_multiple', { entityName: req.params.entityName, ids: ':id' })}}".replace(':id', id);
             url += '&redirect=' + window.location;
             modal
-                .find('.delete-url')
-                .attr("href", url);
+                .find('.delete-form')
+                .attr("action", url);
         });
     </script>
 {% endblock %}
@@ -158,7 +158,7 @@
             </span>
             
             <div>
-              {% if not metadata.classParameters.disableCreation %}
+              {% if not metadata.classParameters.disableCreation and AUIcanWrite(req, req.params.entityName) %}
                 <a href="{{ route('adminUI.details', {entityName: req.params.entityName, id: 0}) }}" class="btn btn-primary btn-create btn-create-{{req.params.entityName}}">
                     <i class="fas fa-plus"></i>
                     {{ 'admin-ui.create' | tr }}
@@ -171,7 +171,7 @@
           <table class="table table-sm table-striped table-{{req.params.entityName}}">
               <thead>
                   <tr>
-                      {% if metadata.classParameters.batchDelete %}
+                      {% if metadata.classParameters.batchDelete and AUIcanWrite(req, req.params.entityName) %}
                           <th class="header-delete-checkbox">
                               <input type="checkbox" onclick="toggleAllSelections()"/>
                           </th>
@@ -189,7 +189,7 @@
               <tbody>
                   {% for d in gridData.data %}
                       <tr>
-                          {% if metadata.classParameters.batchDelete %}
+                          {% if metadata.classParameters.batchDelete and AUIcanWrite(req, req.params.entityName) %}
                               <th class="cell-delete-checkbox">
                                   <input type="checkbox" onclick="toggleSelection('{{d.getId()}}')" id="delete-checkbox-{{d.getId()}}"/>
                               </th>
@@ -212,7 +212,7 @@
                                   {% include resolvePath(metadata.classParameters.listActionTemplate) %}
                               {% else %}
                                   <a class="btn btn-primary btn-details btn-details-{{req.params.entityName}}" href="{{route('adminUI.details', {entityName: req.params.entityName, id: d.id})}}">{{ 'admin-ui.details' | tr }}</a>
-                                  {% if not metadata.classParameters.disableDelete %}
+                                  {% if not metadata.classParameters.disableDelete and AUIcanWrite(req, req.params.entityName) %}
                                       <button class="btn btn-danger btn-delete btn-delete-{{req.params.entityName}}" type="button" data-toggle="modal" data-target="#deleteModal" data-name="{{d.getLabel()}}" data-id="{{d.getId()}}">
                                           <i class="far fa-trash-alt"></i>
                                       </button>
@@ -225,7 +225,7 @@
               </tbody>
           </table>
 
-          {% if not metadata.classParameters.disableDelete %}
+          {% if not metadata.classParameters.disableDelete and AUIcanWrite(req, req.params.entityName) %}
               <div>
                   <button style="display: none;" id="deleteAllBtn" class="btn btn-danger btn-delete" type="button" data-toggle="modal" data-target="#deleteAllModal">{{ 'admin-ui.delete-selected-elements' | tr }}</button>
               </div>
@@ -252,7 +252,9 @@
                   </div>
                   <div class="modal-footer">
                       <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ 'admin-ui.abort' | tr }}</button>
-                      <a href="" class="delete-url btn btn-danger">{{ 'admin-ui.delete' | tr }}</a>
+                      <form method="POST" action="" class="delete-form">
+                          <input type="submit" class="delete-url btn btn-danger" value="{{ 'admin-ui.delete' | tr }}"/>
+                      </form>
                   </div>
               </div>
           </div>
@@ -272,11 +274,12 @@
                   </div>
                   <div class="modal-footer">
                       <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ 'admin-ui.abort' | tr }}</button>
-                      <a href="" class="delete-url btn btn-danger">{{ 'admin-ui.delete' | tr }}</a>
+                      <form method="POST" action="" class="delete-form">
+                          <input type="submit" class="delete-url btn btn-danger" value="{{ 'admin-ui.delete' | tr }}"/>
+                      </form>
                   </div>
               </div>
           </div>
         </div>
     </div>
-
 {% endblock %}

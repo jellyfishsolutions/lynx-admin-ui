@@ -9,7 +9,7 @@
           {% endif %}
       </label>
       <div>
-        {% if req.params.id != 0 and field.readOnly != true and data[key + '__disable_creation'] != true %}
+        {% if req.params.id != 0 and field.readOnly != true and data[key + '__disable_creation'] != true and AUIcanWrite(req, req.params.entityName)%}
             <button type="button" class="btn btn-primary" onclick='openModal{{key}}(0)'>
                 {{ "admin-ui.add" | tr }}
             </button>
@@ -47,10 +47,12 @@
                     {% endfor %}
                     <td class="text-center">
                         <button type="button" class="btn btn-primary btn-details" onclick='openModal{{key}}({{d.id}})'>{{ 'admin-ui.details' | tr }}</button>
-                        {% if field.readOnly != true %}
-                            <a class="btn btn-danger btn-delete" href="{{ route('adminUI.nested', {entityName: req.params.entityName, id: req.params.id, nestedKey: key, remove: d.getId() }) }}">
-                                <i class="far fa-trash-alt"></i>
-                            </a>
+                        {% if field.readOnly != true and AUIcanWrite(req, req.params.entityName) %}
+                            <form method="POST" action="{{ route('adminUI.nested', {entityName: req.params.entityName, id: req.params.id, nestedKey: key, remove: d.getId() }) }}">
+                                <button class="btn btn-danger btn-delete">
+                                  <i class="far fa-trash-alt"></i>
+                                </button>
+                            </form>
                         {% endif %}
 
                     </td>

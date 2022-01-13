@@ -6,7 +6,7 @@ import EditableEntity from '../../editable-entity';
 import Request from 'lynx-framework/request';
 
 async function _myOnly(req: Request, e: any) {
-    return true;
+    return false;
 }
 
 @Entity('addresses')
@@ -19,7 +19,7 @@ export default class Address extends BaseEntity implements EditableEntity {
     @AdminField({
         name: 'Id',
         type: AdminType.Id,
-        readOnly: true,
+        readOnly: false,
         onSummary: true,
     })
     id: number;

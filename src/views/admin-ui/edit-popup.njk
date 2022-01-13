@@ -48,9 +48,11 @@ function closePopup() {
 </div>
 </div>
 
-<div class="modal-footer">
-    <button class="btn btn-primary btn-save btn-save-{{req.params.entityName}}" type="submit">{{ 'admin-ui.save' | tr }}</button>
-</div>
+{% if AUIcanWrite(req, req.params.entityName) %}
+  <div class="modal-footer">
+      <button class="btn btn-primary btn-save btn-save-{{req.params.entityName}}" type="submit">{{ 'admin-ui.save' | tr }}</button>
+  </div>
+{% endif %}
 
 </form>
 

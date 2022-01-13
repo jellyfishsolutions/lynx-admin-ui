@@ -31,13 +31,13 @@ export default class UIController extends BaseUIController {
     }
 
     @Name("adminUI.delete")
-    @GET("/:entityName/:id/delete")
+    @POST("/:entityName/:id/delete")
     async performDelete(entityName: string, id: any, req: Request) {
         return this.performEntityDelete(entityName, id, req);
     }
 
     @Name("adminUI.delete_multiple")
-    @GET("/:entityName/delete_multiple")
+    @POST("/:entityName/delete_multiple")
     async performMultipleDelete(entityName: string, req: Request) {
         return this.performEntityDeleteMultiple(entityName, req);
     }
@@ -58,6 +58,12 @@ export default class UIController extends BaseUIController {
     @GET("/:entityName/:id/:nestedKey")
     async nestedView(entityName: string, id: any, nestedKey: string, req: Request) {
         return this.retrieveNestedView(entityName, id, nestedKey, req);
+    }
+
+    @Name("adminUI.nested.delete")
+    @POST("/:entityName/:id/:nestedKey")
+    async deleteNested(entityName: string, id: any, nestedKey: string, req: Request) {
+        return this.retrieveNestedView(entityName, id, nestedKey, req, true);
     }
 
     @Name("adminUI.save")

@@ -1,4 +1,5 @@
 import { app } from 'lynx-framework/app';
+import { Request, Response } from 'express';
 import SimpleModule from 'lynx-framework/simple.module';
 import { AdminType } from './decorators';
 
@@ -14,6 +15,11 @@ export default class AdminUIModule extends SimpleModule {
     static nestedTemplatePath = 'admin-ui/nested';
     static popupEditorParentTemplatePath = '/admin-ui/layouts/nested-base';
     static popupEditorTemplatePath = 'admin-ui/edit-popup';
+    static canReadFunction = (req: Request, entityName: String) => true;
+    static canWriteFunction = (req: Request, entityName: String) => true;
+    static permissionDeniedHandler = (req: Request, res: Response, entityName: String) => {
+      res.redirect('/AdminUI');
+    };
 
     constructor() {
         super();
@@ -149,6 +155,36 @@ export default class AdminUIModule extends SimpleModule {
         AdminUIModule.popupEditorParentTemplatePath = path;
     }
 
+    /**
+     * Customize to protect routes and frontend
+     * @param func the function that contains the access logic
+     */
+    static setCanReadFunction(
+        func: (req: Request, entity: String) => boolean
+    ) {
+        AdminUIModule.canReadFunction = func;
+    }
+
+    /**
+     * Customize to protect routes and frontend
+     * @param func the function that contains the access logic
+     */
+    static setCanWriteFunction(
+        func: (req: Request, entityName: String) => boolean
+    ) {
+        AdminUIModule.canWriteFunction = func;
+    }
+
+    /**
+     * Customize the response when access permission is denied (based on canRead/Write methods)
+     * @param func the function that contains the permission denied logc
+     */
+    static setPermissionDeniedHandler(
+        func: (req: Request, res: Response, entityName: string) => void
+    ) {
+        AdminUIModule.permissionDeniedHandler = func;
+    }
+
     get translation(): string {
         return __dirname + '/locale';
     }
@@ -163,5 +199,13 @@ export default class AdminUIModule extends SimpleModule {
 
     get public(): string {
         return __dirname + '/public';
+    }
+
+    get templating(): string {
+        return __dirname + '/templating';
+    }
+
+    get middlewares(): string {
+        return __dirname + '/middlewares';    
     }
 }
