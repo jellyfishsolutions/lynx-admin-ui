@@ -252,6 +252,8 @@ If the `max` parameter is specified, the "Add" button will be displayed only if 
 
 This type can be used for `OneToOne` relations, when the target entity of the relation is available to the AdminUI.
 In this case, the fields of the target entity will be available inside the interface of the main entity.
+If the `readOnly` parameter is specified and, during the request, is resolved to `true`, the parameter is automatically inherited by any fields of the expanded entity. Otherwise, the `readOnly` parameter of any fields of the expanded entity is used as expected.
+The same behavior is applied also for the `hide` parameter.
 
 #### `AdminType.Color`
 

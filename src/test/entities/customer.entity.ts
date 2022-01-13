@@ -5,7 +5,8 @@ import EditableEntity from "../../editable-entity";
 import Address from "./address.entity";
 import { Request } from 'lynx-framework/request';
 
-async function _myOnly(req: Request, e: any) {
+export async function _myOnly(req: Request, e: any) {
+    console.log("intanto è chiamata?");
   return true;
 }
 
