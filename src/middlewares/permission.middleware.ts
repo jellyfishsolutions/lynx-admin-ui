@@ -3,6 +3,11 @@ import { Middleware } from 'lynx-framework/decorators';
 import { Request, Response} from 'express';
 import AdminUIModule from '..';
 
+/**
+ * 
+ * @param url 
+ * @returns name of enitity
+ */
 function getEntityName(url: string): string {
   const regex = /(adminUI\/)(\w*)/;
   const match = url.match(regex);
@@ -10,8 +15,6 @@ function getEntityName(url: string): string {
   if (null === match) {
     return 'unknown';
   }
-
-  //@todo additional checks
 
   return match[2];
 }

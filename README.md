@@ -463,6 +463,16 @@ The same method could also be used to use a custom template for an original type
 
 IMPORTANT: for custom field type, please use numbers greater then `300`, in order to prevent conflict with the original field types.
 
+### Permissions and security
+
+It is possible to protect routes and frontend actions by defining logic for reading/writing entities.
+Use the respective `AdminUI.setCanReadFunction` and `AdminUI.setCanWriteFunction` to accomplish this.
+The function receives the express request as first parameter and the name of the entity an action is being performed as second;
+the function must return a boolean value that will be evaluated to determine if che current request has the access rights to
+perform the specified action. 
+You can also use the configured function logic on your templates trough the `AUIcanRead` and `AUIcanWrite` template functions.
+Please note that if non configured any of the routes and frontend actions **are not protected.**
+
 ## Low Level API
 
 Starting from version `v0.5.0`, a new "low level" API is available.

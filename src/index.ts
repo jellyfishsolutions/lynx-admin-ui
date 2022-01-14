@@ -18,7 +18,7 @@ export default class AdminUIModule extends SimpleModule {
     static canReadFunction = (req: Request, entityName: String) => true;
     static canWriteFunction = (req: Request, entityName: String) => true;
     static permissionDeniedHandler = (req: Request, res: Response, entityName: String) => {
-      res.redirect('/AdminUI');
+      res.redirect('/AdminUI/');
     };
 
     constructor() {

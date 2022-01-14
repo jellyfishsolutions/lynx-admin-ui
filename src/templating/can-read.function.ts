@@ -5,6 +5,6 @@ import AdminUIModule from '..';
 @TemplateFunction("AUIcanRead")
 export class CanReadFunction extends BaseFunction {
     execute(...args: any[]) {
-        return AdminUIModule.canWriteFunction(args[0], args[1]);
+        return AdminUIModule.canReadFunction(args[0], args[1]);
     }
 }
