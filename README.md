@@ -467,7 +467,7 @@ IMPORTANT: for custom field type, please use numbers greater then `300`, in orde
 
 It is possible to protect routes and frontend actions by defining logic for reading/writing entities.
 Use the respective `AdminUI.setCanReadFunction` and `AdminUI.setCanWriteFunction` to accomplish this.
-The function receives the express request as first parameter and the name of the entity an action is being performed as second;
+The function receives the express request as first parameter and the name of the entity the current action is being performed on as second;
 the function must return a boolean value that will be evaluated to determine if che current request has the access rights to
 perform the specified action. 
 You can also use the configured function logic on your templates trough the `AUIcanRead` and `AUIcanWrite` template functions.
