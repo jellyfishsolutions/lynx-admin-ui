@@ -48,7 +48,7 @@
                     <td class="text-center">
                         <button type="button" class="btn btn-primary btn-details" onclick='openModal{{key}}({{d.id}})'>{{ 'admin-ui.details' | tr }}</button>
                         {% if field.readOnly != true and AUIcanWrite(req, req.params.entityName) %}
-                            <form method="POST" action="{{ route('adminUI.nested', {entityName: req.params.entityName, id: req.params.id, nestedKey: key, remove: d.getId() }) }}">
+                            <form method="POST" class="nested-form" action="{{ route('adminUI.nested', {entityName: req.params.entityName, id: req.params.id, nestedKey: key, remove: d.getId() }) }}">
                                 <button class="btn btn-danger btn-delete">
                                   <i class="far fa-trash-alt"></i>
                                 </button>

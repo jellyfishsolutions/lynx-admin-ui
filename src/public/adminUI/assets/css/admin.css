@@ -7984,3 +7984,6 @@ body.sidebar-toggled footer.sticky-footer {
 
 .table td {
   vertical-align: middle; }
+
+.nested-form {
+  display: inline-block; }
