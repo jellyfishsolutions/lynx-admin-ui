@@ -633,11 +633,17 @@ export class Controller extends BaseController {
             if (meta) {
                 if (!field.query) {
                     fields[key] = { ... field };
-                    let currentEntity = entityData[key];
-                    let evaluatedFields = await this.generateContextFields(meta, req, currentEntity, field.readOnly as any, field.hide as any);
                     let updatedFields: Record<string, FieldParameters> = {};
-                    for (let f in meta.fields) {
-                        updatedFields[key + '-' + f] = field.type == AdminType.Expanded ? evaluatedFields[f] : meta.fields[f];
+                    if (field.type == AdminType.Expanded) {
+                        let currentEntity = (entityData ?? {})[key];
+                        let evaluatedFields = await this.generateContextFields(meta, req, currentEntity, field.readOnly as any, field.hide as any);
+                        for (let f in meta.fields) {
+                            updatedFields[key + '-' + f] = evaluatedFields[f];
+                        }
+                    } else {
+                        for (let f in meta.fields) {
+                            updatedFields[key + '-' + f] = meta.fields[f];
+                        }
                     }
                     meta = { ...meta, fields: updatedFields };
                 }
