@@ -2109,8 +2109,7 @@ input[type="button"].btn-block {
 .collapsing {
   position: relative;
   height: 0;
-  overflow: hidden;
-  transition: height 0.15s ease; }
+  overflow: hidden; }
   @media (prefers-reduced-motion: reduce) {
     .collapsing {
       transition: none; } }
@@ -7399,6 +7398,8 @@ a:focus {
 .sidebar {
   width: 6.5rem;
   min-height: 100vh; }
+  .sidebar .shrink-container button {
+  display: none; }
   .sidebar .nav-item {
     position: relative; }
     .sidebar .nav-item:last-child {
@@ -7411,23 +7412,29 @@ a:focus {
         display: block; }
     .sidebar .nav-item.active .nav-link {
       font-weight: 700; }
+    .sidebar.shrinked-sidebar .nav-item .collapse,
+    .sidebar.shrinked-sidebar .nav-item .collapsing,
     .sidebar .nav-item .collapse {
       position: absolute;
       left: calc(6.5rem + 1.5rem / 2);
       z-index: 1;
       top: 2px; }
+      .sidebar.shrinked-sidebar .nav-item .collapse .collapse-inner,
       .sidebar .nav-item .collapse .collapse-inner {
         border-radius: 0.35rem;
         box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15); }
+    
+    .sidebar.shrinked-sidebar .nav-item .collapsing
     .sidebar .nav-item .collapsing {
       display: none;
       transition: none; }
+    .sidebar.shrinked-sidebar .nav-item .collapse .collapse-inner,
+    .sidebar.shrinked-sidebar .nav-item .collapsing .collapse-inner,
     .sidebar .nav-item .collapse .collapse-inner,
     .sidebar .nav-item .collapsing .collapse-inner {
       padding: .5rem 0;
       min-width: 10rem;
-      font-size: 0.85rem;
-      margin: 0 0 1rem 0; }
+      font-size: 0.85rem; }
       .sidebar .nav-item .collapse .collapse-inner .collapse-header,
       .sidebar .nav-item .collapsing .collapse-inner .collapse-header {
         margin: 0;
@@ -7509,8 +7516,43 @@ a:focus {
     }
 
 @media (min-width: 768px) {
-  .sidebar {
+  .sidebar:not(.shrinked-sidebar) {
     width: 14rem !important; }
+    .sidebar .shrink-container {
+      margin-top: auto;
+      padding-bottom: 3rem; }
+      .sidebar .shrink-container button {
+        outline: none;
+        display: inline-block;
+        width: 3rem;
+        height: 3rem;
+        border-radius: 50%; 
+        border: 0;
+        background-color: #333333; }
+        .sidebar .shrink-container button i {
+          font-size: 1.5rem; }
+        .sidebar .shrink-container button i.fa-chevron-right {
+          margin-left: 6px; }
+        .sidebar .shrink-container button i.fa-chevron-left {
+          margin-right: 3px; }
+        .sidebar .shrink-container button:hover i {
+          color: #fff; }
+    .sidebar.shrinked-sidebar .nav-item .nav-link {
+      display: block;
+      padding: 1rem; 
+      width: auto;
+      margin-left: 1.4rem; }
+      .sidebar.shrinked-sidebar .shrink-container button i.close {
+        display: none; }
+      .sidebar.shrinked-sidebar .nav-item .nav-link span {
+        display: none; }
+      .sidebar.shrinked-sidebar .nav-item .nav-link i {
+        font-size: 1.5rem; }
+      .sidebar.shrinked-sidebar .nav-item .collapsing {
+        transition: all 0.15s ease; }
+      .sidebar.shrinked-sidebar .nav-item .collapsing, 
+      .sidebar.shrinked-sidebar .nav-item .collapse {
+        left: calc(5rem + 1.5rem / 2); }
     .sidebar .nav-item .collapse {
       position: relative;
       left: 0;
@@ -7520,7 +7562,7 @@ a:focus {
       .sidebar .nav-item .collapse .collapse-inner {
         border-radius: 0;
         box-shadow: none; }
-    .sidebar .nav-item .collapsing {
+    .sidebar:not(.shrinked-sidebar) .nav-item .collapsing {
       display: block;
       transition: height 0.15s ease; }
     .sidebar .nav-item .collapse,
@@ -7536,7 +7578,7 @@ a:focus {
         margin-right: 0.25rem; }
       .sidebar .nav-item .nav-link span {
         display: inline; }
-      .sidebar .nav-item .nav-link[data-toggle="collapse"]::after {
+      .sidebar:not(.shrinked-sidebar) .nav-item .nav-link[data-toggle="collapse"]::after {
         width: 1rem;
         text-align: center;
         float: right;
@@ -7545,7 +7587,7 @@ a:focus {
         font-weight: 900;
         content: '\f107';
         font-family: 'Font Awesome 5 Free'; }
-      .sidebar .nav-item .nav-link[data-toggle="collapse"].collapsed::after {
+      .sidebar:not(.shrinked-sidebar) .nav-item .nav-link[data-toggle="collapse"].collapsed::after {
         content: '\f105'; }
     .sidebar .sidebar-brand .sidebar-brand-icon i {
       font-size: 2rem; }
