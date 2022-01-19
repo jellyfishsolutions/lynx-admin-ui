@@ -184,7 +184,9 @@ th {
 
 label {
   display: inline-block;
-  margin-bottom: 0.5rem; }
+  margin-bottom: 0.5rem;
+  color: #36454f;
+  font-weight: 500; }
 
 button {
   border-radius: 0; }
@@ -8029,3 +8031,5 @@ body.sidebar-toggled footer.sticky-footer {
 
 .nested-form {
   display: inline-block; }
+
+  
