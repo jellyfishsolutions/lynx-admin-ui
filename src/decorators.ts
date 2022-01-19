@@ -53,6 +53,7 @@ export interface ClassParameters {
     disableCreation?: boolean | ((req: Request) => Promise<boolean>);
     disableDelete?: boolean | ((req: Request) => Promise<boolean>);
     defaultOrderBy?: string | ((req: Request) => Promise<string>);
+    customFetchData?: (req: Request, order: any, take: any, skip: any) => Promise<[any[], number]>;
 }
 
 export interface QueryParams {

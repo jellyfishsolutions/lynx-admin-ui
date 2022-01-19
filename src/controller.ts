@@ -118,7 +118,11 @@ export class Controller extends BaseController {
         }
         let where = {} as any;
         let smartWhere = {} as any;
-        for (let key in metadata.fields) {
+        let qb = null as any;
+        const hasCustomFetchData = (metadata.classParameters.customFetchData !== undefined) as boolean;
+
+        if (!hasCustomFetchData) {
+          for (let key in metadata.fields) {
             let f = metadata.fields[key];
             if (!f.searchable && !f.smartSearchable) {
                 continue;
@@ -169,35 +173,35 @@ export class Controller extends BaseController {
                     where[key + left] = right;
                 }
             }
-        }
+          }
 
-        let repository = getConnection().getRepository(
+          let repository = getConnection().getRepository(
             Class
-        ) as Repository<any>;
+          ) as Repository<any>;
 
-        let ors = [];
-        if (Object.keys(smartWhere).length > 0) {
+          let ors = [];
+          if (Object.keys(smartWhere).length > 0) {
             for (let key in smartWhere) {
                 let tmp = { ...filterWhere, ...where } as any;
                 tmp[key] = smartWhere[key];
                 ors.push(tmp);
             }
-        } else {
+          } else {
             for (let key in where) {
                 let tmp = { ...filterWhere } as any;
                 tmp[key] = where[key];
                 ors.push(tmp);
             }
-        }
+          }
 
-        where = ors;
+          where = ors;
 
-        let qb = repository.createQueryBuilder('e');
-        for (let relation of metadata.classParameters.relations || []) {
+          qb = repository.createQueryBuilder('e');
+          for (let relation of metadata.classParameters.relations || []) {
             qb = qb.leftJoinAndSelect('e.' + relation, relation.toUpperCase());
-        }
+          }
 
-        for (let orOption of where) {
+          for (let orOption of where) {
             let parts = [];
             let params: any = {};
             let counter = 0;
@@ -232,10 +236,16 @@ export class Controller extends BaseController {
             }
             let q = parts.join(' AND ');
             qb = qb.orWhere(q, params);
+          }
         }
 
         await datagrid.fetchData((params) => {
             let order = params.order;
+
+            if (hasCustomFetchData) {
+              return metadata.classParameters.customFetchData && metadata.classParameters.customFetchData(req, params.order, params.take, params.skip);
+            }
+
             if (
                 Object.keys(order).length == 0 &&
                 metadata.classParameters.defaultOrderBy

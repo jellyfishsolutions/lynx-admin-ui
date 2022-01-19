@@ -52,7 +52,7 @@ Beside the standard `Entity` annotation, the `AdminUI` one shall be added when a
 
 The `AdminUI` annotation supports also an optional object argument, with the following optional parameters:
 
--   `filterBy`: defines a function to generate an appropriate `where` clause used to filter the data in the list section of the AdminUI. It receives the current `req` request as argument;
+-   `filterBy` defines a function to generate an appropriate `where` clause used to filter the data in the list section of the AdminUI. It receives the current `req` request as argument;
 -   `editorTemplate` and `editorParentTemplate` allow to specifies a custom editor template for the current entity;
 -   `popupEditorTemplate` and `popupEditorParentTemplate` allow to specifies a custom popup editor template for the current entity;
 -   `listTemplate` and `listParentTemplate` allow to specifies a custom list template for the current entity;
@@ -62,6 +62,7 @@ The `AdminUI` annotation supports also an optional object argument, with the fol
 -   `disableCreation` if true (or if resolve to true), the button to create a new entity is not displayed;
 -   `disableDelete` if true (or if resolve to true), the button to delete an entity is not displayed;
 -   `defaultOrderBy` if specified, defines a default order by used in the entity list (it uses the same notation of the ordering string used when a column header is tapped).
+-   `customFetchData` allows you to create your custom query when retrieving data for the list trough a function that receives the current `req` as well as datatable infos. If defined, the dafault query building process will not be executed, meaning your `filterBy` function will have no effect.
 
 Each "template" parameter accepts both a `string`, containing the specified path, or a function that accept the current `req` request as argument and returns a `string`. Using the function version, it is possible to customize a template based on a specific request.
 
