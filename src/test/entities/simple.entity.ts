@@ -10,7 +10,7 @@ import {
 import Complex from './complex.entity';
 import Request from 'lynx-framework/request';
 
-async function fetchData(req: Request, order: any, take: any, skip: any): Promise<[any[], number]>
+async function fetchData(req: Request, order: any, take: number, skip: number): Promise<[any[], number]>
 {
   const query = req.query;
   const smartSearch = query?.smartSearch;
