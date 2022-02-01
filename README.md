@@ -86,8 +86,8 @@ NOTE: if the entity does not implements the `EditableEntity`, the AdminUI behavi
 
 The `EditableEntity` allows also the definition of methods to intercept the life-cycle of the entity:
 
--   `onBeforeSave`: this method (if implemented) will be executeded just BEFORE the saving action of an entity. The entity is already updated with the latest value inserted by the user. If an expection is throwed in this method, the saving process will be interrupted.
--   `onAfterSave`: this method (if implemented) will be executeded just AFTER the saving action of an entity.
+-   `onBeforeSave`: this method (if implemented) will be executed just BEFORE the saving action of an entity. The entity is already updated with the latest value inserted by the user. If an exception is thrown in this method, the saving process will be interrupted.
+-   `onAfterSave`: this method (if implemented) will be executed just AFTER the saving action of an entity.
 
 Both methods are executed with the current `req` request as argument (that can be used or accessed by this methods to perform additional operations or checks).
 
@@ -177,10 +177,10 @@ const genderValues = [
 
 #### `AdminType.AjaxSelection`
 
-Indicates that the field can only have a set of values, dinamically loaded using an ajax request.
+Indicates that the field can only have a set of values, dynamically loaded using an ajax request.
 It uses the select widget updated with the `Select2` library in order to provide a searchability of the options.
 This type is intended to be used when the set of values is huge, or/and if options searchability is needed.
-It is also necesary to specify the [`searchRequest` parameter](#searchRequest-parameter).
+It is also necessary to specify the [`searchRequest` parameter](#searchRequest-parameter).
 Example:
 
 ```
@@ -358,16 +358,16 @@ If the `selfType` of the current object is available as an `AdminUI` entity, aft
 
 ### `searchRequest` parameter
 
-The `searchRequest` parameter contains information on how to dinamically obtain options for a particular field.
+The `searchRequest` parameter contains information on how to dynamically obtain options for a particular field.
 
-The `searchRequest` parameter shall be an asynchronus function with the following parameters:
+The `searchRequest` parameter shall be an asynchronous function with the following parameters:
 
 -   `req`, the current Lynx request;
 -   `currentEntity` is the current `entity`;
 -   `search` contains what the user typed for searching (can be empty);
 -   `page` the current request page (if pagination is supported).
 
-The result of this function shall be a `Promise<[{key: any, value: string}[], boolean]>`. The first element of the tupla is the usual key-value array, containing the list of options (the `map` method can be used to automatically transform an `EditableEntity` to this type). The second element contains info about pagintation. If its value is `true`, it means that other data can be requested (and other request, with greater `page` value, will be delivered). If `false`, no further date is available.
+The result of this function shall be a `Promise<[{key: any, value: string}[], boolean]>`. The first element of the tupla is the usual key-value array, containing the list of options (the `map` method can be used to automatically transform an `EditableEntity` to this type). The second element contains info about pagination. If its value is `true`, it means that other data can be requested (and other request, with greater `page` value, will be delivered). If `false`, no further date is available.
 
 ### `uiSettings` parameter
 
@@ -377,7 +377,7 @@ By default, both in the editor and in the filtering section, widgets are display
 This parameter defines the following optional properties:
 
 -   `editorClasses`: indicates custom CSS classes to the widget when displayed in the editor section.
--   `innerEditorClasses` indicates custom CSS classes, internally used by the widget (for example, for the `input` tag). This can be used diffenently by different types.
+-   `innerEditorClasses` indicates custom CSS classes, internally used by the widget (for example, for the `input` tag). This can be used differently by different types.
 -   `filterClasses`: indicates custom CSS classes to the widget when displayed in the filtering section (default to `col-12`).
 -   `listTemplate`: indicates a custom template to be used in the list view. The template can access the `value` variable, containing the current value of the field.
 -   `listFilter`: indicates a nunjucks filter that should be applied when the element is rendered on the list.
@@ -385,10 +385,11 @@ This parameter defines the following optional properties:
 -   `additionalFilterInfo`: additional info that can be used by the editor template; `any` values accepted.
 -   `additionalListInfo`: additional info that can be used by the editor template; `any` values accepted.
 -   `descriptionText`: additional `small` text rendered inside the `label` tag. Supports localized strings.
--   `descriptionTextClasses`: custom CSS classes for the `descritionText`.
+-   `descriptionTextClasses`: custom CSS classes for the `descriptionText`.
 -   `editorFullWidth`: indicates if the field should occupy the full width of the view in the editor instead of the half width as by default. This option will be overwritten by `editorClasses`.
 
 Moreover, in the editor section, each field is wrapped inside a `div` with an unique id. The id is defined as `field-{{entity-name}}-{{name-of-the-field}}`. Using the id, it is possible to customize though CSS rules the aspect of a single field.
+In the list section, each field has its own class, defined as `header-{{name-of-the-field}}` and `cell-{{header-of-the-field}}`, for the `th` and the `td` element respectively. These classes apply also for the nested list, used with the `AdminType.Table` type.
 
 ## Utility functions
 
