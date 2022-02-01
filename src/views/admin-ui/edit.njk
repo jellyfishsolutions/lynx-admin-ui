@@ -36,24 +36,13 @@
 
         <form method="POST" action="{{route('adminUI.save', {entityName: req.params.entityName, id: req.params.id} )}}" enctype="multipart/form-data">
           <input type="hidden" name="__admin_ui_action" id="__admin_ui_action" />
-            {% set counter = 0 %}
-            {% set isRow = false %}
+            <div class="row">
             {% for key, field in fields %}
               {% if not field.hide %}
 
-                {% if counter%2 === 0 %}
-                  {% set isRow = true %}
-                {% else %}
-                  {% set isRow = false %}
-                {% endif %}
-
-                {% if isRow %}
-                  <div class="row">
-                {% endif %}
-
                 {% if field.uiSettings and field.uiSettings.editorClasses %}
                   <div id="field-{{req.params.entityName}}-{{key}}" class="{{ field.uiSettings.editorClasses }}">
-                {% elif field.uiSettings and field.uiSettings.fullwidth %}
+                {% elif field.uiSettings and field.uiSettings.editorFullwidth %}
                   <div id="field-{{req.params.entityName}}-{{key}}" class="col-12">
                 {% else %}
                   <div id="field-{{req.params.entityName}}-{{key}}" class="col-12 col-md-6">
@@ -62,17 +51,9 @@
                     {% include resolvePath(configuration[field.type]) %}
 
                   </div>
-                
-                {% if not isRow %}
-                  </div>
-                {% endif %}
-
-                {% set counter = counter + 1 %}
               {% endif %}
             {% endfor %}
-            {% if isRow %}
-              </div>
-            {% endif %}
+            </div>
 
           {% if AUIcanWrite(req, req.params.entityName) %}
             <div class="mt-3">
