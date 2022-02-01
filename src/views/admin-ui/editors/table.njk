@@ -21,7 +21,7 @@
             <tr>
                 {% for _key, _field in field.metadata.fields %}
                     {% if _field.onSummary %}
-                        <th>
+                        <th class="header-{{_key}}">
                             {{dgUtils.orderableHeader(_field.name, _key, data[key])}}
                         </th>
                     {% endif %}
@@ -36,16 +36,16 @@
                         {% if _field.onSummary %}
                             {% if _field.uiSettings and _field.uiSettings.listTemplate %}
                                 {% set value = d[_key] %}
-                                <td>{% include resolvePath(_field.uiSettings.listTemplate) %}
+                                <td class="cell-{{_key}}">{% include resolvePath(_field.uiSettings.listTemplate) %}
                                 </td>
                             {% elif _field.uiSettings and _field.uiSettings.listFilter %}
-                                <td>{{ d[_key] | _adminUIMasterFilter_(_field.uiSettings.listFilter) | safe }}</td>
+                                <td class="cell-{{_key}}">{{ d[_key] | _adminUIMasterFilter_(_field.uiSettings.listFilter) | safe }}</td>
                             {% else %}
-                                <td>{{d[_key]}}</td>
+                                <td class="cell-{{_key}}">{{d[_key]}}</td>
                             {% endif %}
                         {% endif %}
                     {% endfor %}
-                    <td class="text-center">
+                    <td class="text-right">
                         <button type="button" class="btn btn-primary btn-details" onclick='openModal{{key}}({{d.id}})'>{{ 'admin-ui.details' | tr }}</button>
                         {% if field.readOnly != true and AUIcanWrite(req, req.params.entityName) %}
                             <form method="POST" class="nested-form" action="{{ route('adminUI.nested', {entityName: req.params.entityName, id: req.params.id, nestedKey: key, remove: d.getId() }) }}">
