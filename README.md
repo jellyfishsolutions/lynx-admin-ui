@@ -119,6 +119,7 @@ There is a set of optional parameters, available on all types:
 -   `required`: indicates if the field is "required" in the editor view; default: `false`. It adds the "required" attribute to the generated input. This parameter can be a `boolean` value, or a function like `(req: Request, currentEntity: any) => Promise<boolean>` (same as the `values` but with different return type).
 -   `hide`: indicates if the field should be displayed or not in the editor view; default: `false`. This parameter can be a `boolean` value, or a function like `(req: Request, currentEntity: any) => Promise<boolean>` (same as the `values` but with different return type).
 -   `uiSettings`: contains information on the visual appearance of the field. See the `uiSettings` paragraph for more information.
+-   `optionalParameters` contains optional custom parameters that can be used by the editor. 
 
 ### `AdminField` types
 
@@ -210,6 +211,7 @@ async function filteredCategories(req: Request, currentEntity: any, search: stri
 
 Indicates that the field is a long Html text. It uses a RichText editor.
 By default, the Quill editor is used.
+It is possible to customize the Quill editor options using the `optionalParameters` value. A complex rich text editor is available using the `defaultRichTextParameters` exported by the `lynx-admin-ui/rich-text-options` file. The `optionalParameters` shall contains the complete Quill configuration, with the `theme` and `modules` properties.
 
 #### `AdminType.Checkbox`
 

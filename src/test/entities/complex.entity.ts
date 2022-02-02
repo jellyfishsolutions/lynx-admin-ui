@@ -14,6 +14,7 @@ import EditableEntity, { map } from '../../editable-entity';
 import { Request } from 'lynx-framework/request';
 import { app } from 'lynx-framework/app';
 import Simple from './simple.entity';
+import { defaultRichTextParameters } from '../../rich-text-options';
 
 export enum Gender {
     male,
@@ -203,7 +204,7 @@ export default class Complex extends BaseEntity implements EditableEntity {
     @Column()
     @AdminField({ name: 'Bio', type: AdminType.RichText, readOnly: isReadOnly, uiSettings: {
       editorFullWidth: true,
-    }})
+    }, optionalParameters: defaultRichTextParameters })
     biography: string;
 
     @Column()

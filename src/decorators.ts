@@ -62,6 +62,8 @@ export interface QueryParams {
     skip: number;
 }
 
+export interface OptionalParameters {}
+
 export interface FieldParameters {
     name: string;
     type: AdminType;
@@ -107,6 +109,7 @@ export interface FieldParameters {
     selfType?: string;
     inverseSide?: string;
     uiSettings?: UISettings;
+    optionalParameters?: OptionalParameters;
     getter?: (value: any) => Promise<string>;
 }
 

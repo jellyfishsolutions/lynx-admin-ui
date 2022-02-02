@@ -18,9 +18,15 @@ if (!window.quills) {
     window.quills = [];
 }
 window.quills.push(function() {
-    var quill{{key}} = new Quill('#rich-text-{{key}}', {
+    var quill{{key}} = new Quill('#rich-text-{{key}}', 
+    {% if field.optionalParameters %}
+        {{ field.optionalParameters | json | safe }}
+    {% else %}
+    {
         theme: 'snow'
-    });
+    }
+    {% endif %}
+    );
     quill{{key}}.on('text-change', function(delta, oldDelta, source) {
         var input = document.querySelector('input[name={{key}}]');
         input.value = quill{{key}}.container.firstChild.innerHTML;
