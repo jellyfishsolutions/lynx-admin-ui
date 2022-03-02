@@ -52,19 +52,22 @@ async function getCategories() {
     return map(await Category.find());
 }
 
-async function fetchSimples(req: Request, entity: Complex, params: QueryParams): Promise<[any[], number]>
-{
-  if (! entity.id) {
-    return [[], 0];
-  }
-  return await Simple.findAndCount({
-    where: {
-      complex: entity,
-    },
-    take: params.take,
-    skip: params.skip,
-    order: params.order,
-  });
+async function fetchSimples(
+    req: Request,
+    entity: Complex,
+    params: QueryParams
+): Promise<[any[], number]> {
+    if (!entity.id) {
+        return [[], 0];
+    }
+    return await Simple.findAndCount({
+        where: {
+            complex: entity,
+        },
+        take: params.take,
+        skip: params.skip,
+        order: params.order,
+    });
 }
 
 async function filteredCategories(
@@ -124,7 +127,8 @@ async function actionTemplate(req: Request): Promise<string> {
     filterBy: filteringList,
     listParentTemplate: listTemplate,
     listActionTemplate: actionTemplate,
-    relations: ['subcategories', 'category', 'simple'],
+    disableReloadOnList: true,
+    relations: ['subcategories', 'category', 'simple', 'categoryAjax'],
 })
 export default class Complex extends BaseEntity implements EditableEntity {
     @PrimaryGeneratedColumn()
@@ -202,9 +206,15 @@ export default class Complex extends BaseEntity implements EditableEntity {
     date: Date;
 
     @Column()
-    @AdminField({ name: 'Bio', type: AdminType.RichText, readOnly: isReadOnly, uiSettings: {
-      editorFullWidth: true,
-    }, optionalParameters: defaultRichTextParameters })
+    @AdminField({
+        name: 'Bio',
+        type: AdminType.RichText,
+        readOnly: isReadOnly,
+        uiSettings: {
+            editorFullWidth: true,
+        },
+        optionalParameters: defaultRichTextParameters,
+    })
     biography: string;
 
     @Column()
@@ -262,23 +272,22 @@ export default class Complex extends BaseEntity implements EditableEntity {
     subcategories: Category[];
 
     @AdminField({
-      name: 'Simple',
-      type: AdminType.Table,
-      selfType: 'Simple',
-      inverseSide: 'complex',
-      query: fetchSimples,
-      readOnly: false,
+        name: 'Simple',
+        type: AdminType.Table,
+        selfType: 'Simple',
+        inverseSide: 'complex',
+        query: fetchSimples,
+        readOnly: false,
     })
-    @OneToMany(() => Simple, simple => simple.complex, { eager: true })
+    @OneToMany(() => Simple, (simple) => simple.complex, { eager: true })
     simple: Simple[];
 
     @AdminField({
-      name: 'Altre categorie ancora',
-      type: AdminType.Checkbox,
-      values: map([new Category]),
-      readOnly: true,
+        name: 'Altre categorie ancora',
+        type: AdminType.Checkbox,
+        values: map([new Category()]),
+        readOnly: true,
     })
-
     @AdminField({
         name: 'Giorno della settimana',
         type: AdminType.Selection,

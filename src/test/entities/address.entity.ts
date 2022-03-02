@@ -30,7 +30,10 @@ export default class Address extends BaseEntity implements EditableEntity {
         type: AdminType.String,
         onSummary: true,
         smartSearchable: true,
-        uiSettings: { additionalEditorInfo: { prova: 'asdasd' } },
+        uiSettings: {
+            additionalEditorInfo: { prova: 'asdasd' },
+            expandedEditorClasses: 'col-3',
+        },
     })
     street: string;
 
@@ -40,7 +43,10 @@ export default class Address extends BaseEntity implements EditableEntity {
         type: AdminType.String,
         onSummary: true,
         smartSearchable: true,
-        readOnly: _myOnly
+        readOnly: _myOnly,
+        uiSettings: {
+            expandedEditorClasses: 'col-3',
+        },
     })
     city: string;
 

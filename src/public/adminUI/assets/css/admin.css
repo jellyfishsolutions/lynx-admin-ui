@@ -254,7 +254,8 @@ fieldset {
   min-width: 0;
   padding: 0;
   margin: 0;
-  border: 0; }
+  border: 0;
+  margin-bottom: 15px; }
 
 legend {
   display: block;
@@ -262,9 +263,9 @@ legend {
   max-width: 100%;
   padding: 0;
   margin-bottom: .5rem;
-  font-size: 1.5rem;
   line-height: inherit;
-  color: inherit;
+  font-weight: 500;
+  color: #36454f;
   white-space: normal; }
 
 progress {

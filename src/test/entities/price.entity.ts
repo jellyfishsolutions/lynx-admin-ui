@@ -8,7 +8,7 @@ import { PrimaryGeneratedColumn, Column, Entity, ManyToOne } from 'typeorm';
 import { AdminUI, AdminField, AdminType } from '../../decorators';
 import ContractEntity from './contract.entity';
 
-@AdminUI('Prezzi')
+@AdminUI('Prezzi', { batchDelete: true })
 @Entity('prices')
 export default class PriceEntity extends BaseEntity implements EditableEntity {
     @AdminField({

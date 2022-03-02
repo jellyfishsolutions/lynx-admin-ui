@@ -1,14 +1,37 @@
-<label>{{ field.name | tr }}
-{% if field.uiSettings.descriptionText %}
-    <small id="{{key}}-help" class="{{ field.uiSettings.descriptionTextClasses if field.uiSettings.descriptionTextClasses }} description-label">{{ field.uiSettings.descriptionText | tr }}</small>
+{% if field.optionalParameters and field.optionalParameters.fieldset %}
+    <fieldset class="border p-2">
+        <legend  class="w-auto">
+{% else %}
+        <label>
 {% endif %}
-</label>
+            {{ field.name | tr }}
+                {% if field.uiSettings.descriptionText %}
+                    <small id="{{key}}-help" class="{{ field.uiSettings.descriptionTextClasses if field.uiSettings.descriptionTextClasses }} description-label">{{ field.uiSettings.descriptionText | tr }}</small>
+                {% endif %}
+{% if field.optionalParameters and field.optionalParameters.fieldset %}
+        </legend>
+{% else %}
+         </label>
+{% endif %}
+        {% set originalKey = key %}
+        {% set originalField = field %}
 
-{% set originalKey = key %}
-{% set originalField = field %}
+        <div class="row p-2">
+        {% for key, field in originalField.metadata.fields %}
+            {% set __c = 'col-12' %}
+            {% if field.uiSettings  %}
+                {% if field.uiSettings.expandedEditorClasses %}
+                    {% set __c = field.uiSettings.expandedEditorClasses %}
+                {% elif field.uiSettings.editorClasses %}
+                    {% set __c = field.uiSettings.editorClasses %}
+                {% endif %}
+            {% endif %}
+            <div id="field-{{req.params.entityName}}-{{originalKey}}-{{key}}" class="{{ __c }} ">
+                {% include resolvePath(configuration[field.type]) %}
+            </div>
+        {% endfor %}
+        </div>
 
-{% for key, field in originalField.metadata.fields %}
-    <div id="field-{{req.params.entityName}}-{{originalKey}}-{{key}}" class="{{ field.uiSettings.editorClasses if field.uiSettings and field.uiSettings.editorClasses else 'col-12' }} ">
-        {% include resolvePath(configuration[field.type]) %}
-    </div>
-{% endfor %}
+{% if field.optionalParameters and field.optionalParameters.fieldset %}   
+    </fieldset>
+{% endif %}

@@ -53,16 +53,17 @@ Beside the standard `Entity` annotation, the `AdminUI` one shall be added when a
 The `AdminUI` annotation supports also an optional object argument, with the following optional parameters:
 
 -   `filterBy` defines a function to generate an appropriate `where` clause used to filter the data in the list section of the AdminUI. It receives the current `req` request as argument;
--   `editorTemplate` and `editorParentTemplate` allow to specifies a custom editor template for the current entity;
--   `popupEditorTemplate` and `popupEditorParentTemplate` allow to specifies a custom popup editor template for the current entity;
--   `listTemplate` and `listParentTemplate` allow to specifies a custom list template for the current entity;
--   `listActionTemplate` allows to specifies a custom template to be used as the 'action' column (the last one) in the listing template;
+-   `editorTemplate` and `editorParentTemplate` allow to specify a custom editor template for the current entity;
+-   `popupEditorTemplate` and `popupEditorParentTemplate` allow to specify a custom popup editor template for the current entity;
+-   `listTemplate` and `listParentTemplate` allow to specify a custom list template for the current entity;
+-   `listActionTemplate` allows to specify a custom template to be used as the 'action' column (the last one) in the listing template;
 -   `batchDelete` if true (or if resolve to true), checkboxes will be displayed for each list element, enabling a batch delete of elements;
--   `relations` allows to specifies other TypeORM relations to load with the entity (useful for "lazy" relations);
+-   `relations` allows to specify the name of parameters of the entity (that are relations) that needs to be loaded with the entity (useful in conjunction with `disableReloadOnList` parameter or to filtering/search entity with a particular relation);
 -   `disableCreation` if true (or if resolve to true), the button to create a new entity is not displayed;
 -   `disableDelete` if true (or if resolve to true), the button to delete an entity is not displayed;
--   `defaultOrderBy` if specified, defines a default order by used in the entity list (it uses the same notation of the ordering string used when a column header is tapped).
--   `customFetchData` allows you to create your custom query when retrieving data for the list trough a function that receives the current `req` as well as datatable infos. If defined, the dafault query building process will not be executed, meaning your `filterBy` function will have no effect.
+-   `defaultOrderBy` if specified, defines a default order by used in the entity list (it uses the same notation of the ordering string used when a column header is tapped);
+- `disableReloadOnList` if true (or if resolve to true), the displayed entities in the list are not reloaded. Please refer to [optimization section](#Listing page optimization) for additional info.
+-   `customFetchData` allows you to create your custom query when retrieving data for the list trough a function that receives the current `req` as well as datatable infos. If defined, the default query building process will not be executed, meaning your `filterBy` function will have no effect.
 
 Each "template" parameter accepts both a `string`, containing the specified path, or a function that accept the current `req` request as argument and returns a `string`. Using the function version, it is possible to customize a template based on a specific request.
 
@@ -379,7 +380,8 @@ By default, both in the editor and in the filtering section, widgets are display
 This parameter defines the following optional properties:
 
 -   `editorClasses`: indicates custom CSS classes to the widget when displayed in the editor section.
--   `innerEditorClasses` indicates custom CSS classes, internally used by the widget (for example, for the `input` tag). This can be used differently by different types.
+-   `innerEditorClasses`: indicates custom CSS classes, internally used by the widget (for example, for the `input` tag). This can be used differently by different types.
+-   `expandedEditorClasses`: indicates custom CSS classes to the widget when displayed as an expanded element in the editor section.
 -   `filterClasses`: indicates custom CSS classes to the widget when displayed in the filtering section (default to `col-12`).
 -   `listTemplate`: indicates a custom template to be used in the list view. The template can access the `value` variable, containing the current value of the field.
 -   `listFilter`: indicates a nunjucks filter that should be applied when the element is rendered on the list.
@@ -482,3 +484,45 @@ Please note that if non configured any of the routes and frontend actions **are 
 Starting from version `v0.5.0`, a new "low level" API is available.
 This API allows to create a custom controller to display and edit the entities.
 Thought the API it is possible to customize urls and add custom validation based, for example, on the user role.
+
+
+## Performance optimization
+
+For small-to-medium entities size, the AdminUI provide good performances out of the box.
+With large entities, or with entities with a lot of eager relations, some adjustments can be necessary.
+
+### Listing page optimization
+The listing page can have a quite poor performance. This is due to a "reloading" of each displayed entity, in order to ensure the correct visualization of any field and eager relation. This is a convenient behavior, but it can also lead to poor performance.
+In this cases, it is better to use the `disableReloadOnList` parameter, set to `"false"`, and only load the necessary relations with the `relations` parameter.
+Please refer to [`ComplexEntity`](https://github.com/jellyfishsolutions/lynx-admin-ui/blob/master/src/test/entities/complex.entity.ts) as an example.
+
+### Large `values` with `AdminType.Selection`
+When the implementation of the `values` returns all the possibility of an entity, there can be performance issues with big dataset. 
+This problem can be resolved using the `AdminType.AjaxSelection`, with an autocomplete field.
+
+If the `AdminType.Selection` is used in an "inverted side" of a relation, the `AdminType.AjaxSelection` type cannot be used.
+In this case, the best option is to inspect the `req` parameter, searching for a default value as depicted in the following code:
+
+```
+@AdminField({
+    type: AdminType.Selection,
+    name: 'from',
+    selfType: 'ProductEntity',
+    readOnly: notEditableFromPopup,
+    values: async (req, current) => {
+        let obj = {};
+        try {
+            obj = JSON.parse(req.query.defaultValues as string);
+        } catch (err) {
+            obj = {
+                from: req.body.from ?? current?.from?.id,
+            };
+        }
+        return map(await ProductEntity.find({ id: obj.from }));
+    },
+})
+@ManyToOne((type) => ProductEntity, (related) => related.related)
+from: ProductEntity;
+```
+
+Only the necessary value is retrieved from the database.

@@ -25,6 +25,7 @@ export enum AdminType {
 export interface UISettings {
     editorClasses?: string;
     innerEditorClasses?: string;
+    expandedEditorClasses?: string;
     filterClasses?: string;
     listTemplate?: string;
     listFilter?: string;
@@ -53,7 +54,13 @@ export interface ClassParameters {
     disableCreation?: boolean | ((req: Request) => Promise<boolean>);
     disableDelete?: boolean | ((req: Request) => Promise<boolean>);
     defaultOrderBy?: string | ((req: Request) => Promise<string>);
-    customFetchData?: (req: Request, order: any, take: number, skip: number) => Promise<[any[], number]>;
+    customFetchData?: (
+        req: Request,
+        order: any,
+        take: number,
+        skip: number
+    ) => Promise<[any[], number]>;
+    disableReloadOnList?: boolean | ((req: Request) => Promise<boolean>);
 }
 
 export interface QueryParams {

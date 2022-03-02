@@ -119,131 +119,147 @@ export class Controller extends BaseController {
         let where = {} as any;
         let smartWhere = {} as any;
         let qb = null as any;
-        const hasCustomFetchData = (metadata.classParameters.customFetchData !== undefined) as boolean;
+        const hasCustomFetchData = (metadata.classParameters.customFetchData !==
+            undefined) as boolean;
+        const disableReload = metadata.classParameters
+            .disableReloadOnList as boolean;
 
         if (!hasCustomFetchData) {
-          for (let key in metadata.fields) {
-            let f = metadata.fields[key];
-            if (!f.searchable && !f.smartSearchable) {
-                continue;
-            }
-            let v = null;
-            if (f.searchable) {
-                v = datagrid.getQueryValue(key);
-            } else if (f.smartSearchable) {
-                v = datagrid.getQueryValue('smartSearch');
-            }
-            if (v) {
-                let right;
-                let left = '';
-                if (f.type == AdminType.String) {
-                    right = Like('%' + (v as string).toLowerCase() + '%');
-                    key = 'e.' + key;
-                } else {
-                    let Class = this.retrieveEntityClass(f.selfType as string);
-                    if (Class) {
-                        if (
-                            (metadata.classParameters.relations || []).indexOf(
-                                key
-                            ) == -1
-                        ) {
-                            this.logger.error(
-                                'Searching for the column `' +
-                                    key +
-                                    '` is enabled only if `' +
-                                    key +
-                                    '` is specified in the `relations` parmeter of `AdminUI`'
-                            );
-                            throw new Error(
-                                'The `relation` field of AdminUI not include ' +
-                                    key
-                            );
-                        }
-                        right = v;
-                        key = key.toUpperCase();
-                        left = '.id';
-                    } else {
-                        right = v;
+            for (let key in metadata.fields) {
+                let f = metadata.fields[key];
+                if (!f.searchable && !f.smartSearchable) {
+                    continue;
+                }
+                let v = null;
+                if (f.searchable) {
+                    v = datagrid.getQueryValue(key);
+                } else if (f.smartSearchable) {
+                    v = datagrid.getQueryValue('smartSearch');
+                }
+                if (v) {
+                    let right;
+                    let left = '';
+                    if (f.type == AdminType.String) {
+                        right = Like('%' + (v as string).toLowerCase() + '%');
                         key = 'e.' + key;
-                    }
-                }
-                if (f.smartSearchable) {
-                    smartWhere[key + left] = right;
-                } else {
-                    where[key + left] = right;
-                }
-            }
-          }
-
-          let repository = getConnection().getRepository(
-            Class
-          ) as Repository<any>;
-
-          let ors = [];
-          if (Object.keys(smartWhere).length > 0) {
-            for (let key in smartWhere) {
-                let tmp = { ...filterWhere, ...where } as any;
-                tmp[key] = smartWhere[key];
-                ors.push(tmp);
-            }
-          } else {
-            for (let key in where) {
-                let tmp = { ...filterWhere } as any;
-                tmp[key] = where[key];
-                ors.push(tmp);
-            }
-          }
-
-          where = ors;
-
-          qb = repository.createQueryBuilder('e');
-          for (let relation of metadata.classParameters.relations || []) {
-            qb = qb.leftJoinAndSelect('e.' + relation, relation.toUpperCase());
-          }
-
-          for (let orOption of where) {
-            let parts = [];
-            let params: any = {};
-            let counter = 0;
-            for (let key in orOption) {
-                let _q = '';
-                let value = orOption[key];
-                if (value instanceof Array) {
-                    _q += '(';
-                    for (let i = 0; i < value.length; i++) {
-                        let _v = 'param' + counter;
-                        params[_v] = value[i];
-                        counter++;
-                        _q += key + ' = :' + _v;
-                        if (i < value.length - 1) {
-                            _q += ' OR';
+                    } else {
+                        let Class = this.retrieveEntityClass(
+                            f.selfType as string
+                        );
+                        if (Class) {
+                            if (
+                                (
+                                    metadata.classParameters.relations || []
+                                ).indexOf(key) == -1
+                            ) {
+                                this.logger.error(
+                                    'Searching for the column `' +
+                                        key +
+                                        '` is enabled only if `' +
+                                        key +
+                                        '` is specified in the `relations` parmeter of `AdminUI`'
+                                );
+                                throw new Error(
+                                    'The `relation` field of AdminUI not include ' +
+                                        key
+                                );
+                            }
+                            right = v;
+                            key = key.toUpperCase();
+                            left = '.id';
+                        } else {
+                            right = v;
+                            key = 'e.' + key;
                         }
-                        _q += ' ';
                     }
-                    _q += ') ';
-                } else if (value instanceof FindOperator) {
-                    let _v = 'param' + counter;
-                    params[_v] = value.value;
-                    counter++;
-                    _q += key + ' LIKE :' + _v + ' ';
-                } else {
-                    let _v = 'param' + counter;
-                    params[_v] = value;
-                    counter++;
-                    _q += key + ' = :' + _v + ' ';
+                    if (f.smartSearchable) {
+                        smartWhere[key + left] = right;
+                    } else {
+                        where[key + left] = right;
+                    }
                 }
-                parts.push(_q.trim());
             }
-            let q = parts.join(' AND ');
-            qb = qb.orWhere(q, params);
-          }
+
+            let repository = getConnection().getRepository(
+                Class
+            ) as Repository<any>;
+
+            let ors = [];
+            if (Object.keys(smartWhere).length > 0) {
+                for (let key in smartWhere) {
+                    let tmp = { ...filterWhere, ...where } as any;
+                    tmp[key] = smartWhere[key];
+                    ors.push(tmp);
+                }
+            } else {
+                for (let key in where) {
+                    let tmp = { ...filterWhere } as any;
+                    tmp[key] = where[key];
+                    ors.push(tmp);
+                }
+            }
+
+            where = ors;
+
+            qb = repository.createQueryBuilder('e');
+            for (let relation of metadata.classParameters.relations || []) {
+                qb = qb.leftJoinAndSelect(
+                    'e.' + relation,
+                    relation.toUpperCase()
+                );
+            }
+
+            for (let orOption of where) {
+                let parts = [];
+                let params: any = {};
+                let counter = 0;
+                for (let key in orOption) {
+                    let _q = '';
+                    let value = orOption[key];
+                    if (value instanceof Array) {
+                        _q += '(';
+                        for (let i = 0; i < value.length; i++) {
+                            let _v = 'param' + counter;
+                            params[_v] = value[i];
+                            counter++;
+                            _q += key + ' = :' + _v;
+                            if (i < value.length - 1) {
+                                _q += ' OR';
+                            }
+                            _q += ' ';
+                        }
+                        _q += ') ';
+                    } else if (value instanceof FindOperator) {
+                        let _v = 'param' + counter;
+                        params[_v] = value.value;
+                        counter++;
+                        _q += key + ' LIKE :' + _v + ' ';
+                    } else {
+                        let _v = 'param' + counter;
+                        params[_v] = value;
+                        counter++;
+                        _q += key + ' = :' + _v + ' ';
+                    }
+                    parts.push(_q.trim());
+                }
+                let q = parts.join(' AND ');
+                qb = qb.orWhere(q, params);
+            }
         }
 
         await datagrid.fetchData((params) => {
             let order = params.order;
 
             if (hasCustomFetchData) {
-              return metadata.classParameters.customFetchData && metadata.classParameters.customFetchData(req, params.order, params.take, params.skip);
+                return (
+                    metadata.classParameters.customFetchData &&
+                    metadata.classParameters.customFetchData(
+                        req,
+                        params.order,
+                        params.take,
+                        params.skip
+                    )
+                );
             }
 
             if (
@@ -266,18 +282,23 @@ export class Controller extends BaseController {
             qb = qb.take(params.take);
             return qb.getManyAndCount();
         });
-        let tmp = datagrid.data as BaseEntity[];
-        let promises: Promise<void>[] = [];
-        tmp.forEach((t) => promises.push(t.reload()));
-        await Promise.all(promises);
-        for (let i = 0; i < datagrid.data.length; i++) {
+        if (!disableReload) {
+            let tmp = datagrid.data as BaseEntity[];
+            let promises: Promise<void>[] = [];
+            tmp.forEach((t) => promises.push(t.reload()));
+            await Promise.all(promises);
+        }
+        datagrid.data = await Promise.all(
+            datagrid.data.map((d) => this.cleanData(req, d, metadata, true))
+        );
+        /*for (let i = 0; i < datagrid.data.length; i++) {
             datagrid.data[i] = await this.cleanData(
                 req,
                 datagrid.data[i],
                 metadata,
                 true
             );
-        }
+        }*/
     }
 
     async cleanData(
@@ -293,6 +314,11 @@ export class Controller extends BaseController {
             defaultValues = JSON.parse(req.query.defaultValues as string);
         }
         for (let key in metadata.fields) {
+            if (forList) {
+                if (metadata.fields[key].onSummary !== true) {
+                    continue;
+                }
+            }
             if (metadata.fields[key].query) {
                 let executor = metadata.fields[key].query as any;
                 let datagrid = new Datagrid(key + '-', req);
@@ -588,6 +614,9 @@ export class Controller extends BaseController {
         requests.push(
             this.evaluateTemplate(meta, 'defaultOrderBy', null as any, req)
         );
+        requests.push(
+            this.evaluateTemplate(meta, 'disableReloadOnList', null as any, req)
+        );
         await Promise.all(requests);
         if (
             meta.classParameters.listActionTemplate &&
@@ -642,11 +671,17 @@ export class Controller extends BaseController {
 
             if (meta) {
                 if (!field.query) {
-                    fields[key] = { ... field };
+                    fields[key] = { ...field };
                     let updatedFields: Record<string, FieldParameters> = {};
                     if (field.type == AdminType.Expanded) {
                         let currentEntity = (entityData ?? {})[key];
-                        let evaluatedFields = await this.generateContextFields(meta, req, currentEntity, field.readOnly as any, field.hide as any);
+                        let evaluatedFields = await this.generateContextFields(
+                            meta,
+                            req,
+                            currentEntity,
+                            field.readOnly as any,
+                            field.hide as any
+                        );
                         for (let f in meta.fields) {
                             updatedFields[key + '-' + f] = evaluatedFields[f];
                         }
@@ -660,7 +695,7 @@ export class Controller extends BaseController {
                 fields[key].metadata = meta;
                 (field as any).metadata = meta;
             }
-            
+
             if (field.required instanceof Function) {
                 fields[key] = { ...field };
                 fields[key].required = await (field.required as Function)(
@@ -669,7 +704,7 @@ export class Controller extends BaseController {
                 );
                 field = fields[key] as FieldParameters;
             }
-            
+
             if (field.values instanceof Function) {
                 fields[key] = { ...field };
                 fields[key].values = await (field.values as Function)(
@@ -691,7 +726,6 @@ export class Controller extends BaseController {
                 )(req, entityData);
                 field = fields[key] as FieldParameters;
             }
-            
         }
         return fields;
     }
