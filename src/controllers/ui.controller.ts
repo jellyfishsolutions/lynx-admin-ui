@@ -46,6 +46,19 @@ export default class UIController extends BaseUIController {
         return this.performAjaxRequest(entityName, id, field, req);
     }
 
+    @Name('adminUI.ajax-details')
+    @API()
+    @GET('/ajaxDetails/:entityName/:id/:field/:selection')
+    async ajaxDetails(
+        entityName: string,
+        id: any,
+        field: string,
+        selection: any,
+        req: Request
+    ) {
+        return this.performAjaxDetails(entityName, id, field, selection, req);
+    }
+
     @Name('adminUI.delete')
     @POST('/:entityName/:id/delete')
     async performDelete(entityName: string, id: any, req: Request) {

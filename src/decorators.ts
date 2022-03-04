@@ -20,6 +20,7 @@ export enum AdminType {
     DateTime = 16,
     ActionButton = 17,
     Currency = 18,
+    ExpandedAndSelection = 19,
 }
 
 export interface UISettings {
@@ -70,6 +71,10 @@ export interface QueryParams {
 }
 
 export interface OptionalParameters {}
+
+export interface ExpandedAndSelectionParameters extends OptionalParameters {
+    readOnlyExpanded?: boolean;
+}
 
 export interface FieldParameters {
     name: string;

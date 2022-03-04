@@ -259,6 +259,16 @@ In this case, the fields of the target entity will be available inside the inter
 If the `readOnly` parameter is specified and, during the request, is resolved to `true`, the parameter is automatically inherited by any fields of the expanded entity. Otherwise, the `readOnly` parameter of any fields of the expanded entity is used as expected.
 The same behavior is applied also for the `hide` parameter.
 
+The `AdminType.Expanded` supports also the `fieldset` optional property. If `true`, the input of the target entity will be rendered inside an html `fieldset` element.
+
+#### `AdminType.ExpandedAndSelection`
+
+This type has the same function of the original `AdminType.Expanded`, but also provides the possibility to select the entire entity with a ajax selection (using a similar functionality to `AdminType.AjaxSelection`).
+For this reason, it is necessary to specify the [`searchRequest` parameter](#searchRequest-parameter).
+
+If the `readOnly` parameter resolve to `true`, both the selection and the editing of any field is not allowed. If the selection can be changed but the "expanded" fields shall be in readonly mode, it is possible to specify the `readOnlyExpanded` as `true` in the `optionalParameters` field.
+Moreover, the `fieldset` optional property is supported.
+
 #### `AdminType.Color`
 
 Indicates that the field is a color. It uses the standard input with type color.

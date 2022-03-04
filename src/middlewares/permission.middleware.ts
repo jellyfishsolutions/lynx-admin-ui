@@ -1,22 +1,22 @@
 import { BaseMiddleware, BLOCK_CHAIN } from 'lynx-framework/base.middleware';
 import { Middleware } from 'lynx-framework/decorators';
-import { Request, Response} from 'express';
+import { Request, Response } from 'express';
 import AdminUIModule from '..';
 
 /**
- * 
- * @param url 
+ *
+ * @param url
  * @returns name of enitity
  */
 function getEntityName(url: string): string {
-  const regex = /(adminUI\/)(\w*)/;
-  const match = url.match(regex);
+    const regex = /(adminUI\/)(ajaxRequest\/|ajaxDetails\/)?(\w*)/;
+    const match = url.match(regex);
 
-  if (null === match) {
-    return 'unknown';
-  }
+    if (null === match) {
+        return 'unknown';
+    }
 
-  return match[2];
+    return match[3];
 }
 
 @Middleware('/adminUI/*')
@@ -26,15 +26,15 @@ export default class PermissionMiddleware extends BaseMiddleware {
         const method = req.method;
         let canAccess;
 
-        switch(method) {
-          case 'GET':
-            canAccess = AdminUIModule.canReadFunction(req, entityName);
-            break;
-          case 'POST': 
-            canAccess = AdminUIModule.canWriteFunction(req, entityName);
-            break;
-          default: 
-            canAccess = false;
+        switch (method) {
+            case 'GET':
+                canAccess = AdminUIModule.canReadFunction(req, entityName);
+                break;
+            case 'POST':
+                canAccess = AdminUIModule.canWriteFunction(req, entityName);
+                break;
+            default:
+                canAccess = false;
         }
 
         if (false === canAccess) {

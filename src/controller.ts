@@ -475,7 +475,11 @@ export class Controller extends BaseController {
                 }
             } else if (m.type == AdminType.Checkbox) {
                 (entity as any)[key] = data[prefix + key] ? true : false;
-            } else if (m.type == AdminType.Expanded) {
+            } else if (
+                m.type == AdminType.Expanded ||
+                (m.type == AdminType.ExpandedAndSelection &&
+                    !(m.optionalParameters as any)?.readOnlyExpanded)
+            ) {
                 let entityClass = await this.retrieveEntityClass(
                     m.selfType as string
                 );
@@ -673,7 +677,10 @@ export class Controller extends BaseController {
                 if (!field.query) {
                     fields[key] = { ...field };
                     let updatedFields: Record<string, FieldParameters> = {};
-                    if (field.type == AdminType.Expanded) {
+                    if (
+                        field.type == AdminType.Expanded ||
+                        field.type == AdminType.ExpandedAndSelection
+                    ) {
                         let currentEntity = (entityData ?? {})[key];
                         let evaluatedFields = await this.generateContextFields(
                             meta,

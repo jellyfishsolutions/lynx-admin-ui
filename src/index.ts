@@ -17,8 +17,12 @@ export default class AdminUIModule extends SimpleModule {
     static popupEditorTemplatePath = 'admin-ui/edit-popup';
     static canReadFunction = (req: Request, entityName: String) => true;
     static canWriteFunction = (req: Request, entityName: String) => true;
-    static permissionDeniedHandler = (req: Request, res: Response, entityName: String) => {
-      res.redirect('/AdminUI/');
+    static permissionDeniedHandler = (
+        req: Request,
+        res: Response,
+        entityName: String
+    ) => {
+        res.redirect('/AdminUI/');
     };
 
     constructor() {
@@ -55,6 +59,8 @@ export default class AdminUIModule extends SimpleModule {
             '/admin-ui/editors/action-button';
         AdminUIModule.configuration[AdminType.Currency] =
             '/admin-ui/editors/currency';
+        AdminUIModule.configuration[AdminType.ExpandedAndSelection] =
+            '/admin-ui/editors/expanded-and-selection';
 
         setTimeout(() => {
             app.nunjucksEnvironment.addFilter(
@@ -159,9 +165,7 @@ export default class AdminUIModule extends SimpleModule {
      * Customize to protect routes and frontend
      * @param func the function that contains the access logic
      */
-    static setCanReadFunction(
-        func: (req: Request, entity: String) => boolean
-    ) {
+    static setCanReadFunction(func: (req: Request, entity: String) => boolean) {
         AdminUIModule.canReadFunction = func;
     }
 
@@ -206,6 +210,6 @@ export default class AdminUIModule extends SimpleModule {
     }
 
     get middlewares(): string {
-        return __dirname + '/middlewares';    
+        return __dirname + '/middlewares';
     }
 }
