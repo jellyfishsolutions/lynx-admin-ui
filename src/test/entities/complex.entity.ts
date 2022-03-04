@@ -243,6 +243,7 @@ export default class Complex extends BaseEntity implements EditableEntity {
         values: getCategories,
         onSummary: true,
         searchable: true,
+        readOnly: true,
     })
     category: Category;
 

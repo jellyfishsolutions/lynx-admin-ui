@@ -66,7 +66,22 @@ export default class AdminUIModule extends SimpleModule {
             app.nunjucksEnvironment.addFilter(
                 '_adminUIMasterFilter_',
                 (str: any, filterName: string) => {
-                    return app.nunjucksEnvironment.getFilter(filterName)(str);
+                    let name = filterName;
+                    let args = [str];
+                    let endName = filterName.indexOf('(');
+                    if (endName > -1) {
+                        name = filterName.substring(0, endName);
+                        let parsed = eval(
+                            '[' +
+                                filterName.substring(
+                                    endName + 1,
+                                    filterName.length - 1
+                                ) +
+                                ']'
+                        );
+                        args = [str, ...parsed];
+                    }
+                    return app.nunjucksEnvironment.getFilter(name)(...args);
                 }
             );
         }, 2000);

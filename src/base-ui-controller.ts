@@ -204,9 +204,11 @@ export class BaseUIController extends Controller {
         let hasSmartSearchable = false;
         for (let key in fields) {
             let field = fields[key];
+            if (field.smartSearchable || field.searchable) {
+                field.readOnly = false;
+            }
             if (field.smartSearchable) {
                 hasSmartSearchable = true;
-                break;
             }
         }
         let data: any = {};

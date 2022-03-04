@@ -31,17 +31,17 @@ export default class Category extends BaseEntity implements EditableEntity {
         readOnly: false,
         onSummary: true,
         uiSettings: {
-            listFilter: 'date',
+            listFilter: 'date("DD MMM YYYY")',
         },
     })
     date: Date;
 
     @Column({ nullable: true })
     @AdminField({
-      name: 'Sensible Content',
-      type: AdminType.Checkbox,
-      readOnly: true,
-      onSummary: true,
+        name: 'Sensible Content',
+        type: AdminType.Checkbox,
+        readOnly: true,
+        onSummary: true,
     })
     sensible: boolean;
 
