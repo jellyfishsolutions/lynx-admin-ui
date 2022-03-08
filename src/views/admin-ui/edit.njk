@@ -1,29 +1,32 @@
 {% extends resolvePath(parentTemplate) %}
-{% import resolvePath("/lynx/utils") as utils %}
+{% import resolvePath("/lynx/utils")as utils %}
 
 {% block additional_styles %}
   <link href="{{route('/adminUI/fontawesome/css/all.css')}}" rel="stylesheet">
   <link href="{{ route('/adminUI/assets/css/admin.css') }}" rel="stylesheet">
 
   {% for type in usedTypes %}
-      {% include resolvePath(configuration[type] + '-css') ignore missing %}
+    {% include resolvePath(configuration[type] + '-css') ignore missing %}
   {% endfor %}
 {% endblock %}
 
 {% block additional_scripts %}
   {% for type in usedTypes %}
-      {% include resolvePath(configuration[type] + '-js') ignore missing %}
+    {% include resolvePath(configuration[type] + '-js') ignore missing %}
   {% endfor %}
 {% endblock %}
 
-
 {% block body %}
+<form method="POST" action="{{route('adminUI.save', {entityName: req.params.entityName, id: req.params.id} )}}" enctype="multipart/form-data">
+<div class="row">
+<div class="col-12 col-lg-9 col-xl-10 mb-4">
   <div class="card">
     <div class="card-body">
       <div class="lead entity-title entity-title-{{req.params.entityName}}">
-          <a class="btn btn-secondary btn-back btn-back-{{req.params.entityName}}" href="{{ route('adminUI.list', {entityName: req.params.entityName}) }}">
-              <i class="fas fa-chevron-left"></i> {{ 'admin-ui.back' | tr }}
-          </a>
+        <a class="btn btn-secondary btn-back btn-back-{{req.params.entityName}}" href="{{ route('adminUI.list', {entityName: req.params.entityName}) }}">
+          <i class="fas fa-chevron-left"></i>
+          {{ 'admin-ui.back' | tr }}
+        </a>
       </div>
 
       {{ utils.alert(flash) }}
@@ -34,38 +37,83 @@
           {{ metadata.name }}
         </div>
 
-        <form method="POST" action="{{route('adminUI.save', {entityName: req.params.entityName, id: req.params.id} )}}" enctype="multipart/form-data">
-          <input type="hidden" name="__admin_ui_action" id="__admin_ui_action" />
-            <div class="row">
-            {% for key, field in fields %}
-              {% if not field.hide %}
+        
+          <input type="hidden" name="__admin_ui_action" id="__admin_ui_action"/>
 
-                {% if field.uiSettings and field.uiSettings.editorClasses %}
-                  <div id="field-{{req.params.entityName}}-{{key}}" class="{{ field.uiSettings.editorClasses }}">
-                {% elif field.uiSettings and field.uiSettings.editorFullwidth %}
-                  <div id="field-{{req.params.entityName}}-{{key}}" class="col-12">
-                {% else %}
-                  <div id="field-{{req.params.entityName}}-{{key}}" class="col-12 col-md-6">
-                {% endif %}
-                
-                    {% include resolvePath(configuration[field.type]) %}
-
+          <!-- if entity is divided in tabs -->
+          {% if tabs and tabs.length > 1 %}
+            <ul class="nav nav-tabs">
+              {% for tab in tabs %}
+                <li class="nav-item">
+                  <a class="nav-link {{ 'active' if defaultTab == tab.key else '' }}" data-toggle="tab" href="#tab{{loop.index}}">{{ tab.label | tr }}</a>
+                </li>
+              {% endfor %}
+            </ul>
+            <div class="tab-content">
+              {% for tab in tabs %}
+                <div id="tab{{loop.index}}" class="tab-pane fade my-5 {{ 'show active' if defaultTab == tab.key else '' }}">
+                  <div class="row">
+                    {% for key, field in fields %}
+                      {% if field.uiSettings and field.uiSettings.tab == tab.key and not field.hide and not field.uiSettings.onRightColumn %}
+                      {{ fieldComponent(field, key) }}
+                      {% endif %}
+                    {% endfor %}
                   </div>
-              {% endif %}
-            {% endfor %}
+                </div>
+              {% endfor %}
             </div>
-
-          {% if AUIcanWrite(req, req.params.entityName) %}
-            <div class="mt-3">
-              <button class="btn btn-primary btn-save btn-save-{{req.params.entityName}}" type="submit">
-                <i class="fas fa-save"></i> {{'admin-ui.save' | tr }}
-              </button>
+          {% else %}
+            <!-- if entity is NOT divided in tabs -->
+            <div class="row">
+              {% for key, field in fields %}
+                {% if not field.hide and not field.uiSettings.onRightColumn %}
+                  {{ fieldComponent(field, key) }}
+                {% endif %}
+              {% endfor %}
             </div>
           {% endif %}
-        </form>
-      
+         
+
       </div>
     </div>
   </div>
+    </div>
+  <div class="col-12 col-lg-3 col-xl-2">
+    <div class="card">
+      <div class="card-body">
+        <div class="row">
+        {% for key, field in fields %}
+          {% if not field.hide and field.uiSettings.onRightColumn %}
+            {{ fieldComponent(field, key) }}
+          {% endif %}
+        {% endfor %}
+          {% if AUIcanWrite(req, req.params.entityName) %}
+            <div class="col-12 mt-4">
+              <button class="btn btn-primary btn-save btn-save-{{req.params.entityName}} w-100" type="submit">
+                <i class="fas fa-save"></i>
+                {{'admin-ui.save' | tr }}
+              </button>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  
 
+  </div>
+          </form>
 {% endblock %}
+
+{% macro fieldComponent(field, key) %}
+
+  {% if field.uiSettings and field.uiSettings.editorClasses %}
+    <div id="field-{{req.params.entityName}}-{{key}}" class="{{ field.uiSettings.editorClasses }}">
+  {% elif field.uiSettings and field.uiSettings.editorFullwidth %}
+    <div id="field-{{req.params.entityName}}-{{key}}" class="col-12">
+  {% else %}
+    <div id="field-{{req.params.entityName}}-{{key}}" class="col-12 col-md-6">
+  {% endif %}
+  {% include resolvePath(configuration[field.type]) %}
+  </div>
+{% endmacro %}

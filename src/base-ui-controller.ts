@@ -280,6 +280,8 @@ export class BaseUIController extends Controller {
             parentTemplate: isPopup
                 ? metadata.classParameters.popupEditorParentTemplate
                 : metadata.classParameters.editorParentTemplate,
+            tabs: metadata.classParameters.uiSettings?.tabs,
+            defaultTab: metadata.classParameters.uiSettings?.defaultTab,
             nested: false,
             metadata: metadata,
             fields: fields,

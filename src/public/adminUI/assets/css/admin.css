@@ -1701,8 +1701,6 @@ fieldset:disabled a.btn {
 
 .btn-primary {
   background: #fff;
-  padding-left: 50px;
-  padding-right: 50px;
   color: #000;
   border: 0.5px solid #908E8E; }
   .btn-primary:hover {

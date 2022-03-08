@@ -13,6 +13,18 @@ async function _myOnly(req: Request, e: any) {
 @AdminUI('Address', {
     defaultOrderBy: '+city',
     batchDelete: true,
+    uiSettings: {
+        tabs: [{
+            key: "tab1",
+            label: "admin-ui.add"
+        },
+        {
+            key: "tab2",
+            label: "admin-ui.select"
+        }
+        ],
+        defaultTab: "tab1"
+    }
 })
 export default class Address extends BaseEntity implements EditableEntity {
     @PrimaryGeneratedColumn()
@@ -21,6 +33,9 @@ export default class Address extends BaseEntity implements EditableEntity {
         type: AdminType.Id,
         readOnly: false,
         onSummary: true,
+        uiSettings: {
+            tab: "tab1"
+        }
     })
     id: number;
 
@@ -31,6 +46,8 @@ export default class Address extends BaseEntity implements EditableEntity {
         onSummary: true,
         smartSearchable: true,
         uiSettings: {
+            onRightColumn: true,
+            editorClasses: "col-12",
             additionalEditorInfo: { prova: 'asdasd' },
             expandedEditorClasses: 'col-3',
         },
@@ -45,6 +62,7 @@ export default class Address extends BaseEntity implements EditableEntity {
         smartSearchable: true,
         readOnly: _myOnly,
         uiSettings: {
+            tab: "tab2",
             expandedEditorClasses: 'col-3',
         },
     })
