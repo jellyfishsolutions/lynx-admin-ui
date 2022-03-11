@@ -1,37 +1,68 @@
 {% if field.optionalParameters and field.optionalParameters.fieldset %}
     <fieldset class="border p-2">
         <legend  class="w-auto">
-{% else %}
-        <label>
-{% endif %}
-            {{ field.name | tr }}
-                {% if field.uiSettings.descriptionText %}
-                    <small id="{{key}}-help" class="{{ field.uiSettings.descriptionTextClasses if field.uiSettings.descriptionTextClasses }} description-label">{{ field.uiSettings.descriptionText | tr }}</small>
-                {% endif %}
-{% if field.optionalParameters and field.optionalParameters.fieldset %}
-        </legend>
-{% else %}
-         </label>
-{% endif %}
-        {% set originalKey = key %}
-        {% set originalField = field %}
-
-        <div class="row p-2">
-        {% for key, field in originalField.metadata.fields %}
-            {% set __c = 'col-12' %}
-            {% if field.uiSettings  %}
-                {% if field.uiSettings.expandedEditorClasses %}
-                    {% set __c = field.uiSettings.expandedEditorClasses %}
-                {% elif field.uiSettings.editorClasses %}
-                    {% set __c = field.uiSettings.editorClasses %}
-                {% endif %}
+        {% else %}
+            <label>
             {% endif %}
-            <div id="field-{{req.params.entityName}}-{{originalKey}}-{{key}}" class="{{ __c }} ">
-                {% include resolvePath(configuration[field.type]) %}
-            </div>
-        {% endfor %}
-        </div>
+            {{ field.name | tr }}
+            {% if field.uiSettings.descriptionText %}
+                <small id="{{key}}-help" class="{{ field.uiSettings.descriptionTextClasses if field.uiSettings.descriptionTextClasses }} description-label">{{ field.uiSettings.descriptionText | tr }}</small>
+            {% endif %}
+            {% if field.optionalParameters and field.optionalParameters.fieldset %}
+            </legend>
+        {% else %}
+        </label>
+    {% endif %}
+    {% set originalKey = key %}
+    {% set originalField = field %}
 
-{% if field.optionalParameters and field.optionalParameters.fieldset %}   
+    <div class="row p-2">
+        {% if originalField.metadata.classParameters.uiSettings and originalField.metadata.classParameters.uiSettings.tabs and originalField.metadata.classParameters.uiSettings.tabs.length > 1 %}
+            <div class="col-12">
+                {% set tabsId = AUIgenerateId() %}
+                <ul class="nav nav-tabs">
+                    {% for tab in originalField.metadata.classParameters.uiSettings.tabs %}
+                        <li class="nav-item">
+                            <a class="nav-link {{ 'active' if originalField.metadata.classParameters.uiSettings.defaultTab == tab.key else '' }}" data-toggle="tab" href="#tab_{{tabsId}}_{{loop.index}}">{{ tab.label | tr }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+                <div class="tab-content">
+                    {% for tab in originalField.metadata.classParameters.uiSettings.tabs %}
+                        <div id="tab_{{tabsId}}_{{loop.index}}" class="tab-pane fade my-5 {{ 'show active' if originalField.metadata.classParameters.uiSettings.defaultTab == tab.key else '' }}">
+                            <div class="row">
+                                {% for key, field in originalField.metadata.fields %}
+                                    {% if field.uiSettings and field.uiSettings.tab == tab.key and not field.hide %}
+                                        {{ fieldComponent(field, key) }}
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% else %}
+            {% for key, field in originalField.metadata.fields %}
+                {{ fieldComponent(field, key) }}
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    {% if field.optionalParameters and field.optionalParameters.fieldset %}
     </fieldset>
 {% endif %}
+
+{% macro fieldComponent(field, key) %}
+
+    {% set __c = 'col-12' %}
+    {% if field.uiSettings %}
+        {% if field.uiSettings.expandedEditorClasses %}
+            {% set __c = field.uiSettings.expandedEditorClasses %}
+        {% elif field.uiSettings.editorClasses %}
+            {% set __c = field.uiSettings.editorClasses %}
+        {% endif %}
+    {% endif %}
+    <div id="field-{{req.params.entityName}}-{{originalKey}}-{{key}}" class="{{ __c }} ">
+        {% include resolvePath(configuration[field.type]) %}
+    </div>
+{% endmacro %}

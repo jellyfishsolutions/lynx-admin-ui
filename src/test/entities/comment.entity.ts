@@ -19,7 +19,7 @@ export default class Comment extends BaseEntity implements EditableEntity {
     text: string;
 
     @ManyToOne(type => Post, post => post.comments, { eager: true })
-    @AdminField({ name: "Post", type: AdminType.Selection, readOnly: notEditableFromPopup, values: async () => map(await Post.find())})
+    @AdminField({ name: "Post", selfType: 'Post', type: AdminType.Selection, readOnly: notEditableFromPopup, values: async () => map(await Post.find())})
     post: Post;
 
 

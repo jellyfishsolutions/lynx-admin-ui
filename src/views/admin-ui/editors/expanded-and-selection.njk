@@ -40,14 +40,16 @@
                     var url = '{{route("adminUI.ajax-details", { entityName: req.params.entityName, id: req.params.id, field: key, selection: ":selection" })}}';
                     url = url.replace(':selection', id);
                     var xhttp = new XMLHttpRequest();
-                            xhttp.onreadystatechange = function () {
-                                if (this.readyState == 4 && this.status == 200) {
-                                    let data = JSON.parse(this.response).data;
-                                    setupData(data);
-                                } else if (this.readyState == 4 && this.status != 200) {}
-                            };
-                            xhttp.open("GET", url, true);
-                            xhttp.send();
+                    xhttp.onreadystatechange = function () {
+                        if (this.readyState == 4 && this.status == 200) {
+                            let data = JSON
+                                .parse(this.response)
+                                .data;
+                            setupData(data);
+                        } else if (this.readyState == 4 && this.status != 200) {}
+                    };
+                    xhttp.open("GET", url, true);
+                    xhttp.send();
                 }
 
                 function setupData(data) {
@@ -58,86 +60,119 @@
                         $("input[name={{key}}]").val(data['{{key}}'.replace('{{originalKey}}-', '')]);
                     {% endfor %}
 
-                }
+            }
 
-                var url = '{{route("adminUI.ajax-selection", { entityName: req.params.entityName, id: req.params.id, field: key })}}';
-                $('#select2-{{key}}').select2({
-                    ajax: {
-                        transport: function (params, success, failure) {
-                            var xhttp = new XMLHttpRequest();
-                            xhttp.onreadystatechange = function () {
-                                if (this.readyState == 4 && this.status == 200) {
-                                    success(JSON.parse(this.response));
-                                } else if (this.readyState == 4 && this.status != 200) {
-                                    failure();
-                                }
-                            };
-                            xhttp.open("GET", params.url + '?term=' + (
-                            params.data.term || '') + '&page=' + (
-                            params.data.page || 1), true);
-                            xhttp.send();
-                        },
-                        url: url,
-                        dataType: 'json',
-                        processResults: function (data) {
-                            let out = {
-                                results: data.data.data,
-                                pagination: {
-                                    more: data.data.pagination
-                                }
-                            };
-                            return out;
-                        }
+            var url = '{{route("adminUI.ajax-selection", { entityName: req.params.entityName, id: req.params.id, field: key })}}';
+            $('#select2-{{key}}').select2({
+                ajax: {
+                    transport: function (params, success, failure) {
+                        var xhttp = new XMLHttpRequest();
+                        xhttp.onreadystatechange = function () {
+                            if (this.readyState == 4 && this.status == 200) {
+                                success(JSON.parse(this.response));
+                            } else if (this.readyState == 4 && this.status != 200) {
+                                failure();
+                            }
+                        };
+                        xhttp.open("GET", params.url + '?term=' + (
+                        params.data.term || '') + '&page=' + (
+                        params.data.page || 1), true);
+                        xhttp.send();
+                    },
+                    url: url,
+                    dataType: 'json',
+                    processResults: function (data) {
+                        let out = {
+                            results: data.data.data,
+                            pagination: {
+                                more: data.data.pagination
+                            }
+                        };
+                        return out;
                     }
-                });
-                $('#select2-{{key}}').on("select2:select", function (e) { loadData(e.params.data.id); });
-                {% if data[key] %}
-                    var xhttp = new XMLHttpRequest();
-                    xhttp.onreadystatechange = function () {
-                        if (this.readyState == 4 && this.status == 200) {
-                            let obj = JSON.parse(this.response);
-                            let selection = obj
-                                .data
-                                .data[0];
-                            var option = new Option(selection.text, selection.id, true, true);
-                            $('#select2-{{key}}')
-                                .append(option)
-                                .trigger('change');
-                        }
-                    };
-                    xhttp.open("GET", url + '?selection=true', true);
-                    xhttp.send();
-                {% endif %}
-
-                {% if field.optionalParameters and field.optionalParameters.readOnlyExpanded %}
-                        {% for key, f in field.metadata.fields %}
-                            $("input[name={{key}}]").attr("disabled", true);
-                            $("input[name={{key}}]").attr("readonly", true);
-                        {% endfor %}
-                {% endif %}
-
+                }
             });
+            $('#select2-{{key}}').on("select2:select", function (e) {
+                loadData(e.params.data.id);
+            });
+            {% if data[key] %}
+                var xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function () {
+                    if (this.readyState == 4 && this.status == 200) {
+                        let obj = JSON.parse(this.response);
+                        let selection = obj
+                            .data
+                            .data[0];
+                        var option = new Option(selection.text, selection.id, true, true);
+                        $('#select2-{{key}}')
+                            .append(option)
+                            .trigger('change');
+                    }
+                };
+                xhttp.open("GET", url + '?selection=true', true);
+                xhttp.send();
+            {% endif %}
+
+            {% if field.optionalParameters and field.optionalParameters.readOnlyExpanded %}
+                {% for key, f in field.metadata.fields %}
+                    $("input[name={{key}}]").attr("disabled", true);
+                    $("input[name={{key}}]").attr("readonly", true);
+                {% endfor %}
+            {% endif %}
+
+        });
     </script>
 
     {% set originalKey = key %}
     {% set originalField = field %}
 
     <div class="row p-2">
-        {% for key, field in originalField.metadata.fields %}
-            {% set __c = 'col-12' %}
-            {% if field.uiSettings %}
-                {% if field.uiSettings.expandedEditorClasses %}
-                    {% set __c = field.uiSettings.expandedEditorClasses %}
-                {% elif field.uiSettings.editorClasses %}
-                    {% set __c = field.uiSettings.editorClasses %}
-                {% endif %}
-            {% endif %}
-            <div id="field-{{req.params.entityName}}-{{originalKey}}-{{key}}" class="{{ __c }} ">
-                {% include resolvePath(configuration[field.type]) %}
+        {% if originalField.metadata.classParameters.uiSettings and originalField.metadata.classParameters.uiSettings.tabs and originalField.metadata.classParameters.uiSettings.tabs.length > 1 %}
+            <div class="col-12">
+                {% set tabsId = AUIgenerateId() %}
+                <ul class="nav nav-tabs">
+                    {% for tab in originalField.metadata.classParameters.uiSettings.tabs %}
+                        <li class="nav-item">
+                            <a class="nav-link {{ 'active' if originalField.metadata.classParameters.uiSettings.defaultTab == tab.key else '' }}" data-toggle="tab" href="#tab_{{tabsId}}_{{loop.index}}">{{ tab.label | tr }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+                <div class="tab-content">
+                    {% for tab in originalField.metadata.classParameters.uiSettings.tabs %}
+                        <div id="tab_{{tabsId}}_{{loop.index}}" class="tab-pane fade my-5 {{ 'show active' if originalField.metadata.classParameters.uiSettings.defaultTab == tab.key else '' }}">
+                            <div class="row">
+                                {% for key, field in originalField.metadata.fields %}
+                                    {% if field.uiSettings and field.uiSettings.tab == tab.key and not field.hide %}
+                                        {{ fieldComponent(field, key) }}
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
             </div>
-        {% endfor %}
+        {% else %}
+            {% for key, field in originalField.metadata.fields %}
+                {{ fieldComponent(field, key) }}
+            {% endfor %}
+        {% endif %}
     </div>
 
     {% if field.optionalParameters and field.optionalParameters.fieldset %}
     </fieldset>
 {% endif %}
+
+{% macro fieldComponent(field, key) %}
+
+    {% set __c = 'col-12' %}
+    {% if field.uiSettings %}
+        {% if field.uiSettings.expandedEditorClasses %}
+            {% set __c = field.uiSettings.expandedEditorClasses %}
+        {% elif field.uiSettings.editorClasses %}
+            {% set __c = field.uiSettings.editorClasses %}
+        {% endif %}
+    {% endif %}
+    <div id="field-{{req.params.entityName}}-{{originalKey}}-{{key}}" class="{{ __c }} ">
+        {% include resolvePath(configuration[field.type]) %}
+    </div>
+{% endmacro %}

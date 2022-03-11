@@ -1,9 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne, ManyToOne } from 'typeorm';
 import { AdminUI, AdminField, AdminType } from '../../decorators';
 import BaseEntity from 'lynx-framework/entities/base.entity';
 import Customer from './customer.entity';
-import EditableEntity from '../../editable-entity';
+import EditableEntity, { map, notEditableFromPopup } from '../../editable-entity';
 import Request from 'lynx-framework/request';
+import ProfessionalEntity from './professional.entity';
 
 async function _myOnly(req: Request, e: any) {
     return false;
@@ -12,6 +13,7 @@ async function _myOnly(req: Request, e: any) {
 @Entity('addresses')
 @AdminUI('Address', {
     defaultOrderBy: '+city',
+    relations: ['professional'],
     batchDelete: true,
     uiSettings: {
         tabs: [{
@@ -48,6 +50,7 @@ export default class Address extends BaseEntity implements EditableEntity {
         smartSearchable: true,
         uiSettings: {
             onRightColumn: true,
+            tab: "tab2",
             editorClasses: "col-12",
             additionalEditorInfo: { prova: 'asdasd' },
             expandedEditorClasses: 'col-3',
@@ -68,6 +71,19 @@ export default class Address extends BaseEntity implements EditableEntity {
         },
     })
     city: string;
+
+    @AdminField({
+        name: 'Professional',
+        type: AdminType.Selection,
+        selfType: 'ProfessionalEntity',
+        inverseSide: 'address',
+        values: async () => map(await ProfessionalEntity.find()),
+        onSummary: true,
+        readOnly: notEditableFromPopup,
+      })
+      @ManyToOne(() => ProfessionalEntity, professional => professional.address)
+      professional: ProfessionalEntity;
+
 
     @OneToOne((type) => Customer)
     customer: Customer;

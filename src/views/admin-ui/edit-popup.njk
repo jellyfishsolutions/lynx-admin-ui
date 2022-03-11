@@ -1,61 +1,83 @@
 {% extends resolvePath(parentTemplate) %}
 
-
 {% block additional_styles %}
-<link href="{{route('/adminUI/fontawesome/css/all.css')}}" rel="stylesheet">
-{% for type in usedTypes %}
-    {% include resolvePath(configuration[type] + '-css') ignore missing %}
-{% endfor %}
-<style>
-.modal-footer {
-    position: absolute;
-    bottom: 0px;
-    border-top: 1px solid #dee2e6;
-    width: 100%;
-}
-</style>
+    <link href="{{route('/adminUI/fontawesome/css/all.css')}}" rel="stylesheet">
+    {% for type in usedTypes %}
+        {% include resolvePath(configuration[type] + '-css') ignore missing %}
+    {% endfor %}
+    <style>
+        .modal-footer {
+            position: absolute;
+            bottom: 0;
+            border-top: 1px solid #dee2e6;
+            width: 100%;
+        }
+    </style>
 
 {% endblock %}
 {% block additional_scripts %}
-{% for type in usedTypes %}
-    {% include resolvePath(configuration[type] + '-js') ignore missing %}
-{% endfor %}
-<script>
-function closePopup() {
-    window.parent.postMessage({
-        type: 'closePopup',
-        frameId: "#nested-frame-{{req.query.frameKey}}",
-    });
-}
-</script>
+    {% for type in usedTypes %}
+        {% include resolvePath(configuration[type] + '-js') ignore missing %}
+    {% endfor %}
+    <script>
+        function closePopup() {
+            window
+                .parent
+                .postMessage({type: 'closePopup', frameId: "#nested-frame-{{req.query.frameKey}}"});
+        }
+    </script>
 {% endblock %}
-
 
 {% block body %}
 
-
-<form method="POST" action="{{route('adminUI.save', {entityName: req.params.entityName, id: req.params.id, popup: req.query.popup} )}}" enctype="multipart/form-data" onsubmit='closePopup()'>
-<input type="hidden" name="__admin_ui_action" id="__admin_ui_action" />
-<div class="container-fluid">
-<div class="row mt-1">
-{% for key, field in fields %}
-    {% if not field.hide %}
-        <div id="field-{{req.params.entityName}}-{{key}}" class="{{ field.uiSettings.editorClasses if field.uiSettings and field.uiSettings.editorClasses else 'col-12' }} ">
-            {% include resolvePath(configuration[field.type]) %}
+    <form method="POST" action="{{route('adminUI.save', {entityName: req.params.entityName, id: req.params.id, popup: req.query.popup} )}}" enctype="multipart/form-data" onsubmit='closePopup()'>
+        <input type="hidden" name="__admin_ui_action" id="__admin_ui_action"/>
+        <div class="container-fluid">
+            <div class="row mt-1">
+                {% if tabs and tabs.length > 1 %}
+                    {% set tabsId = AUIgenerateId() %}
+                    <div class="col-12">
+                        <ul class="nav nav-tabs">
+                            {% for tab in tabs %}
+                                <li class="nav-item">
+                                    <a class="nav-link {{ 'active' if defaultTab == tab.key else '' }}" data-toggle="tab" href="#tab_{{tabsId}}_{{loop.index}}">{{ tab.label | tr }}</a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                        <div class="tab-content">
+                            {% for tab in tabs %}
+                                <div id="tab_{{tabsId}}_{{loop.index}}" class="tab-pane fade my-5 {{ 'show active' if defaultTab == tab.key else '' }}">
+                                    <div class="row">
+                                        {% for key, field in fields %}
+                                            {% if field.uiSettings and field.uiSettings.tab == tab.key and not field.hide %}
+                                                <div class="col-12">
+                                                    {% include resolvePath(configuration[field.type]) %}
+                                                </div>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% else %}
+                    {% for key, field in fields %}
+                        {% if not field.hide %}
+                            <div id="field-{{req.params.entityName}}-{{key}}" class="{{ field.uiSettings.editorClasses if field.uiSettings and field.uiSettings.editorClasses else 'col-12' }} ">
+                                {% include resolvePath(configuration[field.type]) %}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            </div>
         </div>
-    {% endif %}
-{% endfor %}
-</div>
-</div>
 
-{% if AUIcanWrite(req, req.params.entityName) %}
-  <div class="modal-footer">
-      <button class="btn btn-primary btn-save btn-save-{{req.params.entityName}}" type="submit">{{ 'admin-ui.save' | tr }}</button>
-  </div>
-{% endif %}
+        {% if AUIcanWrite(req, req.params.entityName) %}
+            <div class="modal-footer">
+                <button class="btn btn-primary btn-save btn-save-{{req.params.entityName}}" type="submit">{{ 'admin-ui.save' | tr }}</button>
+            </div>
+        {% endif %}
 
-</form>
-
-
+    </form>
 
 {% endblock %}
