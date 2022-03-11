@@ -71,7 +71,7 @@ export default class AdminUIModule extends SimpleModule {
                     let endName = filterName.indexOf('(');
                     if (endName > -1) {
                         name = filterName.substring(0, endName);
-                        let parsed = eval(
+                        let parsed = JSON.parse(
                             '[' +
                                 filterName.substring(
                                     endName + 1,
