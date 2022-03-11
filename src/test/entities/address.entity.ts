@@ -23,7 +23,8 @@ async function _myOnly(req: Request, e: any) {
             label: "admin-ui.select"
         }
         ],
-        defaultTab: "tab1"
+        defaultTab: "tab1",
+        hasRightColumn: true
     }
 })
 export default class Address extends BaseEntity implements EditableEntity {

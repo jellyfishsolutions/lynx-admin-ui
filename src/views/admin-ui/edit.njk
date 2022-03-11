@@ -19,7 +19,7 @@
 {% block body %}
 <form method="POST" action="{{route('adminUI.save', {entityName: req.params.entityName, id: req.params.id} )}}" enctype="multipart/form-data">
 <div class="row">
-<div class="col-12 col-lg-9 col-xl-10 mb-4">
+<div class="col-12 {{ 'col-lg-9 col-xl-10' if hasRightColumn else '' }} mb-4">
   <div class="card">
     <div class="card-body">
       <div class="lead entity-title entity-title-{{req.params.entityName}}">
@@ -72,34 +72,44 @@
               {% endfor %}
             </div>
           {% endif %}
-         
+          {% if not hasRightColumn %}
+            {% if AUIcanWrite(req, req.params.entityName) %}
+                <div class="col-3 mt-4">
+                  <button class="btn btn-primary btn-save btn-save-{{req.params.entityName}}" type="submit">
+                    <i class="fas fa-save"></i>
+                    {{'admin-ui.save' | tr }}
+                  </button>
+                </div>
+              {% endif %}
+          {% endif %}
 
       </div>
     </div>
   </div>
     </div>
-  <div class="col-12 col-lg-3 col-xl-2">
-    <div class="card">
-      <div class="card-body">
-        <div class="row">
-        {% for key, field in fields %}
-          {% if not field.hide and field.uiSettings.onRightColumn %}
-            {{ fieldComponent(field, key) }}
-          {% endif %}
-        {% endfor %}
-          {% if AUIcanWrite(req, req.params.entityName) %}
-            <div class="col-12 mt-4">
-              <button class="btn btn-primary btn-save btn-save-{{req.params.entityName}} w-100" type="submit">
-                <i class="fas fa-save"></i>
-                {{'admin-ui.save' | tr }}
-              </button>
-            </div>
-          {% endif %}
+  {% if hasRightColumn %}
+    <div class="col-12 col-lg-3 col-xl-2">
+      <div class="card">
+        <div class="card-body">
+          <div class="row">
+          {% for key, field in fields %}
+            {% if not field.hide and field.uiSettings.onRightColumn %}
+              {{ fieldComponent(field, key) }}
+            {% endif %}
+          {% endfor %}
+            {% if AUIcanWrite(req, req.params.entityName) %}
+              <div class="col-12 mt-4">
+                <button class="btn btn-primary btn-save btn-save-{{req.params.entityName}} w-100" type="submit">
+                  <i class="fas fa-save"></i>
+                  {{'admin-ui.save' | tr }}
+                </button>
+              </div>
+            {% endif %}
+          </div>
         </div>
       </div>
     </div>
-  </div>
-  
+  {% endif %}
 
   </div>
           </form>

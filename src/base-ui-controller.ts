@@ -282,6 +282,7 @@ export class BaseUIController extends Controller {
                 : metadata.classParameters.editorParentTemplate,
             tabs: metadata.classParameters.uiSettings?.tabs,
             defaultTab: metadata.classParameters.uiSettings?.defaultTab,
+            hasRightColumn: metadata.classParameters.uiSettings?.hasRightColumn,
             nested: false,
             metadata: metadata,
             fields: fields,
