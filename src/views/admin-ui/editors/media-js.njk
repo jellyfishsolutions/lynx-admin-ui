@@ -1,21 +1,51 @@
 <script>
     function _adminUI_removeMedia(key) {
         $('#remove-' + key).val(key);
-        //$('#current-media-' + key).remove();
-        $("#preview-" + key + "-media").attr("style", "display: none");
-        $("#input-" + key + "-media").val("");
-        $('#current-media-' + key + " .btn-remove-img").attr("style", "display: none !important");
+        $('#current-media-' + key).addClass("hidden");
+        $("#placeholder-" + key).removeClass("hidden")
+
     }
 
     function _adminUI_loadFile(event, key) {
         $('#remove-' + key).val("");
-        if ($("#placeholder-" + key).length) {
-            $("#placeholder-" + key).css("background-image", 'url(' + URL.createObjectURL(event.target.files[0]) + ')');
-            $("#placeholder-" + key).addClass("no-after");
-        } else {
-            $("#preview-" + key + "-media").removeAttr("style");
-            $("#preview-" + key + "-media").attr("src", URL.createObjectURL(event.target.files[0]));
-            $('#current-media-' + key + " .btn-remove-img").removeAttr("style");
-        }
+        $('#current-media-' + key).removeClass("hidden");
+        $("#placeholder-" + key).addClass("hidden")
+        
+        $("#preview-" + key + "-media").removeAttr("style");
+        $("#preview-" + key + "-media").attr("src", URL.createObjectURL(event.target.files[0]));
+        $('#current-media-' + key + " .btn-remove-img").removeAttr("style");
+        $('#current-media-' + key + " .btn-edit-img").removeAttr("style");
+        $('#current-media-' + key + " .btn-show-img").removeAttr("style");
     };
+
+    function _adminUI_showImageFullscreen(key) {
+        var src = $("#preview-" + key + "-media").attr('src');
+        var modal;
+        function removeModal() {
+            modal.remove();
+            $('body').off('keyup.modal-close');
+        }
+        modal = $('<div>')
+            .css({
+                background: 'RGBA(0,0,0,.5) url(' + src + ') no-repeat center',
+                backgroundSize: 'contain',
+                width: '100%',
+                height: '100%',
+                position: 'fixed',
+                zIndex: '10000',
+                top: '0',
+                left: '0',
+                cursor: 'zoom-out'
+            })
+            .click(function () {
+                removeModal();
+            })
+            .appendTo('body');
+        //handling ESC
+        $('body').on('keyup.modal-close', function (e) {
+            if (e.key === 'Escape') {
+                removeModal();
+            }
+        });
+    }
 </script>

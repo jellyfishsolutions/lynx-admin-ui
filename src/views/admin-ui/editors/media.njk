@@ -4,21 +4,23 @@
             <small id="{{key}}-help" class="{{ field.uiSettings.descriptionTextClasses if field.uiSettings.descriptionTextClasses }} description-label">{{ field.uiSettings.descriptionText | tr }}</small>
         {% endif %}
     </label>
-    {% if data[key] %}
-        <span id="current-media-{{key}}">
+
+        <span id="current-media-{{key}}" class=" {{ 'hidden' if data[key] }}">
             <br/>
-            <div class="img-thumbnail-container" onclick="$('#input-{{key}}-media').click();">
+            <div class="img-thumbnail-container" >
                 <img id="preview-{{key}}-media" src="{{route('adminUI.previewMedia', { id: data[key] }) }}" class="img-thumbnail">
+                <button type="button" class="btn btn-info btn-show-img" onclick="_adminUI_showImageFullscreen('{{key}}');event.stopPropagation();"><i class="fas fa-eye"></i></button>
                 {% if field.readOnly %}
                 {% else %}
+                    <button type="button" class="btn btn-warning btn-edit-img" onclick="$('#input-{{key}}-media').click();"><i class="fas fa-edit"></i></button>
                     <button type="button" class="btn btn-danger btn-remove-img" onclick="_adminUI_removeMedia('{{key}}');event.stopPropagation();"><i class="fas fa-trash"></i></button>
                 {% endif %}
             </div>
         </span>
         <input type="hidden" id="remove-{{key}}" name="remove-{{key}}" value=""/>
-    {% else %}
-        <div class="media-img-placeholder" id="placeholder-{{key}}" onclick="$('#input-{{key}}-media').click();"></div>
-    {% endif %}
+    
+        <div class="media-img-placeholder {{ 'hidden' if not data[key] }}" id="placeholder-{{key}}" onclick="$('#input-{{key}}-media').click();"></div>
+    
     <input class="form-control" 
         type="file"
         name="{{key}}" 
