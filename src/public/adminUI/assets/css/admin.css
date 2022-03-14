@@ -554,13 +554,17 @@ mark,
   display: none;
 }
 .media-img-placeholder.no-after:hover::after {
-  content: 'Edit';
+  content: "\f044";
+  font-family: 'Font Awesome 5 Free';
+  font-weight: 900;
   background: rgba(221, 221, 221, 0.4);
   display: flex !important;
 }
 
 .img-thumbnail-container:hover::after {
-  content: 'Edit';
+    content: "\f044";
+  font-family: 'Font Awesome 5 Free';
+  font-weight: 900;
   background: rgba(221, 221, 221, 0.4);
   display: flex !important;
 }

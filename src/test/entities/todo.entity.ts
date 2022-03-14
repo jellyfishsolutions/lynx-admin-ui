@@ -34,7 +34,8 @@ export default class Todo extends BaseEntity implements EditableEntity {
         name: 'Icona',
         type: AdminType.Media,
         uiSettings: {
-            onRightColumn: true
+            onRightColumn: true,
+            editorClasses: "col-12"
         },
         onSummary: true,
     })
