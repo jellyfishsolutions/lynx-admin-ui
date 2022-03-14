@@ -1,4 +1,4 @@
-<div class="form-group">
+<div class="form-group {{'right-column' if field.uiSettings.onRightColumn}}">
     <label for="{{key}}">{{ field.name | tr }}
         {% if field.uiSettings.descriptionText %}
             <small id="{{key}}-help" class="{{ field.uiSettings.descriptionTextClasses if field.uiSettings.descriptionTextClasses }} description-label">{{ field.uiSettings.descriptionText | tr }}</small>
@@ -6,17 +6,25 @@
     </label>
     {% if data[key] %}
         <span id="current-media-{{key}}">
-            <br/><img src="{{route('adminUI.previewMedia', { id: data[key] }) }}" class="img-thumbnail">
-            {% if field.readOnly %}
-            {% else %}
-                <button class="btn btn-danger" onclick="_adminUI_removeMedia('{{key}}')">{{ 'admin-ui.remove-media' | tr }}</button>
-            {% endif %}
+            <br/>
+            <div class="img-thumbnail-container" onclick="$('#input-{{key}}-media').click();">
+                <img id="preview-{{key}}-media" src="{{route('adminUI.previewMedia', { id: data[key] }) }}" class="img-thumbnail">
+                {% if field.readOnly %}
+                {% else %}
+                    <button type="button" class="btn btn-danger btn-remove-img" onclick="_adminUI_removeMedia('{{key}}');event.stopPropagation();"><i class="fas fa-trash"></i></button>
+                {% endif %}
+            </div>
         </span>
         <input type="hidden" id="remove-{{key}}" name="remove-{{key}}" value=""/>
+    {% else %}
+        <div class="media-img-placeholder" id="placeholder-{{key}}" onclick="$('#input-{{key}}-media').click();"></div>
     {% endif %}
     <input class="form-control" 
         type="file"
         name="{{key}}" 
+        id="input-{{key}}-media"
+        style="height: 0; padding: 0; border: none"
+        onchange="_adminUI_loadFile(event, '{{key}}')"
         {% if field.accept %}
         accept="{{field.accept}}"
         {% endif %}
@@ -24,3 +32,6 @@
         {{ "required" if field.required }}
 />
 </div>
+<script>
+  
+</script>

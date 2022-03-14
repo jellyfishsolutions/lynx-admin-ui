@@ -1,6 +1,21 @@
 <script>
     function _adminUI_removeMedia(key) {
         $('#remove-' + key).val(key);
-        $('#current-media-' + key).remove();
+        //$('#current-media-' + key).remove();
+        $("#preview-" + key + "-media").attr("style", "display: none");
+        $("#input-" + key + "-media").val("");
+        $('#current-media-' + key + " .btn-remove-img").attr("style", "display: none !important");
     }
+
+    function _adminUI_loadFile(event, key) {
+        $('#remove-' + key).val("");
+        if ($("#placeholder-" + key).length) {
+            $("#placeholder-" + key).css("background-image", 'url(' + URL.createObjectURL(event.target.files[0]) + ')');
+            $("#placeholder-" + key).addClass("no-after");
+        } else {
+            $("#preview-" + key + "-media").removeAttr("style");
+            $("#preview-" + key + "-media").attr("src", URL.createObjectURL(event.target.files[0]));
+            $('#current-media-' + key + " .btn-remove-img").removeAttr("style");
+        }
+    };
 </script>
