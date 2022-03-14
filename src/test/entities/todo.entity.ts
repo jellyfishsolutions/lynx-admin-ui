@@ -15,7 +15,11 @@ import TodoList from './todo-list.entity';
 import Media from 'lynx-framework/entities/media.entity';
 
 @Entity('todo')
-@AdminUI('Todo')
+@AdminUI('Todo', {
+    uiSettings: {
+        hasRightColumn: true
+    }
+})
 export default class Todo extends BaseEntity implements EditableEntity {
     @PrimaryGeneratedColumn()
     @AdminField({
@@ -29,6 +33,9 @@ export default class Todo extends BaseEntity implements EditableEntity {
     @AdminField({
         name: 'Icona',
         type: AdminType.Media,
+        uiSettings: {
+            onRightColumn: true
+        },
         onSummary: true,
     })
     @ManyToOne((type) => Media, { eager: true })
