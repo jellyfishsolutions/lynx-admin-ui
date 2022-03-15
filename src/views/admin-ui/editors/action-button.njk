@@ -1,3 +1,3 @@
 <div class="form-group">
-    <button class="{{ field.uiSettings.innerEditorClasses if field.uiSettings.innerEditorClasses else 'btn'  }}" onclick="$('#__admin_ui_action').val('{{key}}')">{{ field.name | tr }}</button>
+    <button class="{{ field.uiSettings.innerEditorClasses if field.uiSettings.innerEditorClasses else 'btn'  }}" {{ 'disabled' if field.readOnly }} onclick="$('#__admin_ui_action').val('{{key}}')">{{ field.name | tr }}</button>
 </div>
