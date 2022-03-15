@@ -46,7 +46,7 @@ export interface UISettings {
 export interface EntityUISettings {
     tabs?:  { key: string; label: string }[] | ((req: Request) => Promise< { key: string; label: string }[]>);
     defaultTab?: string | ((req: Request) => Promise<string>);
-    hasRightColumn?: boolean| ((req: Request, currentEntity: any) => Promise<boolean>);
+    hasRightColumn?: boolean| ((req: Request) => Promise<boolean>);
 }
 
 export interface ClassParameters {
