@@ -1,6 +1,19 @@
 {% extends resolvePath(parentTemplate) %}
 {% import resolvePath("/lynx/utils")as utils %}
 
+{% macro edit_fieldComponent(field, key) %}
+
+  {% if field.uiSettings and field.uiSettings.editorClasses %}
+    <div id="field-{{req.params.entityName}}-{{key}}" class="{{ field.uiSettings.editorClasses }}">
+  {% elif field.uiSettings and field.uiSettings.editorFullwidth %}
+    <div id="field-{{req.params.entityName}}-{{key}}" class="col-12">
+  {% else %}
+    <div id="field-{{req.params.entityName}}-{{key}}" class="col-12 col-md-6">
+  {% endif %}
+  {% include resolvePath(configuration[field.type]) %}
+  </div>
+{% endmacro %}
+
 {% block additional_styles %}
   <link href="{{route('/adminUI/fontawesome/css/all.css')}}" rel="stylesheet">
   <link href="{{ route('/adminUI/assets/css/admin.css') }}" rel="stylesheet">
@@ -55,7 +68,7 @@
                   <div class="row">
                     {% for key, field in fields %}
                       {% if field.uiSettings and field.uiSettings.tab == tab.key and not field.hide and not field.uiSettings.onRightColumn %}
-                      {{ fieldComponent(field, key) }}
+                      {{ edit_fieldComponent(field, key) }}
                       {% endif %}
                     {% endfor %}
                   </div>
@@ -67,7 +80,7 @@
             <div class="row">
               {% for key, field in fields %}
                 {% if not field.uiSettings or (not field.hide and not field.uiSettings.onRightColumn)  %}
-                  {{ fieldComponent(field, key) }}
+                  {{ edit_fieldComponent(field, key) }}
                 {% endif %}
               {% endfor %}
             </div>
@@ -94,7 +107,7 @@
           <div class="row">
           {% for key, field in fields %}
             {% if not field.hide and field.uiSettings.onRightColumn %}
-              {{ fieldComponent(field, key) }}
+              {{ edit_fieldComponent(field, key) }}
             {% endif %}
           {% endfor %}
             {% if AUIcanWrite(req, req.params.entityName) %}
@@ -114,16 +127,3 @@
   </div>
           </form>
 {% endblock %}
-
-{% macro fieldComponent(field, key) %}
-
-  {% if field.uiSettings and field.uiSettings.editorClasses %}
-    <div id="field-{{req.params.entityName}}-{{key}}" class="{{ field.uiSettings.editorClasses }}">
-  {% elif field.uiSettings and field.uiSettings.editorFullwidth %}
-    <div id="field-{{req.params.entityName}}-{{key}}" class="col-12">
-  {% else %}
-    <div id="field-{{req.params.entityName}}-{{key}}" class="col-12 col-md-6">
-  {% endif %}
-  {% include resolvePath(configuration[field.type]) %}
-  </div>
-{% endmacro %}

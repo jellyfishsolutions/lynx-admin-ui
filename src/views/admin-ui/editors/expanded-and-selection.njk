@@ -1,3 +1,17 @@
+{% macro expandedAndSelection_fieldComponent(field, key) %}
+    {% set __c = 'col-12' %}
+    {% if field.uiSettings %}
+        {% if field.uiSettings.expandedEditorClasses %}
+            {% set __c = field.uiSettings.expandedEditorClasses %}
+        {% elif field.uiSettings.editorClasses %}
+            {% set __c = field.uiSettings.editorClasses %}
+        {% endif %}
+    {% endif %}
+    <div id="field-{{req.params.entityName}}-{{originalKey}}-{{key}}" class="{{ __c }} ">
+        {% include resolvePath(configuration[field.type]) %}
+    </div>
+{% endmacro %}
+
 {% if field.optionalParameters and field.optionalParameters.fieldset %}
     <fieldset class="border p-2">
         <legend  class="w-auto">
@@ -143,7 +157,7 @@
                             <div class="row">
                                 {% for key, field in originalField.metadata.fields %}
                                     {% if field.uiSettings and field.uiSettings.tab == tab.key and not field.hide %}
-                                        {{ fieldComponent(field, key) }}
+                                        {{ expandedAndSelection_fieldComponent(field, key) }}
                                     {% endif %}
                                 {% endfor %}
                             </div>
@@ -153,7 +167,7 @@
             </div>
         {% else %}
             {% for key, field in originalField.metadata.fields %}
-                {{ fieldComponent(field, key) }}
+                {{ expandedAndSelection_fieldComponent(field, key) }}
             {% endfor %}
         {% endif %}
     </div>
@@ -162,17 +176,3 @@
     </fieldset>
 {% endif %}
 
-{% macro fieldComponent(field, key) %}
-
-    {% set __c = 'col-12' %}
-    {% if field.uiSettings %}
-        {% if field.uiSettings.expandedEditorClasses %}
-            {% set __c = field.uiSettings.expandedEditorClasses %}
-        {% elif field.uiSettings.editorClasses %}
-            {% set __c = field.uiSettings.editorClasses %}
-        {% endif %}
-    {% endif %}
-    <div id="field-{{req.params.entityName}}-{{originalKey}}-{{key}}" class="{{ __c }} ">
-        {% include resolvePath(configuration[field.type]) %}
-    </div>
-{% endmacro %}
