@@ -64,8 +64,17 @@ The `AdminUI` annotation supports also an optional object argument, with the fol
 -   `defaultOrderBy` if specified, defines a default order by used in the entity list (it uses the same notation of the ordering string used when a column header is tapped);
 - `disableReloadOnList` if true (or if resolve to true), the displayed entities in the list are not reloaded. Please refer to [optimization section](#Listing page optimization) for additional info.
 -   `customFetchData` allows you to create your custom query when retrieving data for the list trough a function that receives the current `req` as well as datatable infos. If defined, the default query building process will not be executed, meaning your `filterBy` function will have no effect.
+-  `uiSettings` contains information of the visual appearence of the entity views. See the `AdminUI uiSettings` paragraph for more information.
 
 Each "template" parameter accepts both a `string`, containing the specified path, or a function that accept the current `req` request as argument and returns a `string`. Using the function version, it is possible to customize a template based on a specific request.
+
+
+#### `AdminUI uiSettings parameter`
+This parameter contains information about how the entity view should appear in the interface, and defines the following optional properties: 
+
+- `tabs`:  if this property is defined, the detail view of the entity will be split into tabs. This object also define which tabs will be present and thier labels. You can assign the entity fields to a tab through their own `uiSettings` property. The object has the following type: `{ key: string; label: string }[] | ((req: Request) => Promise<{ key: string; label: string }[]>)`. Each element of the array (or the one returned in the Promise) contains a `key` to address the tab, and a ´label`, that will be displayed as the tab title in the view.
+- `defaultTab`: is a property of the type: `string | ((req: Request) => Promise<string>)`, and indicates which tab is the one selected by default. This property value should match the `key` property of one of the defined tabs.
+- `hasRightColumn`: is a property of the type: ` boolean | ((req: Request) => Promise<boolean>)`. If the value of this property is `true`, the details view is split in two columns. The second columns will contains the action buttons, like the save button. The `uiSettings` property of each field contains an option to move this field to the right column, just above the action buttons. It could be useful, for instance, to move a "preview image" field to the right column, to highlight the field. 
 
 ## `EditableEntity` interface
 
@@ -401,6 +410,8 @@ This parameter defines the following optional properties:
 -   `descriptionText`: additional `small` text rendered inside the `label` tag. Supports localized strings.
 -   `descriptionTextClasses`: custom CSS classes for the `descriptionText`.
 -   `editorFullWidth`: indicates if the field should occupy the full width of the view in the editor instead of the half width as by default. This option will be overwritten by `editorClasses`.
+-   `tab`: indicates in which tab the field will be inserted. The tab must be addressed through the `key` property. This property has effect only if the `tabs` property of the `uiSettings` of the `AdminUI` optional parameter is defined and has at least one element. See the `AdminUI uiSettings parameter` for further information
+-   `onRightColumn`: indicates if the field is rendered in the right column of the detail view. This property should be used only if the `hasRightColumn` property of the `uiSettings` of the `AdminUI` optional parameter is defined as `true`. In the other case, the field will not be rendered.  
 
 Moreover, in the editor section, each field is wrapped inside a `div` with an unique id. The id is defined as `field-{{entity-name}}-{{name-of-the-field}}`. Using the id, it is possible to customize though CSS rules the aspect of a single field.
 In the list section, each field has its own class, defined as `header-{{name-of-the-field}}` and `cell-{{header-of-the-field}}`, for the `th` and the `td` element respectively. These classes apply also for the nested list, used with the `AdminType.Table` type.
