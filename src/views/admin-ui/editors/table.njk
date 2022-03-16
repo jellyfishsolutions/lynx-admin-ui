@@ -2,19 +2,19 @@
 
 {% if nested %}
     <div class="d-flex justify-content-between mb-1">
-      <label>
-          {{ field.name | tr }}
-          {% if field.uiSettings.descriptionText %}
-              <small id="{{key}}-help" class="{{ field.uiSettings.descriptionTextClasses if field.uiSettings.descriptionTextClasses }} description-label">{{ field.uiSettings.descriptionText | tr }}</small>
-          {% endif %}
-      </label>
-      <div>
-        {% if req.params.id != 0 and field.readOnly != true and data[key + '__disable_creation'] != true and AUIcanWrite(req, req.params.entityName)%}
-            <button type="button" class="btn btn-primary" onclick='openModal{{key}}(0)'>
-                {{ "admin-ui.add" | tr }}
-            </button>
-        {% endif %}
-      </div>
+        <label>
+            {{ field.name | tr }}
+            {% if field.uiSettings.descriptionText %}
+                <small id="{{key}}-help" class="{{ field.uiSettings.descriptionTextClasses if field.uiSettings.descriptionTextClasses }} description-label">{{ field.uiSettings.descriptionText | tr }}</small>
+            {% endif %}
+        </label>
+        <div>
+            {% if req.params.id != 0 and field.readOnly != true and data[key + '__disable_creation'] != true and AUIcanWrite(req, req.params.entityName)%}
+                <button type="button" class="btn btn-primary" onclick='openModal{{key}}(0)'>
+                    {{ "admin-ui.add" | tr }}
+                </button>
+            {% endif %}
+        </div>
     </div>
     <table class="table table-sm table-striped">
         <thead>
@@ -50,7 +50,7 @@
                         {% if field.readOnly != true and AUIcanWrite(req, req.params.entityName) %}
                             <form method="POST" class="nested-form" action="{{ route('adminUI.nested', {entityName: req.params.entityName, id: req.params.id, nestedKey: key, remove: d.getId() }) }}">
                                 <button class="btn btn-danger btn-delete">
-                                  <i class="far fa-trash-alt"></i>
+                                    <i class="far fa-trash-alt"></i>
                                 </button>
                             </form>
                         {% endif %}
@@ -82,7 +82,7 @@
         }
     </script>
 {% else %}
-    <iframe id="nested-frame-{{key}}" class="nested-frame" onLoad="var self = this; setTimeout(function() { calculateFrameHeight(self); }, 100)" src="{{ route('adminUI.nested', {entityName: req.params.entityName, id: req.params.id, nestedKey: key }) }}"></iframe>
+    <iframe id="nested-frame-{{key}}" class="nested-frame" onLoad="var self = this; setTimeout(function() { calculateFrameHeight(self); }, 200)" src="{{ route('adminUI.nested', {entityName: req.params.entityName, id: req.params.id, nestedKey: key }) }}"></iframe>
     <div class="modal fade" id="modalEdit{{key}}" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
@@ -98,4 +98,19 @@
             </div>
         </div>
     </div>
+    <script>
+        console.log("adding event listener AdminUI.TAB_CHANGED")
+        window.addEventListener('AdminUI.TAB_CHANGED', function (e) {
+            {% if field.uiSettings and field.uiSettings.tab %}
+                if (e.detail == '{{field.uiSettings.tab}}') {
+                    setTimeout(() => {
+                        calculateFrameHeight(document.getElementById("nested-frame-{{key}}"));
+                    }, 200)
+                    setTimeout(() => {
+                        calculateFrameHeightForPopup(document.getElementById("modalEditFrame{{key}}"));
+                    }, 200)
+                }
+            {% endif %}
+        }, false);  
+    </script>
 {% endif %}

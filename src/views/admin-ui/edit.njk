@@ -58,7 +58,7 @@
             <ul class="nav nav-tabs">
               {% for tab in tabs %}
                 <li class="nav-item">
-                  <a class="nav-link {{ 'active' if defaultTab == tab.key else '' }}" data-toggle="tab" href="#tab_{{tabsId}}_{{loop.index}}">{{ tab.label | tr }}</a>
+                  <a class="nav-link {{ 'active' if defaultTab == tab.key else '' }}" data-toggle="tab" href="#tab_{{tabsId}}_{{loop.index}}" onclick="sendTabChangedEvent('{{tab.key}}')">{{ tab.label | tr }}</a>
                 </li>
               {% endfor %}
             </ul>
@@ -75,6 +75,13 @@
                 </div>
               {% endfor %}
             </div>
+            <script>
+              function sendTabChangedEvent(value) {
+                const event = new CustomEvent('AdminUI.TAB_CHANGED', { detail: value });
+                window.dispatchEvent(event)
+              }
+
+            </script>
           {% else %}
             <!-- if entity is NOT divided in tabs -->
             <div class="row">
