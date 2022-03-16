@@ -141,7 +141,7 @@
     {% set originalField = field %}
 
     <div class="row p-2">
-        {% if originalField.metadata.classParameters.uiSettings and originalField.metadata.classParameters.uiSettings.tabs and originalField.metadata.classParameters.uiSettings.tabs.length > 1 and originalField.metadata.classParameters.uiSettings.hasTabsInExpanded %}
+        {% if originalField.metadata.classParameters.uiSettings and originalField.metadata.classParameters.uiSettings.tabs and originalField.metadata.classParameters.uiSettings.tabs.length > 1 and not originalField.metadata.classParameters.uiSettings.hideTabsInExpanded %}
             <div class="col-12">
                 {% set tabsId = AUIgenerateId() %}
                 <ul class="nav nav-tabs">

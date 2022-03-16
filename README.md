@@ -75,8 +75,8 @@ This parameter contains information about how the entity view should appear in t
 - `tabs`:  if this property is defined, the detail view of the entity will be split into tabs. This object also define which tabs will be present and thier labels. You can assign the entity fields to a tab through their own `uiSettings` property. The object has the following type: `{ key: string; label: string }[]`. Each element of the array contains a `key` to address the tab, and a ´label`, that will be displayed as the tab title in the view.
 - `defaultTab`: is a property of the type: `string`, and indicates which tab is the one selected by default. This property value should match the `key` property of one of the defined tabs.
 - `hasRightColumn`: is a property of the type: `boolean`. If the value of this property is `true`, the details view is split in two columns. The second columns will contains the action buttons, like the save button. The `uiSettings` property of each field contains an option to move this field to the right column, just above the action buttons. It could be useful, for instance, to move a "preview image" field to the right column, to highlight the field. 
-- `hasTabsInExpanded`: is a property of the type: `boolean` that decides if the tabs layout is rendered also in the expanded view of the field.
-- `hasTabsInModal`: is a property of the type: `boolean` that decides if the tabs layout is rendered also in the modal view of the field.
+- `hideTabsInExpanded`: is a property of the type: `boolean` that decides if the tabs layout is rendered also in the expanded view of the field.
+- `hideTabsInModal`: is a property of the type: `boolean` that decides if the tabs layout is rendered also in the modal view of the field.
 ## `EditableEntity` interface
 
 An `AdminUI` entity shall also implements the `EditableEntity`. To implement the interface, the class shall have these two methods:

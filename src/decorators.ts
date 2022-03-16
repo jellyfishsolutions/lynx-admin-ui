@@ -45,8 +45,8 @@ export interface UISettings {
 
 export interface EntityUISettings {
     tabs?:  { key: string; label: string }[];
-    hasTabsInExpanded?: boolean;
-    hasTabsInModal?: boolean;
+    hideTabsInExpanded?: boolean;
+    hideTabsInModal?: boolean;
     defaultTab?: string;
     hasRightColumn?: boolean;
 }
