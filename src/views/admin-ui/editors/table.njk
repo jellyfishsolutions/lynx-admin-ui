@@ -99,7 +99,6 @@
         </div>
     </div>
     <script>
-        console.log("adding event listener AdminUI.TAB_CHANGED")
         window.addEventListener('AdminUI.TAB_CHANGED', function (e) {
             {% if field.uiSettings and field.uiSettings.tab %}
                 if (e.detail == '{{field.uiSettings.tab}}') {
