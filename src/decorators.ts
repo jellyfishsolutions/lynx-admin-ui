@@ -36,17 +36,19 @@ export interface UISettings {
     descriptionText?: string;
     descriptionTextClasses?: string;
     editorFullWidth?: boolean;
-    tab?: string | ((req: Request, currentEntity: any) => Promise<string>);
-    onRightColumn?: boolean | ((req: Request, currentEntity: any) => Promise<boolean>);
+    tab?: string;
+    onRightColumn?: boolean;
     //TODO: editorOrder?: number;
     //TODO: editorFilter?: number;
     //TODO: editorList?: number;
 }
 
 export interface EntityUISettings {
-    tabs?:  { key: string; label: string }[] | ((req: Request) => Promise< { key: string; label: string }[]>);
-    defaultTab?: string | ((req: Request) => Promise<string>);
-    hasRightColumn?: boolean| ((req: Request) => Promise<boolean>);
+    tabs?:  { key: string; label: string }[];
+    hasTabsInExpanded?: boolean;
+    hasTabsInModal?: boolean;
+    defaultTab?: string;
+    hasRightColumn?: boolean;
 }
 
 export interface ClassParameters {
