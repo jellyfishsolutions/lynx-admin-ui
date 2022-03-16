@@ -26,6 +26,7 @@
         .push(function () {
             var url = '{{route("adminUI.ajax-selection", { entityName: req.params.entityName, id: req.params.id, field: key })}}';
             $('#select2-{{key}}').select2({
+                 width: '100%',
                 ajax: {
                     transport: function (params, success, failure) {
                         var xhttp = new XMLHttpRequest();
