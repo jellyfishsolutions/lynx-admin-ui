@@ -32,7 +32,7 @@
 {% block body %}
 <form method="POST" action="{{route('adminUI.save', {entityName: req.params.entityName, id: req.params.id} )}}" enctype="multipart/form-data">
 <div class="row">
-<div class="col-12 {{ 'col-lg-9 col-xl-10' if hasRightColumn else '' }} mb-4">
+<div class="col-12 {{ 'col-lg-9' if hasRightColumn else '' }} mb-4">
   <div class="card">
     <div class="card-body">
       <div class="lead entity-title entity-title-{{req.params.entityName}}">
@@ -108,7 +108,7 @@
   </div>
     </div>
   {% if hasRightColumn %}
-    <div class="col-12 col-lg-3 col-xl-2">
+    <div class="col-12 col-lg-3">
       <div class="card">
         <div class="card-body">
           <div class="row">
