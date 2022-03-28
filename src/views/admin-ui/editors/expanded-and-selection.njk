@@ -144,27 +144,44 @@
     <div class="row p-2">
         {% if originalField.metadata.classParameters.uiSettings and originalField.metadata.classParameters.uiSettings.tabs and originalField.metadata.classParameters.uiSettings.tabs.length > 1 and not originalField.metadata.classParameters.uiSettings.hideTabsInExpanded %}
             <div class="col-12">
-                {% set tabsId = AUIgenerateId() %}
-                <ul class="nav nav-tabs">
-                    {% for tab in originalField.metadata.classParameters.uiSettings.tabs %}
-                        <li class="nav-item">
-                            <a class="nav-link {{ 'active' if originalField.metadata.classParameters.uiSettings.defaultTab == tab.key else '' }}" data-toggle="tab" href="#tab_{{tabsId}}_{{loop.index}}">{{ tab.label | tr }}</a>
-                        </li>
-                    {% endfor %}
-                </ul>
-                <div class="tab-content">
-                    {% for tab in originalField.metadata.classParameters.uiSettings.tabs %}
-                        <div id="tab_{{tabsId}}_{{loop.index}}" class="tab-pane fade my-5 {{ 'show active' if originalField.metadata.classParameters.uiSettings.defaultTab == tab.key else '' }}">
-                            <div class="row">
-                                {% for key, field in originalField.metadata.fields %}
-                                    {% if field.uiSettings and field.uiSettings.tab == tab.key and not field.hide %}
-                                        {{ expandedAndSelection_fieldComponent(field, key) }}
-                                    {% endif %}
-                                {% endfor %}
-                            </div>
+                {% if not originalField.metadata.classParameters.uiSettings.tabsAsSections %}
+                    {% set tabsId = AUIgenerateId() %}
+                    <ul class="nav nav-tabs">
+                        {% for tab in originalField.metadata.classParameters.uiSettings.tabs %}
+                            <li class="nav-item">
+                                <a class="nav-link {{ 'active' if originalField.metadata.classParameters.uiSettings.defaultTab == tab.key else '' }}" data-toggle="tab" href="#tab_{{tabsId}}_{{loop.index}}">{{ tab.label | tr }}</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+                {% if originalField.metadata.classParameters.uiSettings.tabsAsSections %}
+                     {% for tab in originalField.metadata.classParameters.uiSettings.tabs %}
+                        <div class="row section-title">
+                            {{ tab.label | tr }}
+                        </div>
+                        <div class="row">
+                            {% for key, field in originalField.metadata.fields %}
+                                {% if field.uiSettings and field.uiSettings.tab == tab.key and not field.hide %}
+                                    {{ expandedAndSelection_fieldComponent(field, key) }}
+                                {% endif %}
+                            {% endfor %}
                         </div>
                     {% endfor %}
-                </div>
+                {% else %}
+                    <div class="tab-content">
+                        {% for tab in originalField.metadata.classParameters.uiSettings.tabs %}
+                            <div id="tab_{{tabsId}}_{{loop.index}}" class="tab-pane fade my-5 {{ 'show active' if originalField.metadata.classParameters.uiSettings.defaultTab == tab.key else '' }}">
+                                <div class="row">
+                                    {% for key, field in originalField.metadata.fields %}
+                                        {% if field.uiSettings and field.uiSettings.tab == tab.key and not field.hide %}
+                                            {{ expandedAndSelection_fieldComponent(field, key) }}
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
         {% else %}
             {% for key, field in originalField.metadata.fields %}

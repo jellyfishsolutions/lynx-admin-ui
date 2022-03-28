@@ -10888,3 +10888,10 @@ body.sidebar-toggled footer.sticky-footer {
 .nested-form {
     display: inline-block;
 }
+.section-title {
+    color: black;
+    margin-top: 25px;
+    margin-bottom: 15px;
+    font-size: 1.3rem;
+
+}

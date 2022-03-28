@@ -16,6 +16,7 @@ async function _myOnly(req: Request, e: any) {
     relations: ['professional'],
     batchDelete: true,
     uiSettings: {
+        tabsAsSections: true,
         tabs: [{
             key: "tab1",
             label: "admin-ui.add"
@@ -26,7 +27,8 @@ async function _myOnly(req: Request, e: any) {
         }
         ],
         defaultTab: "tab1",
-        hasRightColumn: true
+        hideTabsInExpanded: true,
+        hasRightColumn: true, 
     }
 })
 export default class Address extends BaseEntity implements EditableEntity {
@@ -37,7 +39,9 @@ export default class Address extends BaseEntity implements EditableEntity {
         readOnly: false,
         onSummary: true,
         uiSettings: {
-            tab: "tab1"
+            tab: "tab1",
+            editorClasses: "col-12",
+            expandedEditorClasses: "col-4"
         }
     })
     id: number;
