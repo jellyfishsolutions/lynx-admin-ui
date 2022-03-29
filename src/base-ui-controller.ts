@@ -282,6 +282,7 @@ export class BaseUIController extends Controller {
                 : metadata.classParameters.editorParentTemplate,
             tabs: metadata.classParameters.uiSettings?.tabs,
             defaultTab: metadata.classParameters.uiSettings?.defaultTab,
+            tabsAsSections: metadata.classParameters.uiSettings?.tabsAsSections,
             hasTabInExpanded: metadata.classParameters.uiSettings?.hideTabsInExpanded,
             hasTabInModal: metadata.classParameters.uiSettings?.hideTabsInModal,
             hasRightColumn: metadata.classParameters.uiSettings?.hasRightColumn,

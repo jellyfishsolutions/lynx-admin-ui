@@ -36,29 +36,49 @@
             <div class="row mt-1">
                 {% if tabs and tabs.length > 1 and not hideTabsInModal %}
                     {% set tabsId = AUIgenerateId() %}
+                    
                     <div class="col-12">
-                        <ul class="nav nav-tabs">
+                        {% if not tabsAsSections %}
+                            <ul class="nav nav-tabs">
+                                {% for tab in tabs %}
+                                    <li class="nav-item">
+                                        <a class="nav-link {{ 'active' if defaultTab == tab.key else '' }}" data-toggle="tab" href="#tab_{{tabsId}}_{{loop.index}}">{{ tab.label | tr }}</a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                        {% if tabsAsSections %}
                             {% for tab in tabs %}
-                                <li class="nav-item">
-                                    <a class="nav-link {{ 'active' if defaultTab == tab.key else '' }}" data-toggle="tab" href="#tab_{{tabsId}}_{{loop.index}}">{{ tab.label | tr }}</a>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                        <div class="tab-content">
-                            {% for tab in tabs %}
-                                <div id="tab_{{tabsId}}_{{loop.index}}" class="tab-pane fade my-5 {{ 'show active' if defaultTab == tab.key else '' }}">
-                                    <div class="row">
-                                        {% for key, field in fields %}
-                                            {% if field.uiSettings and field.uiSettings.tab == tab.key and not field.hide %}
-                                                <div class="col-12">
-                                                    {% include resolvePath(configuration[field.type]) %}
-                                                </div>
-                                            {% endif %}
-                                        {% endfor %}
-                                    </div>
+                                <div class="row section-title">
+                                    {{ tab.label | tr }}
+                                </div>
+                                <div class="row">
+                                    {% for key, field in fields %}
+                                        {% if field.uiSettings and field.uiSettings.tab == tab.key and not field.hide %}
+                                            <div class="col-12">
+                                                {% include resolvePath(configuration[field.type]) %}
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
                                 </div>
                             {% endfor %}
-                        </div>
+                        {% else %}
+                            <div class="tab-content">
+                                {% for tab in tabs %}
+                                    <div id="tab_{{tabsId}}_{{loop.index}}" class="tab-pane fade my-5 {{ 'show active' if defaultTab == tab.key else '' }}">
+                                        <div class="row">
+                                            {% for key, field in fields %}
+                                                {% if field.uiSettings and field.uiSettings.tab == tab.key and not field.hide %}
+                                                    <div class="col-12">
+                                                        {% include resolvePath(configuration[field.type]) %}
+                                                    </div>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
                     </div>
                 {% else %}
                     {% for key, field in fields %}

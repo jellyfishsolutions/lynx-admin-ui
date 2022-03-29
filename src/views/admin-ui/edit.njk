@@ -55,26 +55,43 @@
           <!-- if entity is divided in tabs -->
           {% if tabs and tabs.length > 1 %}
             {% set tabsId  = AUIgenerateId() %}
-            <ul class="nav nav-tabs">
+            {% if not tabsAsSections %}
+              <ul class="nav nav-tabs">
+                {% for tab in tabs %}
+                  <li class="nav-item">
+                    <a class="nav-link {{ 'active' if defaultTab == tab.key else '' }}" data-toggle="tab" href="#tab_{{tabsId}}_{{loop.index}}" onclick="sendTabChangedEvent('{{tab.key}}')">{{ tab.label | tr }}</a>
+                  </li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+            {% if tabsAsSections %}
               {% for tab in tabs %}
-                <li class="nav-item">
-                  <a class="nav-link {{ 'active' if defaultTab == tab.key else '' }}" data-toggle="tab" href="#tab_{{tabsId}}_{{loop.index}}" onclick="sendTabChangedEvent('{{tab.key}}')">{{ tab.label | tr }}</a>
-                </li>
-              {% endfor %}
-            </ul>
-            <div class="tab-content">
-              {% for tab in tabs %}
-                <div id="tab_{{tabsId}}_{{loop.index}}" class="tab-pane fade my-5 {{ 'show active' if defaultTab == tab.key else '' }}">
-                  <div class="row">
-                    {% for key, field in fields %}
-                      {% if field.uiSettings and field.uiSettings.tab == tab.key and not field.hide and not field.uiSettings.onRightColumn %}
-                      {{ edit_fieldComponent(field, key) }}
-                      {% endif %}
-                    {% endfor %}
-                  </div>
+                <div class="row section-title">
+                    {{ tab.label | tr }}
+                </div>
+                <div class="row">
+                  {% for key, field in fields %}
+                    {% if field.uiSettings and field.uiSettings.tab == tab.key and not field.hide and not field.uiSettings.onRightColumn %}
+                    {{ edit_fieldComponent(field, key) }}
+                    {% endif %}
+                  {% endfor %}
                 </div>
               {% endfor %}
-            </div>
+            {% else %}
+              <div class="tab-content">
+                {% for tab in tabs %}
+                  <div id="tab_{{tabsId}}_{{loop.index}}" class="tab-pane fade my-5 {{ 'show active' if defaultTab == tab.key else '' }}">
+                    <div class="row">
+                      {% for key, field in fields %}
+                        {% if field.uiSettings and field.uiSettings.tab == tab.key and not field.hide and not field.uiSettings.onRightColumn %}
+                        {{ edit_fieldComponent(field, key) }}
+                        {% endif %}
+                      {% endfor %}
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
+            {% endif %}
             <script>
               function sendTabChangedEvent(value) {
                 const event = new CustomEvent('AdminUI.TAB_CHANGED', { detail: value });
