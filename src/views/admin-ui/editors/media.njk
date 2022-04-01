@@ -5,7 +5,7 @@
         {% endif %}
     </label>
 
-        <span id="current-media-{{key}}" class=" {{ 'hidden' if data[key] }}">
+        <span id="current-media-{{key}}" class=" {{ 'hidden' if not data[key] }}">
             <br/>
             <div class="img-thumbnail-container" >
                 <img id="preview-{{key}}-media" src="{{route('adminUI.previewMedia', { id: data[key] }) }}" class="img-thumbnail">
@@ -19,7 +19,7 @@
         </span>
         <input type="hidden" id="remove-{{key}}" name="remove-{{key}}" value=""/>
     
-        <div class="media-img-placeholder {{ 'hidden' if not data[key] }}" id="placeholder-{{key}}" onclick="$('#input-{{key}}-media').click();"></div>
+        <div class="media-img-placeholder {{ 'hidden' if data[key] }}" id="placeholder-{{key}}" onclick="$('#input-{{key}}-media').click();"></div>
     
     <input class="form-control" 
         type="file"
