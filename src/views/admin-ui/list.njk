@@ -211,7 +211,7 @@
                               {% if metadata.classParameters.listActionTemplate %}
                                   {% include resolvePath(metadata.classParameters.listActionTemplate) %}
                               {% else %}
-                                  <a class="btn btn-primary btn-details btn-details-{{req.params.entityName}}" href="{{route('adminUI.details', {entityName: req.params.entityName, id: d.id})}}">{{ 'admin-ui.details' | tr }}</a>
+                                  <a class="btn btn-primary btn-details btn-details-{{req.params.entityName}}" href="{{route('adminUI.details', {entityName: req.params.entityName, id: d.getId()})}}">{{ 'admin-ui.details' | tr }}</a>
                                   {% if not metadata.classParameters.disableDelete and AUIcanWrite(req, req.params.entityName) %}
                                       <button class="btn btn-danger btn-delete btn-delete-{{req.params.entityName}}" type="button" data-toggle="modal" data-target="#deleteModal" data-name="{{d.getLabel()}}" data-id="{{d.getId()}}">
                                           <i class="far fa-trash-alt"></i>
