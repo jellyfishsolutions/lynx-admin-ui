@@ -66,18 +66,26 @@
             {% endif %}
             {% if tabsAsSections %}
               {% for tab in tabs %}
-               <div class="section">
-                  <div class="section-title">
-                      {{ tab.label | tr }}
+                {% set counter = 0 %}
+                {% for key, field in fields %}
+                    {% if field.uiSettings and field.uiSettings.tab == tab.key and not field.hide  and not field.uiSettings.onRightColumn %}
+                        {% set counter = counter + 1 %}
+                    {% endif %}
+                {% endfor %}
+                {% if counter > 0 %}
+                  <div class="section">
+                    <div class="section-title">
+                        {{ tab.label | tr }}
+                    </div>
+                    <div class="row  section-body">
+                      {% for key, field in fields %}
+                        {% if field.uiSettings and field.uiSettings.tab == tab.key and not field.hide and not field.uiSettings.onRightColumn %}
+                        {{ edit_fieldComponent(field, key) }}
+                        {% endif %}
+                      {% endfor %}
+                    </div>
                   </div>
-                  <div class="row  section-body">
-                    {% for key, field in fields %}
-                      {% if field.uiSettings and field.uiSettings.tab == tab.key and not field.hide and not field.uiSettings.onRightColumn %}
-                      {{ edit_fieldComponent(field, key) }}
-                      {% endif %}
-                    {% endfor %}
-                  </div>
-                </div>
+                {% endif %}
               {% endfor %}
             {% else %}
               <div class="tab-content">

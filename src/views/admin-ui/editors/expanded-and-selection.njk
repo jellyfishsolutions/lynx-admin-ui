@@ -156,18 +156,26 @@
                 {% endif %}
                 {% if originalField.metadata.classParameters.uiSettings.tabsAsSections %}
                      {% for tab in originalField.metadata.classParameters.uiSettings.tabs %}
-                        <div class="section">
-                            <div class="section-title">
-                                {{ tab.label | tr }}
+                        {% set counter = 0 %}
+                        {% for key, field in originalField.metadata.fields %}
+                            {% if field.uiSettings and field.uiSettings.tab == tab.key and not field.hide %}
+                                {% set counter = counter + 1 %}
+                            {% endif %}
+                        {% endfor %}
+                        {% if counter > 0 %}
+                            <div class="section">
+                                <div class="section-title">
+                                    {{ tab.label | tr }}
+                                </div>
+                                <div class="row  section-body">
+                                    {% for key, field in originalField.metadata.fields %}
+                                        {% if field.uiSettings and field.uiSettings.tab == tab.key and not field.hide %}
+                                            {{ expandedAndSelection_fieldComponent(field, key) }}
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
                             </div>
-                            <div class="row  section-body">
-                                {% for key, field in originalField.metadata.fields %}
-                                    {% if field.uiSettings and field.uiSettings.tab == tab.key and not field.hide %}
-                                        {{ expandedAndSelection_fieldComponent(field, key) }}
-                                    {% endif %}
-                                {% endfor %}
-                            </div>
-                        </div>
+                        {% endif %}
                     {% endfor %}
                 {% else %}
                     <div class="tab-content">
