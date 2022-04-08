@@ -46,15 +46,17 @@
                 {% endif %}
                 {% if originalField.metadata.classParameters.uiSettings.tabsAsSections %}
                     {% for tab in originalField.metadata.classParameters.uiSettings.tabs %}
-                        <div class="row section-title">
-                            {{ tab.label | tr }}
-                        </div>
-                        <div class="row">
-                            {% for key, field in originalField.metadata.fields %}
-                                {% if field.uiSettings and field.uiSettings.tab == tab.key and not field.hide %}
-                                    {{ expanded_fieldComponent(field, key) }}
-                                {% endif %}
-                            {% endfor %}
+                        <div class="section">
+                            <div class="section-title">
+                                {{ tab.label | tr }}
+                            </div>
+                            <div class="row  section-body">
+                                {% for key, field in originalField.metadata.fields %}
+                                    {% if field.uiSettings and field.uiSettings.tab == tab.key and not field.hide %}
+                                        {{ expanded_fieldComponent(field, key) }}
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
                         </div>
                     {% endfor %}
                 {% else %}

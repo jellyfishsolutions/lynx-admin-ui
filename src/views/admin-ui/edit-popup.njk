@@ -49,17 +49,19 @@
                         {% endif %}
                         {% if tabsAsSections %}
                             {% for tab in tabs %}
-                                <div class="row section-title">
-                                    {{ tab.label | tr }}
-                                </div>
-                                <div class="row">
-                                    {% for key, field in fields %}
-                                        {% if field.uiSettings and field.uiSettings.tab == tab.key and not field.hide %}
-                                            <div class="col-12">
-                                                {% include resolvePath(configuration[field.type]) %}
-                                            </div>
-                                        {% endif %}
-                                    {% endfor %}
+                                <div class="section">
+                                    <div class="section-title">
+                                        {{ tab.label | tr }}
+                                    </div>
+                                    <div class="row section-body">
+                                        {% for key, field in fields %}
+                                            {% if field.uiSettings and field.uiSettings.tab == tab.key and not field.hide %}
+                                                <div class="col-12">
+                                                    {% include resolvePath(configuration[field.type]) %}
+                                                </div>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
                                 </div>
                             {% endfor %}
                         {% else %}
