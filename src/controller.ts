@@ -395,6 +395,9 @@ export class Controller extends BaseController {
                                 } else {
                                     obj[key] = obj[key].id;
                                 }
+                                if (ee instanceof MediaEntity) {
+                                    obj[key + '__' + 'mimetype'] = ee.mimetype;
+                                }
                             }
                         }
                     }
