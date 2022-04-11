@@ -12,7 +12,29 @@
         $("#placeholder-" + key).addClass("hidden")
         
         $("#preview-" + key + "-media").removeAttr("style");
-        $("#preview-" + key + "-media").attr("src", URL.createObjectURL(event.target.files[0]));
+        
+        if (event.target.files[0].type.startsWith("image")) {
+            $("#preview-" + key + "-media").attr("src", URL.createObjectURL(event.target.files[0]));
+            $("#preview-" + key + "-video").addClass("hidden")
+            $("#preview-" + key + "-media").removeClass("hidden")
+            $(".btn-show-img").removeClass("hidden")
+            $("#preview-" + key + "-file").addClass("hidden")
+            $(".img-thumbnail-container").removeClass("file-container")
+
+        } else if (event.target.files[0].type.startsWith("video")) {
+            $("#preview-" + key + "-video").attr("src", URL.createObjectURL(event.target.files[0]));
+            $("#preview-" + key + "-video").removeClass("hidden")
+            $("#preview-" + key + "-media").addClass("hidden")
+            $(".btn-show-img").addClass("hidden")
+            $("#preview-" + key + "-file").addClass("hidden")
+            $(".img-thumbnail-container").removeClass("file-container")
+        } else {
+            $("#preview-" + key + "-video").addClass("hidden")
+            $("#preview-" + key + "-media").addClass("hidden")
+            $(".btn-show-img").addClass("hidden")
+            $("#preview-" + key + "-file").removeClass("hidden")
+            $(".img-thumbnail-container").addClass("file-container")
+        }
         $('#current-media-' + key + " .btn-remove-img").removeAttr("style");
         $('#current-media-' + key + " .btn-edit-img").removeAttr("style");
         $('#current-media-' + key + " .btn-show-img").removeAttr("style");

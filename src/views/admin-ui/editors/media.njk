@@ -4,16 +4,21 @@
             <small id="{{key}}-help" class="{{ field.uiSettings.descriptionTextClasses if field.uiSettings.descriptionTextClasses }} description-label">{{ field.uiSettings.descriptionText | tr }}</small>
         {% endif %}
     </label>
-
+    
         <span id="current-media-{{key}}" class=" {{ 'hidden' if not data[key] }}">
             <br/>
-            <div class="img-thumbnail-container" >
-                <img id="preview-{{key}}-media" src="{{route('adminUI.previewMedia', { id: data[key] }) }}" class="img-thumbnail">
-                <button type="button" class="btn btn-info btn-show-img" onclick="_adminUI_showImageFullscreen('{{key}}');event.stopPropagation();"><i class="fas fa-eye"></i></button>
+            <div class="img-thumbnail-container  {% if not data[key + '__' + 'mimetype'] or (not 'image/' in data[key + '__' + 'mimetype'] and not 'video/' in data[key + '__' + 'mimetype'])  %} file-container {% endif %} " >
+                    
+                    <img id="preview-{{key}}-media" src="{{route('adminUI.previewMedia', { id: data[key] }) }}" class="img-thumbnail  {{ 'hidden' if not data[key + '__' + 'mimetype'] or not 'image/' in data[key + '__' + 'mimetype'] }}" >
+                    <button type="button" class="btn-show-img {{ 'hidden' if not data[key + '__' + 'mimetype'] or not 'image/' in data[key + '__' + 'mimetype'] }}" onclick="_adminUI_showImageFullscreen('{{key}}');event.stopPropagation();"><i class="fas fa-eye"></i></button>
+                    
+                    <video src="{{route('adminUI.previewMedia', { id: data[key] }) }}" id="preview-{{key}}-video" controls class="img-thumbnail {{ 'hidden' if not data[key + '__' + 'mimetype'] or not 'video/' in data[key + '__' + 'mimetype'] }}" >
+                        </video>
+                    <img id="preview-{{key}}-file" src="/adminUI/assets/file-placeholder.png" class="file-placeholder-thumbnail {{ 'hidden' if not data[key + '__' + 'mimetype'] or 'image/' in data[key + '__' + 'mimetype'] or 'video/' in data[key + '__' + 'mimetype'] }}">
                 {% if field.readOnly %}
                 {% else %}
-                    <button type="button" class="btn btn-warning btn-edit-img" onclick="$('#input-{{key}}-media').click();"><i class="fas fa-edit"></i></button>
-                    <button type="button" class="btn btn-danger btn-remove-img" onclick="_adminUI_removeMedia('{{key}}');event.stopPropagation();"><i class="fas fa-trash"></i></button>
+                    <button type="button" class="btn-edit-img" onclick="$('#input-{{key}}-media').click();"><i class="fas fa-edit"></i></button>
+                    <button type="button" class="btn-remove-img" onclick="_adminUI_removeMedia('{{key}}');event.stopPropagation();"><i class="fas fa-trash"></i></button>
                 {% endif %}
             </div>
         </span>

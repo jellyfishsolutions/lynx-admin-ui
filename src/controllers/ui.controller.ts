@@ -28,7 +28,11 @@ export default class UIController extends BaseUIController {
             throw this.error(404, 'Media not found');
         }
         try {
-            return this.download(media, { width: 300 });
+            let options: any = null;
+            if (media.mimetype.startsWith("image/")) {
+                options = { width: 300 };
+            }
+            return this.download(media, options);
         } catch (e) {
             throw this.error(500, e);
         }
