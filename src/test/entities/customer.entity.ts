@@ -78,7 +78,7 @@ export default class Customer extends BaseEntity implements EditableEntity {
     @OneToOne((type) => Address, { eager: true })
     @JoinColumn()
     @AdminField({
-        name: 'Shipping Address',
+        name: 'Preferred Address',
         type: AdminType.ExpandedAndSelection,
         searchRequest: filteredAddresses,
         selfType: 'Address',

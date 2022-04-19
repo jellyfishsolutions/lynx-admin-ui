@@ -1,10 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne } from 'typeorm';
 import { AdminUI, AdminField, AdminType } from '../../decorators';
 import BaseEntity from 'lynx-framework/entities/base.entity';
 import Customer from './customer.entity';
-import EditableEntity, { map, notEditableFromPopup } from '../../editable-entity';
+import EditableEntity from '../../editable-entity';
 import Request from 'lynx-framework/request';
-import ProfessionalEntity from './professional.entity';
 
 async function _myOnly(req: Request, e: any) {
     return false;
@@ -13,23 +12,23 @@ async function _myOnly(req: Request, e: any) {
 @Entity('addresses')
 @AdminUI('Address', {
     defaultOrderBy: '+city',
-    relations: ['professional'],
     batchDelete: true,
     uiSettings: {
         tabsAsSections: true,
-        tabs: [{
-            key: "tab1",
-            label: "admin-ui.add"
-        },
-        {
-            key: "tab2",
-            label: "admin-ui.select"
-        }
+        tabs: [
+            {
+                key: 'tab1',
+                label: 'admin-ui.add',
+            },
+            {
+                key: 'tab2',
+                label: 'admin-ui.select',
+            },
         ],
-        defaultTab: "tab1",
+        defaultTab: 'tab1',
         hideTabsInExpanded: true,
-        hasRightColumn: true, 
-    }
+        hasRightColumn: true,
+    },
 })
 export default class Address extends BaseEntity implements EditableEntity {
     @PrimaryGeneratedColumn()
@@ -39,10 +38,10 @@ export default class Address extends BaseEntity implements EditableEntity {
         readOnly: false,
         onSummary: true,
         uiSettings: {
-            tab: "tab1",
-            editorClasses: "col-12",
-            expandedEditorClasses: "col-4"
-        }
+            tab: 'tab1',
+            editorClasses: 'col-12',
+            expandedEditorClasses: 'col-4',
+        },
     })
     id: number;
 
@@ -54,8 +53,8 @@ export default class Address extends BaseEntity implements EditableEntity {
         smartSearchable: true,
         uiSettings: {
             onRightColumn: true,
-            tab: "tab2",
-            editorClasses: "col-12",
+            tab: 'tab2',
+            editorClasses: 'col-12',
             additionalEditorInfo: { prova: 'asdasd' },
             expandedEditorClasses: 'col-3',
         },
@@ -70,13 +69,13 @@ export default class Address extends BaseEntity implements EditableEntity {
         smartSearchable: true,
         readOnly: _myOnly,
         uiSettings: {
-            tab: "tab2",
+            tab: 'tab2',
             expandedEditorClasses: 'col-3',
         },
     })
     city: string;
 
-    @AdminField({
+    /*@AdminField({
         name: 'Professional',
         type: AdminType.Selection,
         selfType: 'ProfessionalEntity',
@@ -86,8 +85,7 @@ export default class Address extends BaseEntity implements EditableEntity {
         readOnly: notEditableFromPopup,
       })
       @ManyToOne(() => ProfessionalEntity, professional => professional.address)
-      professional: ProfessionalEntity;
-
+      professional: ProfessionalEntity;*/
 
     @OneToOne((type) => Customer)
     customer: Customer;

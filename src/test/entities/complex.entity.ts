@@ -136,7 +136,7 @@ export default class Complex extends BaseEntity implements EditableEntity {
         name: 'Id',
         type: AdminType.Id,
         readOnly: true,
-        onSummary: true,
+        //onSummary: true,
     })
     id: number;
 
@@ -279,6 +279,9 @@ export default class Complex extends BaseEntity implements EditableEntity {
         inverseSide: 'complex',
         query: fetchSimples,
         readOnly: false,
+        uiSettings: {
+            actionListTemplate: '/simple-actions',
+        },
     })
     @OneToMany(() => Simple, (simple) => simple.complex, { eager: true })
     simple: Simple[];
