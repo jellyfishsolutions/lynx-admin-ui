@@ -38,18 +38,20 @@ export interface UISettings {
     editorFullWidth?: boolean;
     tab?: string;
     onRightColumn?: boolean;
+    actionListTemplate?: string;
     //TODO: editorOrder?: number;
     //TODO: editorFilter?: number;
     //TODO: editorList?: number;
 }
 
 export interface EntityUISettings {
-    tabs?:  { key: string; label: string }[];
+    tabs?: { key: string; label: string }[];
     tabsAsSections?: boolean;
     hideTabsInExpanded?: boolean;
     hideTabsInModal?: boolean;
     defaultTab?: string;
     hasRightColumn?: boolean;
+    smartSearchableHint?: string;
 }
 
 export interface ClassParameters {
@@ -66,8 +68,8 @@ export interface ClassParameters {
     disableCreation?: boolean | ((req: Request) => Promise<boolean>);
     disableDelete?: boolean | ((req: Request) => Promise<boolean>);
     defaultOrderBy?: string | ((req: Request) => Promise<string>);
-    uiSettings?: EntityUISettings
-    
+    uiSettings?: EntityUISettings;
+
     customFetchData?: (
         req: Request,
         order: any,

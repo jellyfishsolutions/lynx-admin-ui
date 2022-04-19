@@ -58,6 +58,14 @@ export class BaseUIController extends Controller {
         }
         if (req.query.selection) {
             let tmp = (entityData as any)[field] as EditableEntity;
+            if (req.query.defaultId) {
+                try {
+                    tmp = (await this.retrieveEntity(
+                        _field.selfType!,
+                        req.query.defaultId
+                    )) as any;
+                } catch (e) {}
+            }
             return {
                 data: [{ id: tmp.getId(), text: tmp.getLabel() }],
                 pagination: false,
@@ -283,8 +291,10 @@ export class BaseUIController extends Controller {
             tabs: metadata.classParameters.uiSettings?.tabs,
             defaultTab: metadata.classParameters.uiSettings?.defaultTab,
             tabsAsSections: metadata.classParameters.uiSettings?.tabsAsSections,
-            hasTabInExpanded: metadata.classParameters.uiSettings?.hideTabsInExpanded,
-            hasTabInModal: metadata.classParameters.uiSettings?.hideTabsInModal,
+            hideTabsInExpanded:
+                metadata.classParameters.uiSettings?.hideTabsInExpanded,
+            hideTabsInModal:
+                metadata.classParameters.uiSettings?.hideTabsInModal,
             hasRightColumn: metadata.classParameters.uiSettings?.hasRightColumn,
             nested: false,
             metadata: metadata,

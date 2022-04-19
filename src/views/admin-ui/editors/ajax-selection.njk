@@ -24,7 +24,10 @@
     window
         .select2
         .push(function () {
-            var url = '{{route("adminUI.ajax-selection", { entityName: req.params.entityName, id: req.params.id, field: key })}}';
+            var url = '{{route("adminUI.ajax-selection", { entityName: req.params.entityName, id: req.params.id, field: key, dummy: 'p' })}}';
+            {% if data[key] %}
+            url += '&defaultId={{data[key]}}';
+            {% endif %}
             $('#select2-{{key}}').select2({
                  width: '100%',
                 ajax: {
@@ -37,7 +40,7 @@
                                 failure();
                             }
                         };
-                        xhttp.open("GET", params.url + '?term=' + (
+                        xhttp.open("GET", params.url + '&term=' + (
                         params.data.term || '') + '&page=' + (
                         params.data.page || 1), true);
                         xhttp.send();
@@ -69,7 +72,7 @@
                             .trigger('change');
                     }
                 };
-                xhttp.open("GET", url + '?selection=true', true);
+                xhttp.open("GET", url + '&selection=true', true);
                 xhttp.send();
             {% endif %}
         });

@@ -349,6 +349,19 @@ export class Controller extends BaseController {
                 }
             } else {
                 obj[key] = data[key];
+                if (defaultValues[key]) {
+                    let entityClass = this.retrieveEntityClass(
+                        metadata.fields[key].selfType ?? ''
+                    );
+                    if (entityClass) {
+                        obj[key] = await this.retrieveEntity(
+                            metadata.fields[key].selfType!,
+                            defaultValues[key]
+                        );
+                    } else {
+                        obj[key] = defaultValues[key];
+                    }
+                }
                 if (obj[key] instanceof Object) {
                     if (obj[key] instanceof Promise && obj[key]) {
                         obj[key] = await obj[key];
@@ -402,9 +415,6 @@ export class Controller extends BaseController {
                         }
                     }
                 }
-            }
-            if (defaultValues[key]) {
-                obj[key] = defaultValues[key];
             }
         }
         obj.getLabel = () => {
@@ -491,7 +501,23 @@ export class Controller extends BaseController {
                 }
                 let e = entity as any;
                 if (!e[key]) {
-                    e[key] = new entityClass();
+                    if (data[key]) {
+                        e[key] = await this.retrieveEntity(
+                            m.selfType!,
+                            data[key]
+                        );
+                    }
+                    if (!e[key]) {
+                        e[key] = new entityClass();
+                    }
+                } else {
+                    if (data[key]) {
+                        e[key] =
+                            (await this.retrieveEntity(
+                                m.selfType!,
+                                data[key]
+                            )) ?? e[key];
+                    }
                 }
                 let currentMeta = this.retrieveMetadata(m.selfType as string);
                 await this.setData(
