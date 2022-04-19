@@ -58,7 +58,7 @@
             {% if not tabsAsSections %}
               <ul class="nav nav-tabs">
                 {% for tab in tabs %}
-                  <li class="nav-item">
+                  <li class="nav-item nav-item-{{tab.key}}">
                     <a class="nav-link {{ 'active' if defaultTab == tab.key else '' }}" data-toggle="tab" href="#tab_{{tabsId}}_{{loop.index}}" onclick="sendTabChangedEvent('{{tab.key}}')">{{ tab.label | tr }}</a>
                   </li>
                 {% endfor %}
@@ -73,11 +73,11 @@
                     {% endif %}
                 {% endfor %}
                 {% if counter > 0 %}
-                  <div class="section">
+                  <div class="section section-{{tab.key}}">
                     <div class="section-title">
                         {{ tab.label | tr }}
                     </div>
-                    <div class="row  section-body">
+                    <div class="row section-body">
                       {% for key, field in fields %}
                         {% if field.uiSettings and field.uiSettings.tab == tab.key and not field.hide and not field.uiSettings.onRightColumn %}
                         {{ edit_fieldComponent(field, key) }}
@@ -90,7 +90,7 @@
             {% else %}
               <div class="tab-content">
                 {% for tab in tabs %}
-                  <div id="tab_{{tabsId}}_{{loop.index}}" class="tab-pane fade my-5 {{ 'show active' if defaultTab == tab.key else '' }}">
+                  <div id="tab_{{tabsId}}_{{loop.index}}" class="tab-pane tab-pane-{{tab.key}} fade my-5 {{ 'show active' if defaultTab == tab.key else '' }}">
                     <div class="row">
                       {% for key, field in fields %}
                         {% if field.uiSettings and field.uiSettings.tab == tab.key and not field.hide and not field.uiSettings.onRightColumn %}
@@ -111,7 +111,7 @@
             </script>
           {% else %}
             <!-- if entity is NOT divided in tabs -->
-            <div class="row">
+            <div class="row admin-ui-right-column">
               {% for key, field in fields %}
                 {% if not field.uiSettings or (not field.hide and not field.uiSettings.onRightColumn)  %}
                   {{ edit_fieldComponent(field, key) }}
