@@ -301,6 +301,15 @@ export default class Complex extends BaseEntity implements EditableEntity {
     @Column({ nullable: true })
     day: DayOfWeek;
 
+    @AdminField({
+        name: 'Custom element',
+        type: AdminType.CustomInclude,
+        optionalParameters: {
+            template: '/custom-element',
+        },
+    })
+    _customElement: string;
+
     getId() {
         return this.id;
     }

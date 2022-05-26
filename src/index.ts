@@ -61,6 +61,8 @@ export default class AdminUIModule extends SimpleModule {
             '/admin-ui/editors/currency';
         AdminUIModule.configuration[AdminType.ExpandedAndSelection] =
             '/admin-ui/editors/expanded-and-selection';
+        AdminUIModule.configuration[AdminType.CustomInclude] =
+            '/admin-ui/editors/custom-include';
 
         setTimeout(() => {
             app.nunjucksEnvironment.addFilter(

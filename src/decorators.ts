@@ -21,6 +21,7 @@ export enum AdminType {
     ActionButton = 17,
     Currency = 18,
     ExpandedAndSelection = 19,
+    CustomInclude = 20,
 }
 
 export interface UISettings {

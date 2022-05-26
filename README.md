@@ -324,6 +324,26 @@ Example:
 Indicates that the field is a currency. The implementation uses the [Jquery.inputmask plugin](https://robinherbots.github.io/Inputmask/) to correctly display a mark for decimal and hundreds. Moreover, it is not possible to input characters.
 It is possible to override the decimal separator with the `decimalSeparator` attribute (`.` as default), the hundreds separator with the `hundredsSeparator` attribute (`,` as default) and the number of decimal numbers with the `digits` attribute (`2` as default). Both `decimalSeparator` and `hundredsSeparator` attributes can be a `string`, or a function defined as `(req: Request, currentEntity: any) => Promise<string>`, where `req` is the current request, and `currentEntity` is the current displayed entity.
 
+
+#### `AdminType.CustomInclude`
+
+This type can be used to add a custom UI inside the editor view of an entity.
+It is possible to create a "dummy" property of the class, without adding a "column" annotation (in order to do not add a column to the real database entity).
+A view, defined in the `template` of the `optionalParameters` object of the field, will be included directly in the editor view, allowing a total customization of the page portion.
+
+Example: 
+
+```
+@AdminField({
+    name: 'Custom element',
+    type: AdminType.CustomInclude,
+    optionalParameters: {
+        template: '/custom-element',
+    },
+})
+_customElement: string;
+```
+
 ### `values` parameter
 
 It indicates a list of key-value items that can be used to evaluate the field.
