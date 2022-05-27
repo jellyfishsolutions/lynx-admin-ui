@@ -188,43 +188,58 @@
                   </tr>
               </thead>
               <tbody>
-                  {% for d in gridData.data %}
-                      <tr>
-                          {% if metadata.classParameters.batchDelete and AUIcanWrite(req, req.params.entityName) %}
-                              <th class="cell-delete-checkbox">
-                                  <input type="checkbox" onclick="toggleSelection('{{d.getId()}}')" id="delete-checkbox-{{d.getId()}}"/>
-                              </th>
-                          {% endif %}
-                          {% for key, field in fields %}
-                              {% if field.onSummary %}
-                                  {% if field.uiSettings and field.uiSettings.listTemplate %}
-                                      {% set value = d[key] %}
-                                      <td class="cell-{{field.name}}">{% include resolvePath(field.uiSettings.listTemplate) %}
-                                      </td>
-                                  {% elif field.uiSettings and field.uiSettings.listFilter %}
-                                      <td class="cell-{{field.name}}">{{ d[key] | _adminUIMasterFilter_(field.uiSettings.listFilter) | safe }}</td>
-                                  {% else %}
-                                      <td class="cell-{{field.name}}">{{d[key]}}</td>
-                                  {% endif %}
-                              {% endif %}
-                          {% endfor %}
-                          <td class="text-right">
-                              {% if metadata.classParameters.listActionTemplate %}
-                                  {% include resolvePath(metadata.classParameters.listActionTemplate) %}
-                              {% else %}
-                                  <a class="btn btn-primary btn-details btn-details-{{req.params.entityName}}" href="{{route('adminUI.details', {entityName: req.params.entityName, id: d.getId()})}}">{{ 'admin-ui.details' | tr }}</a>
-                                  {% if not metadata.classParameters.disableDelete and AUIcanWrite(req, req.params.entityName) %}
-                                      <button class="btn btn-danger btn-delete btn-delete-{{req.params.entityName}}" type="button" data-toggle="modal" data-target="#deleteModal" data-name="{{d.getLabel()}}" data-id="{{d.getId()}}">
-                                          <i class="far fa-trash-alt"></i>
-                                      </button>
-                                  {% endif %}
+                {% for d in gridData.data %}
+                    <tr>
+                        {% if metadata.classParameters.batchDelete and AUIcanWrite(req, req.params.entityName) %}
+                            <th class="cell-delete-checkbox">
+                                <input type="checkbox" onclick="toggleSelection('{{d.getId()}}')" id="delete-checkbox-{{d.getId()}}"/>
+                            </th>
+                        {% endif %}
+                        {% for key, field in fields %}
+                            {% if field.onSummary %}
+                                {% if field.uiSettings and field.uiSettings.listTemplate %}
+                                    {% set value = d[key] %}
+                                    <td class="cell-{{field.name}}">{% include resolvePath(field.uiSettings.listTemplate) %}
+                                    </td>
+                                {% elif field.uiSettings and field.uiSettings.listFilter %}
+                                    <td class="cell-{{field.name}}">{{ d[key] | _adminUIMasterFilter_(field.uiSettings.listFilter) | safe }}</td>
+                                {% else %}
+                                    <td class="cell-{{field.name}}">{{d[key]}}</td>
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                        <td class="text-right">
+                            {% if metadata.classParameters.listActionTemplate %}
+                                {% include resolvePath(metadata.classParameters.listActionTemplate) %}
+                            {% else %}
+                                <a class="btn btn-primary btn-details btn-details-{{req.params.entityName}}" href="{{route('adminUI.details', {entityName: req.params.entityName, id: d.getId()})}}">{{ 'admin-ui.details' | tr }}</a>
+                                {% if not metadata.classParameters.disableDelete and AUIcanWrite(req, req.params.entityName) %}
+                                    <button class="btn btn-danger btn-delete btn-delete-{{req.params.entityName}}" type="button" data-toggle="modal" data-target="#deleteModal" data-name="{{d.getLabel()}}" data-id="{{d.getId()}}">
+                                        <i class="far fa-trash-alt"></i>
+                                    </button>
+                                {% endif %}
 
-                              {% endif %}
-                          </td>
-                      </tr>
-                  {% endfor %}
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
               </tbody>
           </table>
+          {% if gridData.length == 0 %}
+            {% if metadata.classParameters.uiSettings and metadata.classParameters.uiSettings.noDataTemplate %}
+                {% include resolvePath(metadata.classParameters.uiSettings.noDataTemplate) %}
+            {% else %}
+            <div class="w-100 no-data-{{req.params.entityName}}">
+                <h3 class="text-center">
+                    {% if metadata.classParameters.uiSettings and metadata.classParameters.uiSettings.noDataString %}
+                        {{ metadata.classParameters.uiSettings.noDataString | tr }}
+                    {% else %}
+                        {{ 'admin-ui.no-data' | tr }}
+                    {% endif %}
+                </h3>
+            </div>
+            {% endif %}
+          {% endif %}
 
           {% if not metadata.classParameters.disableDelete and AUIcanWrite(req, req.params.entityName) %}
               <div>

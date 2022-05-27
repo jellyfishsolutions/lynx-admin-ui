@@ -68,6 +68,21 @@
             {% endfor %}
         </tbody>
     </table>
+    {% if data[key].length == 0 %}
+        {% if field.uiSettings and field.uiSettings.noDataTemplate %}
+                {% include resolvePath(field.uiSettings.noDataTemplate) %}
+            {% else %}
+            <div class="w-100 no-data-table-{{field.selfType}}">
+                <h5 class="text-center">
+                    {% if field.uiSettings and field.uiSettings.noDataString %}
+                        {{ field.uiSettings.noDataString | tr }}
+                    {% else %}
+                        {{ 'admin-ui.no-data' | tr }}
+                    {% endif %}
+                </h5>
+            </div>
+            {% endif %}
+    {% endif %}
     {{ dgUtils.pagination(data[key]) }}
     <script>
         function openModal{{key}}(id) {

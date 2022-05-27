@@ -18,5 +18,6 @@
     "admin-ui.add": "Add",
     "admin-ui.unable-delete": "Unable to delete %1$s. Please check its dependencies.",
     "admin-ui.select": "Select...",
-    "admin-ui.remove-media": "Remove"
+    "admin-ui.remove-media": "Remove",
+    "admin-ui.no-data": "No data available"
 }

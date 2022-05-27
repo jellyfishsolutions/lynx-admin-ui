@@ -78,6 +78,8 @@ This parameter contains information about how the entity view should appear in t
 - `hideTabsInExpanded`: is a property of the type: `boolean` that decides if the tabs layout is rendered also in the expanded view of the field.
 - `hideTabsInModal`: is a property of the type: `boolean` that decides if the tabs layout is rendered also in the modal view of the field.
 - `smartSearchableHint`: the string to be visualized as hint text for the smart search field (can be localized).
+- `noDataString`: indicates a custom localized string to be used when no data is available in the list view.
+- `noDataTemplate`: indicates a custom nunjucks template to be used when no data is available in the list view.
 ## `EditableEntity` interface
 
 An `AdminUI` entity shall also implements the `EditableEntity`. To implement the interface, the class shall have these two methods:
@@ -435,6 +437,8 @@ This parameter defines the following optional properties:
 -   `tab`: indicates in which tab the field will be inserted. The tab must be addressed through the `key` property. This property has effect only if the `tabs` property of the `uiSettings` of the `AdminUI` optional parameter is defined and has at least one element. See the `AdminUI uiSettings parameter` for further information
 -   `onRightColumn`: indicates if the field is rendered in the right column of the detail view. This property should be used only if the `hasRightColumn` property of the `uiSettings` of the `AdminUI` optional parameter is defined as `true`. In the other case, the field will not be rendered.  
 -   `actionListTemplate`: indicates a custom nunjucks template to be used as the last column (the actions) if the specified type is `AdminType.Table`.
+-   `noDataString`: indicates a custom localized string to be used when no data is available (usable in the `AdminType.Table` type).
+-   `noDataTemplate`: indicates a custom nunjucks template to be used when no data is available (usable in the `AdminType.Table` type).
 
 Moreover, in the editor section, each field is wrapped inside a `div` with an unique id. The id is defined as `field-{{entity-name}}-{{name-of-the-field}}`. Using the id, it is possible to customize though CSS rules the aspect of a single field.
 In the list section, each field has its own class, defined as `header-{{name-of-the-field}}` and `cell-{{header-of-the-field}}`, for the `th` and the `td` element respectively. These classes apply also for the nested list, used with the `AdminType.Table` type.

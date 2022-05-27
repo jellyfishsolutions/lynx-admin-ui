@@ -40,6 +40,8 @@ export interface UISettings {
     tab?: string;
     onRightColumn?: boolean;
     actionListTemplate?: string;
+    noDataString?: string;
+    noDataTemplate?: string;
     //TODO: editorOrder?: number;
     //TODO: editorFilter?: number;
     //TODO: editorList?: number;
@@ -53,6 +55,8 @@ export interface EntityUISettings {
     defaultTab?: string;
     hasRightColumn?: boolean;
     smartSearchableHint?: string;
+    noDataString?: string;
+    noDataTemplate?: string;
 }
 
 export interface ClassParameters {
