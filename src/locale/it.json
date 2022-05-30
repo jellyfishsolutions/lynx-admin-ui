@@ -11,6 +11,7 @@
     "admin-ui.delete-element": "Cancella elemento",
     "admin-ui.delete-elements": "Cancella elementi",
     "admin-ui.delete-confirm-single": "Sei sicuro di voler cancellare",
+    "admin-ui.select-filters": "Seleziona filtri",
     "admin-ui.delete-confirm-multiple": "Sei sicuro di voler cancellare gli elementi selezionati?",
     "admin-ui.delete": "Cancella",
     "admin-ui.success-update": "Aggiornamento riuscito!",

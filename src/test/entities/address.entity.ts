@@ -14,6 +14,7 @@ async function _myOnly(req: Request, e: any) {
     defaultOrderBy: '+city',
     batchDelete: true,
     uiSettings: {
+        smartSearchableHint: "Cerca indirizzo",
         tabsAsSections: true,
         tabs: [
             {

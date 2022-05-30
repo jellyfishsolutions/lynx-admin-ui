@@ -129,6 +129,9 @@ async function actionTemplate(req: Request): Promise<string> {
     listActionTemplate: actionTemplate,
     disableReloadOnList: true,
     relations: ['subcategories', 'category', 'simple', 'categoryAjax'],
+    uiSettings: {
+        smartSearchableHint: "Ricerca libera"
+    }
 })
 export default class Complex extends BaseEntity implements EditableEntity {
     @PrimaryGeneratedColumn()
