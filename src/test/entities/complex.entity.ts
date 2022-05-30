@@ -244,6 +244,7 @@ export default class Complex extends BaseEntity implements EditableEntity {
         name: 'Categoria',
         type: AdminType.Selection,
         values: getCategories,
+        defaultValue: async () => Category.findOne(1),
         onSummary: true,
         searchable: true,
         readOnly: true,

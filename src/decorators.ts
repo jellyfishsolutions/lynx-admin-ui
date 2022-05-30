@@ -109,6 +109,7 @@ export interface FieldParameters {
               req: Request,
               currentEntity: any
           ) => Promise<{ key: any; value: string }[]>);
+    defaultValue?: any | ((req: Request, currentEntity: any) => Promise<any>);
     query?: (
         req: Request,
         currentEntity: any,

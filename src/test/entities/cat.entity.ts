@@ -42,6 +42,10 @@ export default class Cat extends BaseEntity implements EditableEntity {
         onSummary: true,
         hide: true,
         smartSearchable: true,
+        defaultValue: async () => {
+            console.log('generating name');
+            return 'ASD';
+        },
     })
     @Column()
     name: string;

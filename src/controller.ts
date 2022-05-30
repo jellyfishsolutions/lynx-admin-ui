@@ -349,6 +349,9 @@ export class Controller extends BaseController {
                 }
             } else {
                 obj[key] = data[key];
+                if (!_data.hasId() && metadata.fields[key].defaultValue) {
+                    obj[key] = metadata.fields[key].defaultValue;
+                }
                 if (defaultValues[key]) {
                     let entityClass = this.retrieveEntityClass(
                         metadata.fields[key].selfType ?? ''
@@ -747,7 +750,17 @@ export class Controller extends BaseController {
                     req,
                     entityData
                 );
+                field = fields[key] as FieldParameters;
             }
+
+            if (field.defaultValue instanceof Function) {
+                fields[key] = { ...field };
+                fields[key].defaultValue = await (
+                    field.defaultValue as Function
+                )(req, entityData);
+                field = fields[key] as FieldParameters;
+            }
+
             if (field.hundredsSeparator instanceof Function) {
                 fields[key] = { ...field };
                 fields[key].hundredsSeparator = await (

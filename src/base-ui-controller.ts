@@ -267,13 +267,14 @@ export class BaseUIController extends Controller {
             throw this.error(404, 'not found');
         }
         let metadata = this.retrieveMetadata(entityName);
-        metadata = await this.generateContextMetadata(metadata, req);
-        let data = await this.cleanData(req, entityData, metadata);
+        metadata = { ...(await this.generateContextMetadata(metadata, req)) };
         let fields = await this.generateContextFields(
             metadata,
             req,
             entityData
         );
+        metadata.fields = fields;
+        let data = await this.cleanData(req, entityData, metadata);
         let usedTypes: string[] = [];
         for (let key in fields) {
             if (usedTypes.indexOf(fields[key].type) == -1) {

@@ -132,6 +132,7 @@ There is a set of optional parameters, available on all types:
 -   `readOnly`: indicates if the field can be only readable in the editor view; default: `false`. This parameter can be a `boolean` value, or a function like `(req: Request, currentEntity: any) => Promise<boolean>` (same as the `values` but with different return type).
 -   `required`: indicates if the field is "required" in the editor view; default: `false`. It adds the "required" attribute to the generated input. This parameter can be a `boolean` value, or a function like `(req: Request, currentEntity: any) => Promise<boolean>` (same as the `values` but with different return type).
 -   `hide`: indicates if the field should be displayed or not in the editor view; default: `false`. This parameter can be a `boolean` value, or a function like `(req: Request, currentEntity: any) => Promise<boolean>` (same as the `values` but with different return type).
+-   `defaultValue`: allows to define a default value for the field. It can be a value, or a function like `(req: Request, currentEntity: any) => Promise<any>`.
 -   `uiSettings`: contains information on the visual appearance of the field. See the `uiSettings` paragraph for more information.
 -   `optionalParameters` contains optional custom parameters that can be used by the editor. 
 
