@@ -7,6 +7,7 @@ import Response from 'lynx-framework/response';
 import EditableEntity from './editable-entity';
 
 import { sprintf } from 'sprintf-js';
+import { EntityMetadata } from './decorators';
 
 /**
  * Basic controller that generates all the UI that contains the logic to perform the
@@ -119,7 +120,7 @@ export class BaseUIController extends Controller {
         let cleaned = await this.cleanData(req, data, _meta, false);
         for (let key in cleaned) {
             if (cleaned[key] instanceof Datagrid) {
-                console.log(
+                this.logger.log(
                     'WARNING: currently not supporting Datagrid data with ExpandedAndSelection type...'
                 );
                 delete cleaned[key];
@@ -251,6 +252,41 @@ export class BaseUIController extends Controller {
         );
     }
 
+    generateCxtForEditingRender(
+        data: any,
+        isPopup: boolean,
+        metadata: EntityMetadata,
+        fields: any
+    ) {
+        let usedTypes: string[] = [];
+        for (let key in fields) {
+            if (usedTypes.indexOf(fields[key].type) == -1) {
+                usedTypes.push(fields[key].type);
+            }
+        }
+
+        let ctx = {
+            data: data,
+            configuration: AdminUIModule.configuration,
+            parentTemplate: isPopup
+                ? metadata.classParameters.popupEditorParentTemplate
+                : metadata.classParameters.editorParentTemplate,
+            tabs: metadata.classParameters.uiSettings?.tabs,
+            defaultTab: metadata.classParameters.uiSettings?.defaultTab,
+            tabsAsSections: metadata.classParameters.uiSettings?.tabsAsSections,
+            hideTabsInExpanded:
+                metadata.classParameters.uiSettings?.hideTabsInExpanded,
+            hideTabsInModal:
+                metadata.classParameters.uiSettings?.hideTabsInModal,
+            hasRightColumn: metadata.classParameters.uiSettings?.hasRightColumn,
+            nested: false,
+            metadata: metadata,
+            fields: fields,
+            usedTypes: usedTypes,
+        } as any;
+        return ctx;
+    }
+
     /**
      * Retrieve the details of a specific entity by its id
      * @param entityName The name of the entity class
@@ -283,25 +319,12 @@ export class BaseUIController extends Controller {
         }
 
         let isPopup = req.query.popup;
-        let ctx = {
-            data: data,
-            configuration: AdminUIModule.configuration,
-            parentTemplate: isPopup
-                ? metadata.classParameters.popupEditorParentTemplate
-                : metadata.classParameters.editorParentTemplate,
-            tabs: metadata.classParameters.uiSettings?.tabs,
-            defaultTab: metadata.classParameters.uiSettings?.defaultTab,
-            tabsAsSections: metadata.classParameters.uiSettings?.tabsAsSections,
-            hideTabsInExpanded:
-                metadata.classParameters.uiSettings?.hideTabsInExpanded,
-            hideTabsInModal:
-                metadata.classParameters.uiSettings?.hideTabsInModal,
-            hasRightColumn: metadata.classParameters.uiSettings?.hasRightColumn,
-            nested: false,
-            metadata: metadata,
-            fields: fields,
-            usedTypes: usedTypes,
-        } as any;
+        let ctx = this.generateCxtForEditingRender(
+            data,
+            isPopup as any,
+            metadata,
+            fields
+        );
         return this.render(
             isPopup
                 ? (metadata.classParameters.popupEditorTemplate as string)
@@ -402,7 +425,7 @@ export class BaseUIController extends Controller {
         try {
             updated = await Controller.saveEntity(entity, req);
         } catch (e) {
-            console.log('error saving the entity', e);
+            this.logger.log('error saving the entity', e);
             try {
                 let errorField = (
                     /'([a-zA-Z0-0_)]+)'/.exec(e.message) as any
@@ -418,9 +441,24 @@ export class BaseUIController extends Controller {
                 this.logger.error(ee);
                 this.addErrorMessage(e.message, req);
             }
-            metadata = await this.generateContextMetadata(metadata, req);
+            metadata = {
+                ...(await this.generateContextMetadata(metadata, req)),
+            };
             let isPopup = req.query.popup;
-            let ctx = {
+            let fields = await this.generateContextFields(
+                metadata,
+                req,
+                entity
+            );
+            metadata.fields = fields;
+
+            let ctx = this.generateCxtForEditingRender(
+                req.body,
+                isPopup as any,
+                metadata,
+                fields
+            );
+            /*let ctx = {
                 data: req.body,
                 configuration: AdminUIModule.configuration,
                 parentTemplate: isPopup
@@ -429,7 +467,7 @@ export class BaseUIController extends Controller {
                 nested: false,
                 metadata: metadata,
                 fields: await this.generateContextFields(metadata, req, entity),
-            } as any;
+            } as any;*/
             return this.render(
                 isPopup
                     ? (metadata.classParameters.popupEditorTemplate as string)

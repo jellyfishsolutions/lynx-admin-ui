@@ -1,6 +1,12 @@
 import BaseEntity from 'lynx-framework/entities/base.entity';
 import Request from 'lynx-framework/request';
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import {
+    Entity,
+    PrimaryGeneratedColumn,
+    Column,
+    OneToMany,
+    SaveOptions,
+} from 'typeorm';
 import { AdminField, AdminType, AdminUI, QueryParams } from '../../decorators';
 import EditableEntity from '../../editable-entity';
 import Therapy from './therapy.entity';
@@ -77,5 +83,12 @@ export default class Cat extends BaseEntity implements EditableEntity {
     }
     getLabel(): string {
         return this.name;
+    }
+
+    save(options?: SaveOptions): Promise<this> {
+        if (!this.name || this.name.length < 3) {
+            throw new Error('Name is too short');
+        }
+        return super.save(options);
     }
 }
