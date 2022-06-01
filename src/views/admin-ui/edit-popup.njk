@@ -30,7 +30,7 @@
 
 {% block body %}
 
-    <form method="POST" action="{{route('adminUI.save', {entityName: req.params.entityName, id: req.params.id, popup: req.query.popup} )}}" enctype="multipart/form-data" onsubmit='closePopup()'>
+    <form method="POST" action="{{route('adminUI.save', {entityName: req.params.entityName, id: req.params.id, popup: req.query.popup, defaultValues: req.query.defaultValues} )}}" enctype="multipart/form-data" onsubmit='closePopup()'>
         <input type="hidden" name="__admin_ui_action" id="__admin_ui_action"/>
         <div class="container-fluid">
             <div class="row mt-1">
