@@ -34,7 +34,7 @@
         <input type="hidden" name="__admin_ui_action" id="__admin_ui_action"/>
         <div class="container-fluid">
             <div class="row mt-1">
-                {% if tabs and tabs.length > 1 and not hideTabsInModal %}
+                {% if tabs and not hideTabsInModal %}
                     {% set tabsId = AUIgenerateId() %}
                     
                     <div class="col-12">

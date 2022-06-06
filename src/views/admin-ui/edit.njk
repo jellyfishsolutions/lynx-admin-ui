@@ -53,7 +53,7 @@
           <input type="hidden" name="__admin_ui_action" id="__admin_ui_action"/>
 
           <!-- if entity is divided in tabs -->
-          {% if tabs and tabs.length > 1 %}
+          {% if tabs %}
             {% set tabsId  = AUIgenerateId() %}
             {% if not tabsAsSections %}
               <ul class="nav nav-tabs">
