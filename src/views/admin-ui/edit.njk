@@ -30,7 +30,7 @@
 {% endblock %}
 
 {% block body %}
-<form method="POST" action="{{route('adminUI.save', {entityName: req.params.entityName, id: req.params.id} )}}" enctype="multipart/form-data">
+<form method="POST" action="{{route('adminUI.save', {entityName: req.params.entityName, id: req.params.id, defaultValues: req.query.defaultValues } )}}" enctype="multipart/form-data">
 <div class="row">
 <div class="col-12 {{ 'col-lg-9' if hasRightColumn else '' }} mb-4">
   <div class="card">
