@@ -149,7 +149,7 @@
                         {% for key, field in fields %}
                             {% if field.onSummary %}
                                 <th class="header-{{field.name}}">
-                                    {{ dgUtils.orderableHeader(field.name, key, gridData) | tr }}
+                                    {{ dgUtils.orderableHeader(field.name | tr, key, gridData) }}
                                 </th>
                             {% endif %}
                         {% endfor %}
