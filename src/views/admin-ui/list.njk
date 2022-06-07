@@ -117,7 +117,7 @@
 
                 <div class="d-flex align-items-center justify-content-between">
                     <span class="entity-title mb-0">
-                        {{ metadata.name }}
+                        {{ metadata.name | tr }}
                     </span>
 
                     <div class="d-flex align-items-start">
@@ -149,7 +149,7 @@
                         {% for key, field in fields %}
                             {% if field.onSummary %}
                                 <th class="header-{{field.name}}">
-                                    {{ dgUtils.orderableHeader(field.name, key, gridData) }}
+                                    {{ dgUtils.orderableHeader(field.name, key, gridData) | tr }}
                                 </th>
                             {% endif %}
                         {% endfor %}
