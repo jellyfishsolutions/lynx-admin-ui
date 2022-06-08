@@ -432,7 +432,11 @@ export class BaseUIController extends Controller {
                 )[1];
                 let field = metadata.fields[errorField];
                 if (field) {
-                    this.addErrorMessage('Error on field ' + field.name, req);
+                    this.addErrorMessage(
+                        this.app.translate('admin-ui.error-on-field', req) +
+                            this.app.translate(field.name, req),
+                        req
+                    );
                 } else {
                     this.addErrorMessage(e.message, req);
                 }

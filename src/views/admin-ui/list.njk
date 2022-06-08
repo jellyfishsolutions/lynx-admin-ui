@@ -260,7 +260,7 @@
                                             <input class="form-control" 
                                     name="smartSearch" 
                                     value="{{req.query.smartSearch}}"
-                                    placeholder="{{ metadata.classParameters.uiSettings.smartSearchableHint if metadata.classParameters.uiSettings }}"
+                                    placeholder="{{ metadata.classParameters.uiSettings.smartSearchableHint | tr if metadata.classParameters.uiSettings }}"
 />
                                         </div>
                                     </div>
