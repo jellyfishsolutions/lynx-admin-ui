@@ -662,6 +662,14 @@ export class Controller extends BaseController {
                 meta.classParameters.listActionTemplate as any
             )(req);
         }
+        if (
+            meta.classParameters.listCustomDeleteAction &&
+            meta.classParameters.listCustomDeleteAction instanceof Function
+        ) {
+            meta.classParameters.listCustomDeleteAction = await (
+                meta.classParameters.listCustomDeleteAction as any
+            )(req);
+        }
         return meta;
     }
 

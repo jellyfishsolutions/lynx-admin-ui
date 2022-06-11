@@ -26,7 +26,7 @@
             modal
                 .find('.element-name')
                 .text(name);
-            var url = "{{route('adminUI.delete', { entityName: req.params.entityName, id: ':id' })}}".replace(':id', id);
+            var url = "{{route(metadata.classParameters.listCustomDeleteAction if metadata.classParameters.listCustomDeleteAction else 'adminUI.delete', { entityName: req.params.entityName, id: ':id' })}}".replace(':id', id);
             url += '?redirect=' + window.location;
             modal
                 .find('.delete-form')
