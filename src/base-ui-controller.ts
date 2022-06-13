@@ -245,7 +245,6 @@ export class BaseUIController extends Controller {
             data: data,
             fields: fields,
             hasSmartSearchable: hasSmartSearchable,
-            activeFilters: Object.keys(req.query).length
         } as any;
         return this.render(
             metadata.classParameters.listTemplate as string,
