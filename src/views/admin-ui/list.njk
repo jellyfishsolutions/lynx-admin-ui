@@ -26,7 +26,7 @@
             modal
                 .find('.element-name')
                 .text(name);
-            var url = "{{route('adminUI.delete', { entityName: req.params.entityName, id: ':id' })}}".replace(':id', id);
+            var url = "{{route(metadata.classParameters.listCustomDeleteAction if metadata.classParameters.listCustomDeleteAction else 'adminUI.delete', { entityName: req.params.entityName, id: ':id' })}}".replace(':id', id);
             url += '?redirect=' + window.location;
             modal
                 .find('.delete-form')
@@ -117,7 +117,7 @@
 
                 <div class="d-flex align-items-center justify-content-between">
                     <span class="entity-title mb-0">
-                        {{ metadata.name }}
+                        {{ metadata.name | tr }}
                     </span>
 
                     <div class="d-flex align-items-start">
@@ -154,7 +154,7 @@
                         {% for key, field in fields %}
                             {% if field.onSummary %}
                                 <th class="header-{{field.name}}">
-                                    {{ dgUtils.orderableHeader(field.name, key, gridData) }}
+                                    {{ dgUtils.orderableHeader(field.name | tr, key, gridData) }}
                                 </th>
                             {% endif %}
                         {% endfor %}
@@ -265,7 +265,7 @@
                                             <input class="form-control" 
                                     name="smartSearch" 
                                     value="{{req.query.smartSearch}}"
-                                    placeholder="{{ metadata.classParameters.uiSettings.smartSearchableHint if metadata.classParameters.uiSettings }}"
+                                    placeholder="{{ metadata.classParameters.uiSettings.smartSearchableHint | tr if metadata.classParameters.uiSettings }}"
 />
                                         </div>
                                     </div>

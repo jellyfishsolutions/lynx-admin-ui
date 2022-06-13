@@ -26,7 +26,7 @@
                 {% for _key, _field in field.metadata.fields %}
                     {% if _field.onSummary %}
                         <th class="header-{{_key}}">
-                            {{dgUtils.orderableHeader(_field.name, _key, data[key])}}
+                            {{dgUtils.orderableHeader(_field.name | tr, _key, data[key])}}
                         </th>
                     {% endif %}
                 {% endfor %}
