@@ -10919,3 +10919,18 @@ body.sidebar-toggled footer.sticky-footer {
     font-size: 1.3rem;
 
 }
+
+.ui-active-filters {
+    font-size: 12px;
+    position: absolute;
+    border-radius: 50%;
+    background: red;
+    color: white;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    right: -9px;
+    top:-9px;
+}

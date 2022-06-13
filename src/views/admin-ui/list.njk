@@ -122,10 +122,15 @@
 
                     <div class="d-flex align-items-start">
                         {% if filtersCount > 0 %}
-                            <button class="btn btn-light btn-search mb-2" type="button" data-toggle="modal" data-target="#filtersModal" aria-expanded="false" aria-controls="filtersModal">
-                                <i class="fas fa-search"></i>
-                                {{ 'admin-ui.filter-title' | tr }}
-                            </button>
+                            <div style="position: relative">
+                                <button class="btn btn-light btn-search mb-2" type="button" data-toggle="modal" data-target="#filtersModal" aria-expanded="false" aria-controls="filtersModal">
+                                    <i class="fas fa-search"></i>
+                                    {{ 'admin-ui.filter-title' | tr }}
+                                </button>
+                                {% if activeFilters > 0 %}
+                                    <div class="ui-active-filters">{{activeFilters}}</div>
+                                {% endif %}
+                            </div>
                         {% endif %}
                         {% if not metadata.classParameters.disableCreation and AUIcanWrite(req, req.params.entityName) %}
                             <a href="{{ route('adminUI.details', {entityName: req.params.entityName, id: 0}) }}" class="btn btn-primary btn-create btn-create-{{req.params.entityName}} ml-3">
@@ -250,8 +255,8 @@
                 <div class="modal-content">
                     <div class="card card-body">
                         <h4>
-                         {{ 'admin-ui.select-filters' | tr }}
-                         </h4>
+                            {{ 'admin-ui.select-filters' | tr }}
+                        </h4>
                         <form method="GET" action="{{route('adminUI.list', { entityName: req.params.entityName })}}">
                             <div class="row">
                                 {% if hasSmartSearchable %}
