@@ -552,7 +552,10 @@ export class Controller extends BaseController {
             ) {
                 (entity as any)[key] = null;
             } else {
-                if (m.selfType == 'Number' && data[prefix + key] === '') {
+                if (
+                    (m.selfType == 'Number' || m.selfType == 'Date') &&
+                    data[prefix + key] === ''
+                ) {
                     data[prefix + key] = null;
                 } else {
                     if (m.selfType == 'Number') {

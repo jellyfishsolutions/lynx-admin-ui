@@ -57,6 +57,15 @@ export default class Cat extends BaseEntity implements EditableEntity {
     name: string;
 
     @AdminField({
+        name: 'Data nascita',
+        type: AdminType.Date,
+        onSummary: true,
+        smartSearchable: true,
+    })
+    @Column({ type: 'date', nullable: true, default: null })
+    birthday?: Date;
+
+    @AdminField({
         name: 'Terapie',
         type: AdminType.Table,
         selfType: 'Therapy',
