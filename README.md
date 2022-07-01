@@ -64,8 +64,8 @@ The `AdminUI` annotation supports also an optional object argument, with the fol
 -   `disableDelete` if true (or if resolve to true), the button to delete an entity is not displayed;
 -   `defaultOrderBy` if specified, defines a default order by used in the entity list (it uses the same notation of the ordering string used when a column header is tapped);
 - `disableReloadOnList` if true (or if resolve to true), the displayed entities in the list are not reloaded. Please refer to [optimization section](#Listing page optimization) for additional info.
--   `customFetchData` allows you to create your custom query when retrieving data for the list trough a function that receives the current `req` as well as datatable infos. If defined, the default query building process will not be executed, meaning your `filterBy` function will have no effect.
--  `uiSettings` contains information of the visual appearence of the entity views. See the `AdminUI uiSettings` paragraph for more information.
+-   `customFetchData` allows you to create your custom query when retrieving data for the list trough a function that receives the current `req` as well as datatable infos. If defined, the default query building process will not be executed, meaning your `filterBy` function will have no effect. Moreover, you need to manually manage the filtering process and the filtering counter (using the `(req as any).__admin_ui_filterCounter` attribute).
+-  `uiSettings` contains information of the visual appearance of the entity views. See the `AdminUI uiSettings` paragraph for more information.
 
 Each "template" parameter accepts both a `string`, containing the specified path, or a function that accept the current `req` request as argument and returns a `string`. Using the function version, it is possible to customize a template based on a specific request.
 
