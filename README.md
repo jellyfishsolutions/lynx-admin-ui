@@ -64,8 +64,8 @@ The `AdminUI` annotation supports also an optional object argument, with the fol
 -   `disableDelete` if true (or if resolve to true), the button to delete an entity is not displayed;
 -   `defaultOrderBy` if specified, defines a default order by used in the entity list (it uses the same notation of the ordering string used when a column header is tapped);
 - `disableReloadOnList` if true (or if resolve to true), the displayed entities in the list are not reloaded. Please refer to [optimization section](#Listing page optimization) for additional info.
--   `customFetchData` allows you to create your custom query when retrieving data for the list trough a function that receives the current `req` as well as datatable infos. If defined, the default query building process will not be executed, meaning your `filterBy` function will have no effect.
--  `uiSettings` contains information of the visual appearence of the entity views. See the `AdminUI uiSettings` paragraph for more information.
+-   `customFetchData` allows you to create your custom query when retrieving data for the list trough a function that receives the current `req` as well as datatable infos. If defined, the default query building process will not be executed, meaning your `filterBy` function will have no effect. Moreover, you need to manually manage the filtering process and the filtering counter (using the `(req as any).__admin_ui_filterCounter` attribute).
+-  `uiSettings` contains information of the visual appearance of the entity views. See the `AdminUI uiSettings` paragraph for more information.
 
 Each "template" parameter accepts both a `string`, containing the specified path, or a function that accept the current `req` request as argument and returns a `string`. Using the function version, it is possible to customize a template based on a specific request.
 
@@ -73,8 +73,9 @@ Each "template" parameter accepts both a `string`, containing the specified path
 #### `AdminUI uiSettings parameter`
 This parameter contains information about how the entity view should appear in the interface, and defines the following optional properties: 
 
-- `tabs`:  if this property is defined, the detail view of the entity will be split into tabs. This object also define which tabs will be present and thier labels. You can assign the entity fields to a tab through their own `uiSettings` property. The object has the following type: `{ key: string; label: string }[]`. Each element of the array contains a `key` to address the tab, and a ´label`, that will be displayed as the tab title in the view.
+- `tabs`:  if this property is defined, the detail view of the entity will be split into tabs. This object also define which tabs will be present and their labels. You can assign the entity fields to a tab through their own `uiSettings` property. The object has the following type: `{ key: string; label: string }[]`. Each element of the array contains a `key` to address the tab, and a ´label`, that will be displayed as the tab title in the view.
 - `defaultTab`: is a property of the type: `string`, and indicates which tab is the one selected by default. This property value should match the `key` property of one of the defined tabs.
+- `tabsAsSections`: if defined and its value is `true`, tabs will be displayed as sections.
 - `hasRightColumn`: is a property of the type: `boolean`. If the value of this property is `true`, the details view is split in two columns. The second columns will contains the action buttons, like the save button. The `uiSettings` property of each field contains an option to move this field to the right column, just above the action buttons. It could be useful, for instance, to move a "preview image" field to the right column, to highlight the field. 
 - `hideTabsInExpanded`: is a property of the type: `boolean` that decides if the tabs layout is rendered also in the expanded view of the field.
 - `hideTabsInModal`: is a property of the type: `boolean` that decides if the tabs layout is rendered also in the modal view of the field.

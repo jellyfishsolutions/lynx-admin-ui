@@ -127,8 +127,8 @@
                                     <i class="fas fa-search"></i>
                                     {{ 'admin-ui.filter-title' | tr }}
                                 </button>
-                                {% if activeFilters > 0 %}
-                                    <div class="ui-active-filters">{{activeFilters}}</div>
+                                {% if req.__admin_ui_filterCounter > 0 %}
+                                    <div class="ui-active-filters">{{req.__admin_ui_filterCounter}}</div>
                                 {% endif %}
                             </div>
                         {% endif %}

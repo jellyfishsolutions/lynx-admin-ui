@@ -125,6 +125,8 @@ export class Controller extends BaseController {
             .disableReloadOnList as boolean;
 
         if (!hasCustomFetchData) {
+            let filterCounter = 0;
+            let hasSmart = false;
             for (let key in metadata.fields) {
                 let f = metadata.fields[key];
                 if (!f.searchable && !f.smartSearchable) {
@@ -133,8 +135,15 @@ export class Controller extends BaseController {
                 let v = null;
                 if (f.searchable) {
                     v = datagrid.getQueryValue(key);
+                    if (v) {
+                        filterCounter += 1;
+                    }
                 } else if (f.smartSearchable) {
                     v = datagrid.getQueryValue('smartSearch');
+                    if (v && !hasSmart) {
+                        hasSmart = true;
+                        filterCounter += 1;
+                    }
                 }
                 if (v) {
                     let right;
@@ -179,6 +188,8 @@ export class Controller extends BaseController {
                     }
                 }
             }
+
+            (req as any).__admin_ui_filterCounter = filterCounter;
 
             let repository = getConnection().getRepository(
                 Class
@@ -552,7 +563,10 @@ export class Controller extends BaseController {
             ) {
                 (entity as any)[key] = null;
             } else {
-                if (m.selfType == 'Number' && data[prefix + key] === '') {
+                if (
+                    (m.selfType == 'Number' || m.selfType == 'Date') &&
+                    data[prefix + key] === ''
+                ) {
                     data[prefix + key] = null;
                 } else {
                     if (m.selfType == 'Number') {

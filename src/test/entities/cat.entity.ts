@@ -29,6 +29,9 @@ async function fetchTherapyList(
 @AdminUI('Cats', {
     uiSettings: {
         smartSearchableHint: 'Cerca per nome',
+        tabs: [{ key: 'main', label: 'Main' }],
+        defaultTab: 'main',
+        tabsAsSections: true,
     },
 })
 @Entity('cats')
@@ -38,6 +41,9 @@ export default class Cat extends BaseEntity implements EditableEntity {
         type: AdminType.Id,
         readOnly: true,
         hide: true,
+        uiSettings: {
+            tab: 'main',
+        },
     })
     @PrimaryGeneratedColumn()
     id: number;
@@ -46,15 +52,30 @@ export default class Cat extends BaseEntity implements EditableEntity {
         name: 'Name',
         type: AdminType.String,
         onSummary: true,
-        hide: true,
+        hide: false,
         smartSearchable: true,
         defaultValue: async () => {
             console.log('generating name');
             return 'ASD';
         },
+        uiSettings: {
+            tab: 'main',
+        },
     })
     @Column()
     name: string;
+
+    @AdminField({
+        name: 'Data nascita',
+        type: AdminType.Date,
+        onSummary: true,
+        smartSearchable: true,
+        uiSettings: {
+            tab: 'main',
+        },
+    })
+    @Column({ type: 'date', nullable: true, default: null })
+    birthday?: Date;
 
     @AdminField({
         name: 'Terapie',
@@ -69,7 +90,7 @@ export default class Cat extends BaseEntity implements EditableEntity {
             return false;
         },
         uiSettings: {
-            tab: 'therapies',
+            tab: 'main',
             editorClasses: 'col-12',
             expandedEditorClasses: 'd-none',
             noDataTemplate: '/no-data-nested',
