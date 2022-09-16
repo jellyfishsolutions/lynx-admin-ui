@@ -113,7 +113,7 @@
             <!-- if entity is NOT divided in tabs -->
             <div class="row admin-ui-right-column">
               {% for key, field in fields %}
-                {% if not field.uiSettings or (not field.hide and not field.uiSettings.onRightColumn)  %}
+                {% if (not field.hide and not (field.uiSettings and field.uiSettings.onRightColumn))  %}
                   {{ edit_fieldComponent(field, key) }}
                 {% endif %}
               {% endfor %}
