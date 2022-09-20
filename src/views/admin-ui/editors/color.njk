@@ -1,9 +1,14 @@
 <div class="form-group">
-    <label for="{{key}}">{{ field.name | tr }}
-    </label>
-    {% if field.uiSettings.descriptionText %}
+     {% if field.uiSettings.labelTemplate %}
+            {% include resolvePath( field.uiSettings.labelTemplate) %}
+        {% else %}
+    <label for="{{key}}">{{ field.name | tr }} 
+           {% if field.uiSettings.descriptionText %}
         <small id="{{key}}-help" class="form-text text-muted">{{ field.uiSettings.descriptionText | tr }}</small>
     {% endif %}
+    </label>
+    {% endif %}
+
     <input class="form-control" 
         type="color"
         name="{{key}}" 

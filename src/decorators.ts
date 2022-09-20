@@ -42,6 +42,7 @@ export interface UISettings {
     actionListTemplate?: string;
     noDataString?: string;
     noDataTemplate?: string;
+    labelTemplate?: string;
     //TODO: editorOrder?: number;
     //TODO: editorFilter?: number;
     //TODO: editorList?: number;

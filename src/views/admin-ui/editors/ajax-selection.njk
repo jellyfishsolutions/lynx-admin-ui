@@ -1,9 +1,13 @@
 <div class="form-group">
+     {% if field.uiSettings.labelTemplate %}
+            {% include resolvePath( field.uiSettings.labelTemplate) %}
+        {% else %}
     <label for="{{key}}">{{ field.name | tr }}
         {% if field.uiSettings.descriptionText %}
             <small id="{{key}}-help" class="{{ field.uiSettings.descriptionTextClasses if field.uiSettings.descriptionTextClasses }} description-label">{{ field.uiSettings.descriptionText | tr }}</small>
         {% endif %}
     </label>
+    {% endif %}
     <select id="select2-{{key}}" class="form-control" name={{key}} {{ "disabled" if field.readOnly }} {{ "required" if field.required }}>
         <option disabled selected>Select...</option>
         {% if data[key] %}

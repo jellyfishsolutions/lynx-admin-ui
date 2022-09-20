@@ -2,12 +2,16 @@
 
 {% if nested %}
     <div class="d-flex justify-content-between mb-1">
+        {% if field.uiSettings.labelTemplate %}
+            {% include resolvePath( field.uiSettings.labelTemplate) %}
+        {% else %}
         <label>
             {{ field.name | tr }}
             {% if field.uiSettings.descriptionText %}
                 <small id="{{key}}-help" class="{{ field.uiSettings.descriptionTextClasses if field.uiSettings.descriptionTextClasses }} description-label">{{ field.uiSettings.descriptionText | tr }}</small>
             {% endif %}
         </label>
+        {% endif %}
         <div>
             {% if req.params.id != 0 and field.readOnly != true and data[key + '__disable_creation'] != true and AUIcanWrite(req, req.params.entityName)%}
                 {% if field.uiSettings.actionListTemplate %}

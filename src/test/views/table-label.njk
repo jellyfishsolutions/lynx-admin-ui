@@ -1,0 +1,6 @@
+<label>
+            {{ field.name | tr }} (Count: {{ data[key].data.length }})
+            {% if field.uiSettings.descriptionText %}
+                <small id="{{key}}-help" class="{{ field.uiSettings.descriptionTextClasses if field.uiSettings.descriptionTextClasses }} description-label">{{ field.uiSettings.descriptionText | tr }}</small>
+            {% endif %}
+        </label>

@@ -1,9 +1,13 @@
 <div class="form-group {{'right-column' if field.uiSettings.onRightColumn}}">
+     {% if field.uiSettings.labelTemplate %}
+            {% include resolvePath( field.uiSettings.labelTemplate) %}
+        {% else %}
     <label for="{{key}}">{{ field.name | tr }}
         {% if field.uiSettings.descriptionText %}
             <small id="{{key}}-help" class="{{ field.uiSettings.descriptionTextClasses if field.uiSettings.descriptionTextClasses }} description-label">{{ field.uiSettings.descriptionText | tr }}</small>
         {% endif %}
     </label>
+    {% endif %}
     
         <span id="current-media-{{key}}" class=" {{ 'hidden' if not data[key] }}">
             <br/>

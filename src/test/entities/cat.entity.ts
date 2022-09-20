@@ -94,6 +94,7 @@ export default class Cat extends BaseEntity implements EditableEntity {
             editorClasses: 'col-12',
             expandedEditorClasses: 'd-none',
             noDataTemplate: '/no-data-nested',
+            labelTemplate: '/table-label',
         },
     })
     @OneToMany(() => Therapy, (therapy) => therapy.cat)

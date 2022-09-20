@@ -442,6 +442,7 @@ This parameter defines the following optional properties:
 -   `actionListTemplate`: indicates a custom nunjucks template to be used as the last column (the actions) if the specified type is `AdminType.Table`.
 -   `noDataString`: indicates a custom localized string to be used when no data is available (usable in the `AdminType.Table` type).
 -   `noDataTemplate`: indicates a custom nunjucks template to be used when no data is available (usable in the `AdminType.Table` type).
+-   `labelTemplate`: indicates a custom nunjucks template to be used to display the label of the field.
 
 Moreover, in the editor section, each field is wrapped inside a `div` with an unique id. The id is defined as `field-{{entity-name}}-{{name-of-the-field}}`. Using the id, it is possible to customize though CSS rules the aspect of a single field.
 In the list section, each field has its own class, defined as `header-{{name-of-the-field}}` and `cell-{{header-of-the-field}}`, for the `th` and the `td` element respectively. These classes apply also for the nested list, used with the `AdminType.Table` type.
