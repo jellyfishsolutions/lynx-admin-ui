@@ -138,6 +138,9 @@
                                 {{ 'admin-ui.create' | tr }}
                             </a>
                         {% endif %}
+                        {% if metadata.classParameters.listAdditionalActionTemplate %}
+                            {% include resolvePath(metadata.classParameters.listAdditionalActionTemplate) %}
+                        {% endif %}
 
                     </div>
                 </div>

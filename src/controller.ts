@@ -462,7 +462,7 @@ export class Controller extends BaseController {
                 m.type == AdminType.ActionButton &&
                 req.body['__admin_ui_action'] == key
             ) {
-                await (entity as any)[key]();
+                await (entity as any)[key](req);
             }
             if ((entity as any)[key] instanceof Promise) {
                 (entity as any)[key] = await (entity as any)[key];
@@ -674,6 +674,15 @@ export class Controller extends BaseController {
         ) {
             meta.classParameters.listActionTemplate = await (
                 meta.classParameters.listActionTemplate as any
+            )(req);
+        }
+        if (
+            meta.classParameters.listAdditionalActionTemplate &&
+            meta.classParameters.listAdditionalActionTemplate instanceof
+                Function
+        ) {
+            meta.classParameters.listAdditionalActionTemplate = await (
+                meta.classParameters.listAdditionalActionTemplate as any
             )(req);
         }
         if (

@@ -57,6 +57,7 @@ The `AdminUI` annotation supports also an optional object argument, with the fol
 -   `popupEditorTemplate` and `popupEditorParentTemplate` allow to specify a custom popup editor template for the current entity;
 -   `listTemplate` and `listParentTemplate` allow to specify a custom list template for the current entity;
 -   `listActionTemplate` allows to specify a custom template to be used as the 'action' column (the last one) in the listing template;
+-   `listAdditionalActionTemplate` allows to specify a custom template to be used beside the "creation" button on the top of the listing template;
 -   `listCustomDeleteAction` allows to specify a custom action to be performed instead of the standard delete action; it shall be a named route, that accepts the `entityName` and `id` path parameters, and the `redirect` query parameter;
 -   `batchDelete` if true (or if resolve to true), checkboxes will be displayed for each list element, enabling a batch delete of elements;
 -   `relations` allows to specify the name of parameters of the entity (that are relations) that needs to be loaded with the entity (useful in conjunction with `disableReloadOnList` parameter or to filtering/search entity with a particular relation);
@@ -313,6 +314,8 @@ Clicking the button automatically submit the editor form. During the saving proc
 By default, a `btn` class is added to the button widget, but it can be overridden using the property `innerEditorClasses` of `uiSettings`.
 
 > Asynchronous functions are supported
+
+> The function is executed with the current `req` Request as first parameter.
 
 Example:
 
