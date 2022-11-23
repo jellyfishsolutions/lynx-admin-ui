@@ -122,11 +122,16 @@ async function actionTemplate(req: Request): Promise<string> {
     return '';
 }
 
+async function backButtonTemplate(req: Request): Promise<string> {
+    return '/back-button';
+}
+
 @Entity('complex')
 @AdminUI('Complex Entity', {
     filterBy: filteringList,
     listParentTemplate: listTemplate,
     listActionTemplate: actionTemplate,
+    backButtonTemplate: backButtonTemplate,
     disableReloadOnList: true,
     relations: ['subcategories', 'category', 'simple', 'categoryAjax'],
     uiSettings: {

@@ -35,12 +35,17 @@
 <div class="col-12 {{ 'col-lg-9' if hasRightColumn else '' }} mb-4">
   <div class="card">
     <div class="card-body">
+
+      {% if backButtonTemplate %}
+        {% include resolvePath(backButtonTemplate) %}
+      {% else %}
       <div class="lead entity-title entity-title-{{req.params.entityName}}">
         <a class="btn btn-secondary btn-back btn-back-{{req.params.entityName}}" href="{{ route('adminUI.list', {entityName: req.params.entityName}) }}">
           <i class="fas fa-chevron-left"></i>
           {{ 'admin-ui.back' | tr }}
         </a>
       </div>
+      {% endif %}
 
       {{ utils.alert(flash) }}
 

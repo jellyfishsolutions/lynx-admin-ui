@@ -69,6 +69,7 @@ export interface ClassParameters {
     listTemplate?: string | ((req: Request) => Promise<string>);
     listParentTemplate?: string | ((req: Request) => Promise<string>);
     listActionTemplate?: string | ((req: Request) => Promise<string>);
+    backButtonTemplate?: string | ((req: Request) => Promise<string>);
     listAdditionalActionTemplate?: string | ((req: Request) => Promise<string>);
     listCustomDeleteAction?: string | ((req: Request) => Promise<string>);
     batchDelete?: boolean | ((req: Request) => Promise<boolean>);

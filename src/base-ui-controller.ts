@@ -265,6 +265,7 @@ export class BaseUIController extends Controller {
                 usedTypes.push(fields[key].type);
             }
         }
+       
 
         let ctx = {
             data: data,
@@ -280,6 +281,7 @@ export class BaseUIController extends Controller {
             hideTabsInModal:
                 metadata.classParameters.uiSettings?.hideTabsInModal,
             hasRightColumn: metadata.classParameters.uiSettings?.hasRightColumn,
+            backButtonTemplate: metadata.classParameters.backButtonTemplate,
             nested: false,
             metadata: metadata,
             fields: fields,

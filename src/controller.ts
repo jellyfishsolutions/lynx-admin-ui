@@ -677,6 +677,14 @@ export class Controller extends BaseController {
             )(req);
         }
         if (
+            metadata.classParameters.backButtonTemplate &&
+            metadata.classParameters.backButtonTemplate instanceof Function
+        ) {
+            meta.classParameters.backButtonTemplate = await (
+                metadata.classParameters.backButtonTemplate as any
+            )(req);
+        }
+        if (
             meta.classParameters.listAdditionalActionTemplate &&
             meta.classParameters.listAdditionalActionTemplate instanceof
                 Function
