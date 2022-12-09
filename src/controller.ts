@@ -322,7 +322,11 @@ export class Controller extends BaseController {
         let data = _data as any;
         let defaultValues = {} as any;
         if (req.query.defaultValues) {
-            defaultValues = JSON.parse(req.query.defaultValues as string);
+            try {
+                defaultValues = JSON.parse(req.query.defaultValues as string);
+            } catch (e) {
+                defaultValues = {};
+            }
         }
         for (let key in metadata.fields) {
             if (forList) {
