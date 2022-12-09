@@ -527,6 +527,9 @@ mark,
   background-repeat: no-repeat;
   cursor: pointer;
 }
+.media-img-placeholder.disabled {
+    opacity: 0.5
+}
 .right-column .media-img-placeholder {
   width: 100% !important;
   min-height: 200px !important;
@@ -539,7 +542,7 @@ mark,
 .hidden {
     display: none !important;
 }
-.media-img-placeholder::after, .img-thumbnail-container::after {
+.media-img-placeholder:not(.disabled)::after, .img-thumbnail-container::after {
   content: '+';
   position: absolute;
   display: flex;

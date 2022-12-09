@@ -19,8 +19,7 @@
                     <video src="{{route('adminUI.previewMedia', { id: data[key] }) }}" id="preview-{{key}}-video" controls class="img-thumbnail {{ 'hidden' if not data[key + '__' + 'mimetype'] or not 'video/' in data[key + '__' + 'mimetype'] }}" >
                         </video>
                     <img id="preview-{{key}}-file" src="/adminUI/assets/file-placeholder.png" class="file-placeholder-thumbnail {{ 'hidden' if not data[key + '__' + 'mimetype'] or 'image/' in data[key + '__' + 'mimetype'] or 'video/' in data[key + '__' + 'mimetype'] }}">
-                {% if field.readOnly %}
-                {% else %}
+                {% if not field.readOnly %}
                     <button type="button" class="btn-edit-img" onclick="$('#input-{{key}}-media').click();"><i class="fas fa-edit"></i></button>
                     <button type="button" class="btn-remove-img" onclick="_adminUI_removeMedia('{{key}}');event.stopPropagation();"><i class="fas fa-trash"></i></button>
                 {% endif %}
@@ -28,7 +27,8 @@
         </span>
         <input type="hidden" id="remove-{{key}}" name="remove-{{key}}" value=""/>
     
-        <div class="media-img-placeholder {{ 'hidden' if data[key] }}" id="placeholder-{{key}}" onclick="$('#input-{{key}}-media').click();"></div>
+    
+        <div class="media-img-placeholder {{ 'disabled' if field.readOnly }} {{ 'hidden' if data[key] }}" id="placeholder-{{key}}"  {% if not field.readOnly %} onclick="$('#input-{{key}}-media').click();"  {% endif %}></div>
     
     <input class="form-control" 
         type="file"
