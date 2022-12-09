@@ -1,9 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { AdminUI, AdminField, AdminType } from '../../decorators';
 import BaseEntity from 'lynx-framework/entities/base.entity';
 import EditableEntity, { notEditableFromPopup } from '../../editable-entity';
 import { map } from '../../editable-entity';
 import Post from './post.entity';
+import Media from 'lynx-framework/entities/media.entity';
+import Request from 'lynx-framework/request';
 
 @Entity('comments')
 @AdminUI('Comment', {
@@ -24,12 +26,13 @@ export default class Comment extends BaseEntity implements EditableEntity {
         name: 'Text',
         type: AdminType.RichText,
         onSummary: true,
+        hide: true,
         searchable: true,
         uiSettings: { listTemplate: '/safe' },
     })
     text: string;
 
-    @ManyToOne((type) => Post, (post) => post.comments, { eager: true })
+    @ManyToOne((type) => Post, (post) => post.comments)
     @AdminField({
         name: 'Post',
         selfType: 'Post',
@@ -52,6 +55,27 @@ export default class Comment extends BaseEntity implements EditableEntity {
         console.log("I'm a function!!");
         this.display = true;
     }
+    @ManyToOne(type => Media, { eager: true })
+    @JoinColumn()
+    @AdminField({
+        name: 'Attachment',
+        readOnly: false,
+        type: AdminType.Media,
+        uiSettings: { editorClasses: 'col-12' },
+    })
+    attachment: Media;
+
+    @AdminField({
+        name: 'Text label',
+        type: AdminType.CustomInclude,
+        optionalParameters: {
+            template: '/templates/text-label',
+        },
+        uiSettings: {
+            editorClasses: 'col-12',
+        },
+    })
+    textLabel: string;
 
     @AdminField({
         name: 'I am a BUTTON 2',
@@ -64,6 +88,8 @@ export default class Comment extends BaseEntity implements EditableEntity {
         this.display = false;
     }
 
+
+
     getId() {
         return this.id;
     }
@@ -75,4 +101,8 @@ export default class Comment extends BaseEntity implements EditableEntity {
         }
         return c.substring(0, 20) + '...';
     }
+    async onBeforeSave?(req: Request) {
+        throw new Error("errore mio, sorry")
+    }
 }
+
