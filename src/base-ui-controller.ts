@@ -265,7 +265,6 @@ export class BaseUIController extends Controller {
                 usedTypes.push(fields[key].type);
             }
         }
-       
 
         let ctx = {
             data: data,
@@ -423,6 +422,7 @@ export class BaseUIController extends Controller {
             ...metadata,
             fields: await this.generateContextFields(metadata, req, entity),
         };
+        let originalData = await this.cleanData(req, entity, metadata);
         await this.setData(req, entity, req.body, metadata);
         let updated;
         try {
@@ -445,7 +445,6 @@ export class BaseUIController extends Controller {
                 }
             } catch (ee) {
                 this.logger.error(e);
-                this.logger.error(ee);
                 this.addErrorMessage(e.message, req);
             }
             metadata = {
@@ -458,23 +457,12 @@ export class BaseUIController extends Controller {
                 entity
             );
             metadata.fields = fields;
-
             let ctx = this.generateCxtForEditingRender(
-                req.body,
+                { ...originalData, ...req.body },
                 isPopup as any,
                 metadata,
                 fields
             );
-            /*let ctx = {
-                data: req.body,
-                configuration: AdminUIModule.configuration,
-                parentTemplate: isPopup
-                    ? metadata.classParameters.popupEditorParentTemplate
-                    : metadata.classParameters.editorParentTemplate,
-                nested: false,
-                metadata: metadata,
-                fields: await this.generateContextFields(metadata, req, entity),
-            } as any;*/
             return this.render(
                 isPopup
                     ? (metadata.classParameters.popupEditorTemplate as string)

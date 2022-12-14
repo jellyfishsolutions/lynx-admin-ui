@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import {
+    Entity,
+    PrimaryGeneratedColumn,
+    Column,
+    ManyToOne,
+    JoinColumn,
+} from 'typeorm';
 import { AdminUI, AdminField, AdminType } from '../../decorators';
 import BaseEntity from 'lynx-framework/entities/base.entity';
 import EditableEntity, { notEditableFromPopup } from '../../editable-entity';
@@ -55,7 +61,7 @@ export default class Comment extends BaseEntity implements EditableEntity {
         console.log("I'm a function!!");
         this.display = true;
     }
-    @ManyToOne(type => Media, { eager: true })
+    @ManyToOne((type) => Media, { eager: true })
     @JoinColumn()
     @AdminField({
         name: 'Attachment',
@@ -88,8 +94,6 @@ export default class Comment extends BaseEntity implements EditableEntity {
         this.display = false;
     }
 
-
-
     getId() {
         return this.id;
     }
@@ -101,8 +105,8 @@ export default class Comment extends BaseEntity implements EditableEntity {
         }
         return c.substring(0, 20) + '...';
     }
+
     async onBeforeSave?(req: Request) {
-        throw new Error("errore mio, sorry")
+        throw new Error('errore mio, sorry');
     }
 }
-
